@@ -32,7 +32,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
         public override void AI()
         {
             const float piOverCircle = MathHelper.Pi / 360f;
-            const float value = 25;
+            const float value = 15;
             float rot = Projectile.ai[0] * Projectile.ai[1];
 
             Projectile.velocity = Projectile.velocity.RotatedBy(rot);

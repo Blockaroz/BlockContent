@@ -8,8 +8,6 @@ namespace BlockContent.Content.Items
     {
         public override Color RarityColor => new(0, 255, 255, 64);
 
-        public override int GetPrefixedRarity(int offset, float valueMult) => Type;
-
-        public override string Name => "Odd";
+        public override int GetPrefixedRarity(int offset, float valueMult) => Type; 
     }
 }

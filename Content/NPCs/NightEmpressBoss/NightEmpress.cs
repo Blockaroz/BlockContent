@@ -95,7 +95,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
         {
             NPCAimedTarget target = NPC.GetTargetData();
 
-            if (Phase == 0)
+            if (Phase == 0) //spawn
             {
                 PhaseCounter++;
                 float yLerp = Utils.GetLerpValue(0, 140, PhaseCounter, true);
@@ -116,32 +116,32 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                     NPC.TargetClosest();
 
                 const int attackLength = 180;
-                const int doAttack = 24;
-                const int doAttackAgain = 54;
+                const int doAttack = 20;
+                const int doAttackSecond = 45;
 
                 if (PhaseCounter <= attackLength)
                 {
-                    MoveToTarget(target, 0.7f, 10);
-
                     Vector2 targetPos = target.Invalid ? NPC.Center : (target.Center + new Vector2(0, -250));
+                    float speed = (PhaseCounter > doAttackSecond) ? 3f : 0.7f;
+                    MoveToTarget(target, speed, 10);
 
-                    if (PhaseCounter >= doAttack && PhaseCounter <= doAttackAgain)
+                    if (PhaseCounter >= doAttack && PhaseCounter <= doAttackSecond)
                     {
                         NPC.velocity *= 0.1f;
-                        Vector2 velocity = new Vector2(9f, 0);
+                        Vector2 velocity = new Vector2(10f, 0);
 
                         float rand = 0;
-                        if (PhaseCounter == 0)
-                            rand = Main.rand.NextFloat(2f, 2f);
+                        if (PhaseCounter == 10)
+                            rand = NPC.AngleTo(targetPos) + Main.rand.NextFloat(0.01f, 0.01f);
 
                         if (PhaseCounter == doAttack)
                         {
-                            SoundEngine.PlaySound(SoundID.Item169, NPC.Center);
-                            FloweringNight(9, rand, velocity);
+                            SoundEngine.PlaySound(SoundID.Item163, NPC.Center);
+                            FloweringNight(7, rand, velocity);
                         }
 
-                        if (PhaseCounter == doAttackAgain)
-                            FloweringNight(9, rand + MathHelper.PiOver4, -velocity);
+                        if (PhaseCounter == doAttackSecond)
+                            FloweringNight(7, rand + MathHelper.PiOver4, -velocity);
                     }
                 }
 
@@ -204,18 +204,16 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
         {
             NPC.TargetClosest();
             Vector2 targetPos = target.Invalid ? NPC.Center : (target.Center + new Vector2(0, -270));
-            if (NPC.Distance(targetPos) > 200f)
-                targetPos -= NPC.DirectionTo(targetPos) * 120f;
+            if (NPC.Distance(targetPos) > 150f)
+                targetPos -= NPC.DirectionTo(targetPos) * 150f;
 
             Vector2 difference = targetPos - NPC.Center;
-            float lerpValue = Utils.GetLerpValue(100f, 700f, difference.Length());
+            float lerpValue = Utils.GetLerpValue(100f, 550f, difference.Length());
             float speed = difference.Length();
-            if (speed > 20f)
-                speed = 20f;
+            if (speed > 24f)
+                speed = 24f;
 
-            NPC.velocity = Vector2.SmoothStep(difference.SafeNormalize(Vector2.Zero) * speed, difference / 6f, lerpValue);
-
-            NPC.velocity *= 0.92f;
+            NPC.velocity = Vector2.Lerp(difference.SafeNormalize(Vector2.Zero) * speed, difference / 7f, lerpValue);
         }
 
         #endregion
