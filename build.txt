@@ -1,0 +1,3 @@
+displayName = Fury
+author = Blockaroz3349
+version = 0.1
