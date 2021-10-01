@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
 using Terraria.ID;
@@ -10,6 +11,7 @@ using Terraria.ModLoader;
 
 namespace BlockContent.Content.NPCs.NightEmpressBoss
 {
+    [AutoloadBossHead]
     public class NightEmpress : ModNPC
     {
         public override void SetStaticDefaults()
@@ -31,6 +33,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
             NPCID.Sets.BossBestiaryPriority.Add(Type);
         }
+
+        public override string BossHeadTexture => "BlockContent/Content/NPCs/NightEmpressBoss/NightEmpress_Head";
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
         {
@@ -55,6 +59,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             NPC.noTileCollide = true;
 
             NPC.HitSound = SoundID.NPCHit1;
+
+            NPC.position.Y -= 60;
 
             if (!Main.dedServ)
                 Music = MusicLoader.GetMusicSlot(Mod, "Assets/Music/Boss_NightEmpress");
@@ -91,8 +97,12 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
             if (Phase == 0)
             {
-                //something
-                if (PhaseCounter++ >= 240)
+                PhaseCounter++;
+                float yLerp = Utils.GetLerpValue(0, 140, PhaseCounter, true);
+
+                NPC.velocity.Y = MathHelper.SmoothStep(0.5f, 0f, yLerp);
+
+                if (PhaseCounter >= 240)
                 {
                     PhaseCounter = 0;
                     Phase++;
@@ -106,25 +116,32 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                     NPC.TargetClosest();
 
                 const int attackLength = 180;
-                const int doAttack = 20;
-                const int doAttackAgain = 60;
+                const int doAttack = 24;
+                const int doAttackAgain = 54;
 
                 if (PhaseCounter <= attackLength)
                 {
                     MoveToTarget(target, 0.7f, 10);
 
+                    Vector2 targetPos = target.Invalid ? NPC.Center : (target.Center + new Vector2(0, -250));
+
                     if (PhaseCounter >= doAttack && PhaseCounter <= doAttackAgain)
                     {
                         NPC.velocity *= 0.1f;
+                        Vector2 velocity = new Vector2(9f, 0);
 
-                        float rotationOffset = Main.rand.NextFloat(-MathHelper.PiOver4, MathHelper.PiOver4);
-                        Vector2 velocity = new Vector2(7f, 0);
+                        float rand = 0;
+                        if (PhaseCounter == 0)
+                            rand = Main.rand.NextFloat(2f, 2f);
 
                         if (PhaseCounter == doAttack)
-                            FloweringNight(9, rotationOffset, velocity);
+                        {
+                            SoundEngine.PlaySound(SoundID.Item169, NPC.Center);
+                            FloweringNight(9, rand, velocity);
+                        }
 
                         if (PhaseCounter == doAttackAgain)
-                            FloweringNight(9, -rotationOffset + MathHelper.PiOver4, -velocity);
+                            FloweringNight(9, rand + MathHelper.PiOver4, -velocity);
                     }
                 }
 
@@ -146,7 +163,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
                 const int attackLength = 120;
 
-                Vector2 targetPos = target.Invalid ? NPC.Center : (target.Center + new Vector2(0, -250));
+                
 
                 if (PhaseCounter <= attackLength)
                 {
@@ -196,7 +213,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             if (speed > 20f)
                 speed = 20f;
 
-            NPC.velocity = Vector2.Lerp(difference.SafeNormalize(Vector2.Zero) * speed, difference / 6f, lerpValue);
+            NPC.velocity = Vector2.SmoothStep(difference.SafeNormalize(Vector2.Zero) * speed, difference / 6f, lerpValue);
 
             NPC.velocity *= 0.92f;
         }
@@ -205,11 +222,11 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
         #region Attacks
 
+        
+
         public void FloweringNight(int totalProjectiles, float rotOffset, Vector2 velocity)
         {
             int projType = ModContent.ProjectileType<Projectiles.NightFlower>();
-
-            //sound
             for (int i = 0; i < totalProjectiles * 2; i++)
             {
                 float direction = i > totalProjectiles ? 1 : -1;
@@ -238,15 +255,14 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-
             if (Phase == 0)
             {
-                float fadeIn = Utils.GetLerpValue(60, 0, PhaseCounter, true);
-                Color fadeColor = NightColor(fadeIn);
+                float purpleFadeIn = Utils.GetLerpValue(0, 45, PhaseCounter, true);
+                float fadeIn = Utils.GetLerpValue(50, 120, PhaseCounter, true);
+                Color fadeColor = Color.Lerp(Color.Transparent, NightColor(fadeIn), purpleFadeIn);
                 fadeColor.A = 0;
                 NPC.Opacity = fadeIn;
                 drawColor = Color.Lerp(fadeColor, Color.White, fadeIn);
-                
             }
 
             Asset<Texture2D> body = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/NightEmpress");
