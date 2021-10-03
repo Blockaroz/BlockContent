@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace BlockContent.Content.Graphics
 {
-    public struct OctaneBladeDrawer
+    public struct HeatBladeDrawer
     {
         private static VertexStrip _edgeGlowStrip = new();
         private static VertexStrip _edgeStrip = new();

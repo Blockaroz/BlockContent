@@ -13,11 +13,11 @@ using Terraria.DataStructures;
 
 namespace BlockContent.Content.Items
 {
-    public class OctaneBlade : ModItem
+    public class HeatBlade : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Octane Blade");
+            DisplayName.SetDefault("Heat Blade");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 
@@ -39,7 +39,7 @@ namespace BlockContent.Content.Items
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.shootSpeed = 16f;
-            Item.shoot = ModContent.ProjectileType<OctaneBladeProjectile>();
+            Item.shoot = ModContent.ProjectileType<HeatBladeProjectile>();
         }
 
         public override Color? GetAlpha(Color lightColor) => new(255, 255, 255, lightColor.A - Item.alpha);

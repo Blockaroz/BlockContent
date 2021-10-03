@@ -7,11 +7,11 @@ using Terraria.ModLoader;
 
 namespace BlockContent.Content.Projectiles
 {
-    public class OctaneBladeProjectile : ModProjectile
+    public class HeatBladeProjectile : ModProjectile
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Octane Blade");
+            DisplayName.SetDefault("Heat Blade");
             ProjectileID.Sets.TrailCacheLength[Type] = 30;
             ProjectileID.Sets.TrailingMode[Type] = 4;
         }
@@ -100,7 +100,7 @@ namespace BlockContent.Content.Projectiles
 
         public override bool PreDraw(ref Color lightColor)
         {
-            default(OctaneBladeDrawer).Draw(Projectile);
+            default(HeatBladeDrawer).Draw(Projectile);
             return false;
         }
     }
