@@ -95,6 +95,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
         {
             NPCAimedTarget target = NPC.GetTargetData();
 
+            Vector2 targetPosOffset = new Vector2(0, -250);
+
             if (Phase == 0) //spawn
             {
                 PhaseCounter++;
@@ -124,9 +126,9 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                     Vector2 targetPos = target.Invalid ? NPC.Center : (target.Center + new Vector2(0, -250));
 
                     if (PhaseCounter < doAttackSecond)
-                        MoveToTarget(target, 3f, 5);
+                        MoveToTarget(target, 3f, 5, targetPosOffset);
                     else
-                        MoveFromTarget(target, 0.3f, 5);
+                        MoveFromTarget(target, 0.3f, Vector2.Zero);
 
                     if (PhaseCounter >= doAttack && PhaseCounter <= doAttackSecond)
                     {
@@ -149,16 +151,16 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 }
 
                 if (PhaseCounter > attackLength && PhaseCounter <= attackLength + 10)
-                    DashToTarget(target);
+                    DashToTarget(target, targetPosOffset);
 
                 if (PhaseCounter > attackLength + 15)
                 {
                     PhaseCounter = 0;
-                    Phase++;
+                    //Phase++;
                 }
             }
 
-            if (Phase == 2)
+            if (Phase == -1)
             {
                 PhaseCounter++;
                 if (PhaseCounter == 0)
@@ -170,26 +172,26 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
                 if (PhaseCounter <= attackLength)
                 {
-                    MoveToTarget(target, 5f, 10);
+                    MoveToTarget(target, 5f, 10, targetPosOffset);
                     //attack
                 }
 
                 if (PhaseCounter > attackLength && PhaseCounter <= attackLength + 10)
-                    DashToTarget(target);
+                    DashToTarget(target, targetPosOffset);
 
                 if (PhaseCounter > attackLength + 15)
                 {
                     PhaseCounter = 0;
-                    Phase--;
+                    Phase++;
                 }
             }
         }
 
         #region Movement
 
-        public void MoveToTarget(NPCAimedTarget target, float speed, float minimumDistance)
+        public void MoveToTarget(NPCAimedTarget target, float speed, float minimumDistance, Vector2 offset)
         {
-            Vector2 targetPos = target.Invalid ? NPC.Center : (target.Center + new Vector2(0, -240));
+            Vector2 targetPos = target.Invalid ? NPC.Center : (target.Center + offset);
             if (Vector2.Distance(NPC.Center, targetPos) >= minimumDistance)
                 NPC.velocity += NPC.DirectionTo(targetPos).SafeNormalize(Vector2.Zero) * 0.25f * speed;
             else
@@ -203,19 +205,19 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 NPC.velocity *= 0.95f;
         }
 
-        public void MoveFromTarget(NPCAimedTarget target, float speed, float minimumDistance)
+        public void MoveFromTarget(NPCAimedTarget target, float speed, Vector2 offset)
         {
-            Vector2 targetPos = target.Invalid ? NPC.Center : (target.Center + new Vector2(0, -240));
+            Vector2 targetPos = target.Invalid ? NPC.Center : (target.Center + offset);
             NPC.velocity -= NPC.DirectionTo(targetPos).SafeNormalize(Vector2.Zero) * 0.25f * speed;
 
             if (NPC.velocity.Length() > 1.5f)
                 NPC.velocity *= 0.95f;
         }
 
-        public void DashToTarget(NPCAimedTarget target)
+        public void DashToTarget(NPCAimedTarget target, Vector2 offset)
         {
             NPC.TargetClosest();
-            Vector2 targetPos = target.Invalid ? NPC.Center : (target.Center + new Vector2(0, -270));
+            Vector2 targetPos = target.Invalid ? NPC.Center : (target.Center + offset);
             if (NPC.Distance(targetPos) > 150f)
                 targetPos -= NPC.DirectionTo(targetPos) * 150f;
 
@@ -267,6 +269,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
         {
             Asset<Texture2D> body = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/NightEmpress");
 
+            Rectangle? frame = body.Frame(1, 2, 0, 1);
+
             Color color = Color.White;
 
             if (Phase == 0)
@@ -279,7 +283,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 color = Color.Lerp(fadeColor, Color.White, fadeIn);
             }
 
-            spriteBatch.Draw(body.Value, NPC.Center - screenPos, null, color, NPC.rotation, body.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(body.Value, NPC.Center - screenPos, frame, color, NPC.rotation, new Vector2(frame.Value.Width, frame.Value.Height) / 2, NPC.scale, SpriteEffects.None, 0);
 
             return false;
         }

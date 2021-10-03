@@ -40,14 +40,14 @@ namespace BlockContent.Content.Graphics
         private static Color EdgeGlowColor(float progressOnStrip) 
         {
             Color result = Color.Lerp(new(253, 73, 53), new(252, 28, 37), Utils.GetLerpValue(0.2f, 1f, progressOnStrip, true));
-            result.A = 198;
+            result.A /= 2;
             return result;
         }
 
         private static Color EdgeColor(float progressOnStrip)
         {
             Color result = Color.Lerp(Color.Goldenrod, new(255, 213, 46), Utils.GetLerpValue(0.3f, 1f, progressOnStrip, true));
-            result.A /= 2;
+            result.A /= 3;
             return result;
         }
 
