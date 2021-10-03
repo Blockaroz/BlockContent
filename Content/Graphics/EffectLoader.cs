@@ -1,14 +1,28 @@
-﻿using Terraria.GameContent.Shaders;
+﻿using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
+using Terraria;
+using Terraria.GameContent.Shaders;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
+using Terraria.ModLoader;
 
 namespace BlockContent.Content.Graphics
 {
     public static class EffectLoader
     {
+        private static Mod Mod
+        {
+            get { return ModContent.GetInstance<BlockContent>(); }
+        }
+
         public static void LoadEffects()
         {
             SkyManager.Instance["BlockContent:ChadSky"] = new ChadEffectSky();
+
+            GameShaders.Misc["BlockContent:OctaneBlade"] = new MiscShaderData(Main.VertexPixelShaderRef, "MagicMissile").UseProjectionMatrix(doUse: true);
+
+            GameShaders.Misc["BlockContent:NightEmpress"] = new MiscShaderData(Main.PixelShaderRef, "HallowBoss");
+            GameShaders.Misc["BlockContent:NightEmpress"].UseImage1("Images/Extra_" + (short)156);
         }
     }
 }

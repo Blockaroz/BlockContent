@@ -18,6 +18,5 @@
   <ItemGroup>
     <Folder Include="Assets\Sounds\" />
     <Folder Include="Content\Dusts\" />
-    <Folder Include="Content\Projectiles\" />
   </ItemGroup>
 </Project>

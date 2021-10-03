@@ -26,13 +26,13 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 670;
+            Projectile.timeLeft = 720;
         }
 
         public override void AI()
         {
             const float piOverCircle = MathHelper.Pi / 360f;
-            const float value = 15;
+            const float value = 30;
             float rot = Projectile.ai[0] * Projectile.ai[1];
 
             Projectile.velocity = Projectile.velocity.RotatedBy(rot);
@@ -55,7 +55,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float opacity = Utils.GetLerpValue(670, 620, Projectile.timeLeft, true) * Utils.GetLerpValue(0, 50, Projectile.timeLeft, true);
+            float opacity = Utils.GetLerpValue(720, 690, Projectile.timeLeft, true) * Utils.GetLerpValue(0, 60, Projectile.timeLeft, true);
 
             Color lightShade = NightEmpress.NightColor(0f);
             lightShade.A /= 8;
@@ -67,7 +67,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             Asset<Texture2D> trailTexture = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/Projectiles/NightFlower_Glow");
             for (int i = 1; i < ProjectileID.Sets.TrailCacheLength[Type]; i++)
             {
-                float lerpValue = Utils.GetLerpValue(2, ProjectileID.Sets.TrailCacheLength[Type], i, true);
+                float lerpValue = Utils.GetLerpValue(5, ProjectileID.Sets.TrailCacheLength[Type], i, true);
                 Color trailColor = NightEmpress.NightColor(lerpValue) * Utils.GetLerpValue(ProjectileID.Sets.TrailCacheLength[Type], 0, i, true);
                 trailColor.A /= 8;
                 Vector2 oldposition = Projectile.oldPos[i] + (Projectile.Size / 2);

@@ -11,7 +11,7 @@ namespace BlockContent.Content.Graphics
     {
         private Mod Mod
         {
-            get { return ModLoader.GetMod("BlockContent"); }
+            get { return ModContent.GetInstance<BlockContent>(); }
         }
 
         public void Draw(Player player, float time)

@@ -42,8 +42,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
         public override void SetDefaults()
         {
-            NPC.width = 102;
-            NPC.height = 168;
+            NPC.width = 118;
+            NPC.height = 166;
             NPC.noGravity = true;
             NPC.friendly = false;
 
@@ -115,33 +115,36 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 if (PhaseCounter == 0)
                     NPC.TargetClosest();
 
-                const int attackLength = 180;
-                const int doAttack = 20;
-                const int doAttackSecond = 45;
+                const int attackLength = 230;
+                const int doAttack = 30;
+                const int doAttackSecond = 60;
 
                 if (PhaseCounter <= attackLength)
                 {
                     Vector2 targetPos = target.Invalid ? NPC.Center : (target.Center + new Vector2(0, -250));
-                    float speed = (PhaseCounter > doAttackSecond) ? 3f : 0.7f;
-                    MoveToTarget(target, speed, 10);
+
+                    if (PhaseCounter < doAttackSecond)
+                        MoveToTarget(target, 3f, 5);
+                    else
+                        MoveFromTarget(target, 0.3f, 5);
 
                     if (PhaseCounter >= doAttack && PhaseCounter <= doAttackSecond)
                     {
                         NPC.velocity *= 0.1f;
                         Vector2 velocity = new Vector2(10f, 0);
 
-                        float rand = 0;
-                        if (PhaseCounter == 10)
-                            rand = NPC.AngleTo(targetPos) + Main.rand.NextFloat(0.01f, 0.01f);
+                        float angle = 0;
+                        if (PhaseCounter == doAttack - 1)
+                            angle = NPC.AngleTo(targetPos) + Main.rand.NextFloat(0.1f, 0.1f);
 
                         if (PhaseCounter == doAttack)
                         {
                             SoundEngine.PlaySound(SoundID.Item163, NPC.Center);
-                            FloweringNight(7, rand, velocity);
+                            FloweringNight(10, angle - MathHelper.PiOver4, velocity);
                         }
 
                         if (PhaseCounter == doAttackSecond)
-                            FloweringNight(7, rand + MathHelper.PiOver4, -velocity);
+                            FloweringNight(10, angle + MathHelper.PiOver4, -velocity);
                     }
                 }
 
@@ -186,7 +189,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
         public void MoveToTarget(NPCAimedTarget target, float speed, float minimumDistance)
         {
-            Vector2 targetPos = target.Invalid ? NPC.Center : (target.Center + new Vector2(0, -270));
+            Vector2 targetPos = target.Invalid ? NPC.Center : (target.Center + new Vector2(0, -240));
             if (Vector2.Distance(NPC.Center, targetPos) >= minimumDistance)
                 NPC.velocity += NPC.DirectionTo(targetPos).SafeNormalize(Vector2.Zero) * 0.25f * speed;
             else
@@ -197,7 +200,16 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             }
 
             if (NPC.velocity.Length() > 1.5f)
-                NPC.velocity *= 0.93f;
+                NPC.velocity *= 0.95f;
+        }
+
+        public void MoveFromTarget(NPCAimedTarget target, float speed, float minimumDistance)
+        {
+            Vector2 targetPos = target.Invalid ? NPC.Center : (target.Center + new Vector2(0, -240));
+            NPC.velocity -= NPC.DirectionTo(targetPos).SafeNormalize(Vector2.Zero) * 0.25f * speed;
+
+            if (NPC.velocity.Length() > 1.5f)
+                NPC.velocity *= 0.95f;
         }
 
         public void DashToTarget(NPCAimedTarget target)
@@ -229,7 +241,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             {
                 float direction = i > totalProjectiles ? 1 : -1;
                 float rotation = ((MathHelper.TwoPi / totalProjectiles) * i) + rotOffset;
-                Projectile flowerProj = Main.projectile[Projectile.NewProjectile(NPC.GetProjectileSpawnSource(), NPC.Center + new Vector2(0, 20).RotatedBy(rotation), velocity.RotatedBy(rotation), projType, NPC.GetAttackDamage_ForProjectiles_MultiLerp(120, 240, 360), 0)];
+                Projectile flowerProj = Main.projectile[Projectile.NewProjectile(NPC.GetProjectileSpawnSource(), NPC.Center, velocity.RotatedBy(rotation), projType, NPC.GetAttackDamage_ForProjectiles_MultiLerp(120, 240, 360), 0)];
                 flowerProj.ai[1] = direction;
             }
         }
@@ -242,8 +254,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
         {
             Color light = new Color(162, 95, 234);
             Color dark = new Color(87, 27, 169);
-            Color lightEnrage = new Color(0, 0, 0);
-            Color darkEnrage = new Color(0, 0, 0);
+            Color lightEnrage = new Color(253, 212, 255);
+            Color darkEnrage = new Color(63, 0, 123);
 
             if (NightRage())
                 return Color.Lerp(lightEnrage, darkEnrage, t);
@@ -253,18 +265,22 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            Asset<Texture2D> body = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/NightEmpress");
+
+            Color color = Color.White;
+
             if (Phase == 0)
             {
                 float purpleFadeIn = Utils.GetLerpValue(0, 45, PhaseCounter, true);
                 float fadeIn = Utils.GetLerpValue(50, 120, PhaseCounter, true);
-                Color fadeColor = Color.Lerp(Color.Transparent, NightColor(fadeIn), purpleFadeIn);
+                Color fadeColor = Color.Lerp(Color.Transparent, NightColor(purpleFadeIn), purpleFadeIn);
                 fadeColor.A = 0;
                 NPC.Opacity = fadeIn;
-                drawColor = Color.Lerp(fadeColor, Color.White, fadeIn);
+                color = Color.Lerp(fadeColor, Color.White, fadeIn);
             }
 
-            Asset<Texture2D> body = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/NightEmpress");
-            spriteBatch.Draw(body.Value, NPC.Center - screenPos, null, drawColor, NPC.rotation, body.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(body.Value, NPC.Center - screenPos, null, color, NPC.rotation, body.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+
             return false;
         }
 

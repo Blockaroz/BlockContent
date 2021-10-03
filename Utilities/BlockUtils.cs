@@ -63,7 +63,7 @@ namespace BlockContent
             return ((MathHelper.TwoPi * piMultiplier) / (total)) * counter;
         }
 
-        public static Vector2 GetPositionAroundTarget(Vector2 center, float radius, bool careAboutTiles)
+        public static Vector2 GetPositionAroundPoint(Vector2 center, float radius, bool careAboutTiles)
         {
             Vector2 rotation = -(Vector2.UnitY * radius).RotatedByRandom(MathHelper.Pi);
 
@@ -146,6 +146,30 @@ namespace BlockContent
                 }
             }
             return controlPoints;
+        }
+
+        public static bool GetNPCTarget(object attacker, Vector2 position, float maxDistance, out int npcIndex)
+        {
+            npcIndex = 0;
+            int? index = null;
+            float realDistance = maxDistance;
+            for (int i = 0; i < 200; i++)
+            {
+                NPC npc = Main.npc[i];
+                if (npc.CanBeChasedBy(attacker))
+                {
+                    float targetDistance = position.Distance(npc.Center);
+                    if (!(realDistance <= targetDistance))
+                    {
+                        index = i;
+                        realDistance = targetDistance;
+                    }
+                }
+            }
+            if (!index.HasValue)
+                return false;
+            npcIndex = index.Value;
+            return true;
         }
     }
 }
