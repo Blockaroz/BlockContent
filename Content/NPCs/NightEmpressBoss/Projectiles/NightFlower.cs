@@ -75,8 +75,11 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
                 Main.EntitySpriteDraw(trailTexture.Value, oldposition - Main.screenPosition, null, trailColor * 0.36f * opacity, Projectile.oldRot[i] + MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
             }
 
-            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, null, darkShade * opacity, Projectile.rotation + MathHelper.PiOver2, origin, Projectile.scale * 0.8f, SpriteEffects.None, 0);
-            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, null, lightShade * opacity, Projectile.rotation + MathHelper.PiOver2, origin, Projectile.scale * 0.5f, SpriteEffects.None, 0);
+            Color nightShade = NightEmpress.NightColor(0f, true);
+            nightShade.A /= 8;
+
+            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, null, darkShade * opacity, Projectile.rotation + MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, null, nightShade * opacity, Projectile.rotation + MathHelper.PiOver2, origin, Projectile.scale * 0.7f, SpriteEffects.None, 0);
 
             return false;
         }
