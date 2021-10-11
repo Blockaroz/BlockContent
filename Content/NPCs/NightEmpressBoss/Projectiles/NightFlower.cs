@@ -57,14 +57,20 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
         {
             float opacity = Utils.GetLerpValue(720, 690, Projectile.timeLeft, true) * Utils.GetLerpValue(0, 60, Projectile.timeLeft, true);
 
-            Color lightShade = NightEmpress.NightColor(0f);
+            Asset<Texture2D> baseTexture = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/Projectiles/NightFlower");
+
+            Color nightShade = NightEmpress.NightColor(0, true);
+            nightShade.A /= 7;
+            Color lightShade = NightEmpress.NightColor(0);
             lightShade.A /= 8;
             Color darkShade = NightEmpress.NightColor(0.5f);
             darkShade.A /= 8;
 
             Vector2 origin = new Vector2(29, 27);
-            Asset<Texture2D> texture = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/Projectiles/NightFlower");
-            Asset<Texture2D> trailTexture = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/Projectiles/NightFlower_Glow");
+
+            Rectangle mainFrame = baseTexture.Frame(2, 1, 0, 0);
+            Rectangle trailFrame = baseTexture.Frame(2, 1, 1, 0);
+
             for (int i = 1; i < ProjectileID.Sets.TrailCacheLength[Type]; i++)
             {
                 float lerpValue = Utils.GetLerpValue(5, ProjectileID.Sets.TrailCacheLength[Type], i, true);
@@ -72,14 +78,11 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
                 trailColor.A /= 8;
                 Vector2 oldposition = Projectile.oldPos[i] + (Projectile.Size / 2);
 
-                Main.EntitySpriteDraw(trailTexture.Value, oldposition - Main.screenPosition, null, trailColor * 0.36f * opacity, Projectile.oldRot[i] + MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(baseTexture.Value, oldposition - Main.screenPosition, trailFrame, trailColor * 0.36f * opacity, Projectile.oldRot[i] + MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
             }
 
-            Color nightShade = NightEmpress.NightColor(0f, true);
-            nightShade.A /= 8;
-
-            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, null, darkShade * opacity, Projectile.rotation + MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
-            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, null, nightShade * opacity, Projectile.rotation + MathHelper.PiOver2, origin, Projectile.scale * 0.7f, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(baseTexture.Value, Projectile.Center - Main.screenPosition, mainFrame, darkShade * opacity, Projectile.rotation + MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(baseTexture.Value, Projectile.Center - Main.screenPosition, mainFrame, nightShade * opacity, Projectile.rotation + MathHelper.PiOver2, origin, Projectile.scale * 0.7f, SpriteEffects.None, 0);
 
             return false;
         }

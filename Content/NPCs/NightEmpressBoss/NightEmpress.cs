@@ -292,7 +292,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
             if (PhaseCounter % interval == 0)
             {
-                Projectile bombProj = Main.projectile[Projectile.NewProjectile(NPC.GetProjectileSpawnSource(), spawnPos, velocity, projType, NPC.GetAttackDamage_ForProjectiles_MultiLerp(120, 240, 360), 0)];
+                Projectile bombProj = Main.projectile[Projectile.NewProjectile(NPC.GetProjectileSpawnSource(), spawnPos, velocity + NPC.velocity, projType, NPC.GetAttackDamage_ForProjectiles_MultiLerp(120, 240, 360), 0)];
                 bombProj.ai[0] = NPC.target;
             }
         }
@@ -321,7 +321,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             Color darkEnrage = new Color(63, 0, 123);
 
             if (useSecondColor == true)
-                lightEnrage = new Color(74, 255, 230);
+                lightEnrage = new Color(132, 221, 255);
 
             if (NightRage())
                 return Color.Lerp(lightEnrage, darkEnrage, t);
