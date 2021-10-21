@@ -42,7 +42,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
                 for (int i = 0; i < 45; i++)
             {
                 Vector2 vector2 = new Vector2(0, _safeRadius).RotatedBy((MathHelper.TwoPi / 45) * i).RotatedByRandom(0.5f);
-                Dust dust = Dust.NewDustPerfect(Projectile.Center + vector2, DustID.FireworksRGB, Vector2.Zero, 0, NightEmpress.NightColor(0), 2f);
+                Dust dust = Dust.NewDustPerfect(Projectile.Center + vector2, DustID.FireworksRGB, Vector2.Zero, 0, NightEmpress.NightColor(Main.rand.Next(0, 1)), 2f);
                 dust.noGravity = true;
                 dust.scale *= 0.87f;
             }    

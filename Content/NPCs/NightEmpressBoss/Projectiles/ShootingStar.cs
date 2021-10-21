@@ -35,7 +35,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
         public override void AI()
         {
             Player target = Main.player[(int)Projectile.ai[0]];
-            Vector2 predictedPosition = target.Center + new Vector2(target.velocity.X * 20, (target.velocity.Y * 20) - Math.Abs(target.velocity.X * 0.15f));
+            Vector2 predictedPosition = target.Center + new Vector2(target.velocity.X * 5, (target.velocity.Y * 5) - Math.Abs(target.velocity.X * 0.15f));
 
             if (Projectile.timeLeft > 140 && Main.netMode != NetmodeID.MultiplayerClient)
             {
