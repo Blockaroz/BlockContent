@@ -11,7 +11,7 @@ using Terraria.Graphics.Renderers;
 using BlockContent.Content.Projectiles;
 using Terraria.DataStructures;
 
-namespace BlockContent.Content.Items
+namespace BlockContent.Content.Items.Weapons
 {
     public class HeatBlade : ModItem
     {

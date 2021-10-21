@@ -32,7 +32,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
         public override void AI()
         {
             const float piOverCircle = MathHelper.Pi / 360f;
-            const float value = 30;
+            const float value = 28;
             float rot = Projectile.ai[0] * Projectile.ai[1];
 
             Projectile.velocity = Projectile.velocity.RotatedBy(rot);
@@ -40,6 +40,9 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
 
             if (Projectile.ai[0] < piOverCircle)
                 Projectile.ai[0] += piOverCircle / value;
+
+            if (Main.getGoodWorld)
+                Projectile.extraUpdates = 1;
 
         }
 
@@ -60,11 +63,11 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             Asset<Texture2D> baseTexture = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/Projectiles/NightFlower");
 
             Color nightShade = NightEmpress.NightColor(0, true);
-            nightShade.A /= 7;
+            nightShade.A /= 5;
             Color lightShade = NightEmpress.NightColor(0);
-            lightShade.A /= 8;
+            lightShade.A /= 7;
             Color darkShade = NightEmpress.NightColor(0.5f);
-            darkShade.A /= 8;
+            darkShade.A /= 7;
 
             Vector2 origin = new Vector2(29, 27);
 
