@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
 using Terraria.GameContent.Shaders;
@@ -20,9 +21,6 @@ namespace BlockContent.Content.Graphics
             SkyManager.Instance["BlockContent:ChadSky"] = new ChadEffectSky();
 
             GameShaders.Misc["BlockContent:OctaneBlade"] = new MiscShaderData(Main.VertexPixelShaderRef, "MagicMissile").UseProjectionMatrix(doUse: true);
-
-            GameShaders.Misc["BlockContent:NightEmpress"] = new MiscShaderData(Main.PixelShaderRef, "HallowBoss");
-            GameShaders.Misc["BlockContent:NightEmpress"].UseImage1("Images/Extra_" + (short)156);
         }
     }
 }
