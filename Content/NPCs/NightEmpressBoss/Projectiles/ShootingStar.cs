@@ -66,7 +66,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             }
 
             if (Projectile.timeLeft == 125)
-                Projectile.velocity += Projectile.DirectionTo(predictedPosition) * 45;
+                Projectile.velocity += Projectile.DirectionTo(predictedPosition) * 36;
 
             if (Projectile.timeLeft == 69)
                 Projectile.localAI[0]++;

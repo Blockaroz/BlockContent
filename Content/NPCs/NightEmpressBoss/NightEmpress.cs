@@ -129,12 +129,12 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 const int blastTime = 100;
                 const int blastTimeSecond = 180;
 
+                int direction = Main.rand.NextBool().ToDirectionInt();
+                if (PhaseCounter == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                    direction = Main.rand.NextBool().ToDirectionInt();
+
                 if (PhaseCounter <= attackLength)
                 {
-                    int direction = -1;
-                    if (PhaseCounter == 0 && Main.netMode != NetmodeID.MultiplayerClient)
-                        direction = Main.rand.NextBool().ToDirectionInt();
-
                     float offsetX = (float)Math.Sin((MathHelper.Pi * PhaseCounter) / (attackLength / 3)) * direction;
                     float offsetY = (float)Math.Cos((MathHelper.Pi * PhaseCounter) / (attackLength / 6));
                     Vector2 followPos = Vector2.Lerp(new Vector2(offsetX * 500, (offsetY * 80) - 250), targetPosOffset, Utils.GetLerpValue(blastTimeSecond, blastTimeSecond + 20, PhaseCounter, true));
@@ -316,10 +316,10 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
         public void HandleDamageValues()
         {
-            damageValue[0] = NPC.GetAttackDamage_ScaledByStrength(90);//Contact Damage
-            damageValue[1] = NPC.GetAttackDamage_ForProjectiles(190, 340);//Explosion
-            damageValue[2] = NPC.GetAttackDamage_ForProjectiles(120, 220);//Flowering Night
-            damageValue[3] = NPC.GetAttackDamage_ForProjectiles(90, 200); //Star
+            damageValue[0] = 90;//Contact Damage
+            damageValue[1] = 200;//Explosion
+            damageValue[2] = 90;//Flowering Night
+            damageValue[3] = 75; //Star
             damageValue[4] = 0;
             damageValue[5] = 0;
             damageValue[6] = 0;
