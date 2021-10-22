@@ -122,7 +122,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 }
             }
 
-            if (Phase == 1)
+            if (Phase == 1)//Shooting Stars
             {
                 PhaseCounter++;
                 const int attackLength = 270;
@@ -157,7 +157,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 }
             }
 
-            if (Phase == 2)
+            if (Phase == 2)//Explo
             {
                 PhaseCounter++;
 
@@ -184,7 +184,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 }
             }
 
-            if (Phase == 3)
+            if (Phase == 3)//Flowering Night
             {
                 PhaseCounter++;
 

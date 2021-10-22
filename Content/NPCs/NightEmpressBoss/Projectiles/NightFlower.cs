@@ -26,7 +26,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 720;
+            Projectile.timeLeft = 700;
         }
 
         public override void AI()

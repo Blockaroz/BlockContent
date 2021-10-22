@@ -34,7 +34,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
         {
             Player target = Main.player[(int)Projectile.ai[0]];
             Vector2 predictedPosition = target.Center + 
-                new Vector2(target.velocity.X * 20, (target.velocity.Y * 23) - Math.Abs(target.velocity.X * 0.12f)) + 
+                new Vector2(target.velocity.X * 18, (target.velocity.Y * 20) - Math.Abs(target.velocity.X * 0.12f)) + 
                 new Vector2(Projectile.ai[1] * 170, 0);
 
             _distance = Projectile.Distance(predictedPosition);
@@ -44,10 +44,10 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             if (Projectile.velocity == Vector2.Zero)
                 Projectile.rotation = MathHelper.Pi;
 
-            if (Projectile.timeLeft > 160 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Projectile.timeLeft > 170 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.velocity += Main.rand.NextVector2Circular(5, 5);
-                Projectile.velocity += Projectile.DirectionTo(predictedPosition + new Vector2(0, -10)) * Utils.GetLerpValue(30, 600, (predictedPosition - Projectile.Center).Length());
+                Projectile.velocity += Projectile.DirectionTo(target.Center + new Vector2(0, -10)) * Utils.GetLerpValue(20, 1000, (predictedPosition - Projectile.Center).Length());
                 Projectile.hostile = false;
             }
             else
@@ -75,6 +75,19 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
         private float _distance;
         private float _lineRotation;
         private Vector2 _linePosition;
+
+        public override void Kill(int timeLeft)
+        {
+            for (int i = 0; i < Main.rand.Next(10, 20); i++)
+            {
+                Color color = NightEmpress.NightColor(Main.rand.NextFloat(0, 1));
+                Vector2 circular = Main.rand.NextVector2CircularEdge(10, 10);
+                Dust starDust = Dust.NewDustDirect(Projectile.Center, 0, 0, DustID.AncientLight, circular.X, circular.Y, 0, color, 1f);
+                starDust.noGravity = true;
+                starDust.noLightEmittence = true;
+                starDust.velocity += Main.rand.NextVector2Circular(2, 2);
+            }
+        }
 
         public override bool PreDraw(ref Color lightColor)
         {
