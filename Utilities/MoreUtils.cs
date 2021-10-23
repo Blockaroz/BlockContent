@@ -7,7 +7,7 @@ using Terraria;
 
 namespace BlockContent
 {
-    public partial class BlockUtils
+    public partial class MoreUtils
     {
         ///Credits
         ///Seraph for Bezier help
@@ -48,14 +48,14 @@ namespace BlockContent
             Main.EntitySpriteDraw(texture.Value, drawCenter, null, color2, rotation + MathHelper.PiOver2, origin, vector * 0.56f, dir, 0);
         }
 
-        public static float GetSquareLerp(float start, float middle, float end, float value)
+        public static float GetBellLerp(float start, float middle, float end, float value, bool clamp = true)
         {
-            return Utils.GetLerpValue(start, middle, value, true) * Utils.GetLerpValue(end, middle, value, true);
+            return Utils.GetLerpValue(start, middle, value, clamp) * Utils.GetLerpValue(end, middle, value, clamp);
         }
 
-        public static float GetSquareLerp(float start, float middleOne, float middleTwo, float end, float value)
+        public static float GetBellLerp(float start, float middleOne, float middleTwo, float end, float value, bool clamp = true)
         {
-            return Utils.GetLerpValue(start, middleOne, value, true) * Utils.GetLerpValue(end, middleTwo, value, true);
+            return Utils.GetLerpValue(start, middleOne, value, clamp) * Utils.GetLerpValue(end, middleTwo, value, clamp);
         }
 
         public static float GetCircle(float counter, float total, float piMultiplier = 1f)
@@ -63,7 +63,7 @@ namespace BlockContent
             return ((MathHelper.TwoPi * piMultiplier) / (total)) * counter;
         }
 
-        public static Vector2 GetPositionAroundPoint(Vector2 center, float radius, bool careAboutTiles)
+        public static Vector2 GetPositionAround(Vector2 center, float radius, bool careAboutTiles)
         {
             Vector2 rotation = -(Vector2.UnitY * radius).RotatedByRandom(MathHelper.Pi);
 
@@ -82,7 +82,32 @@ namespace BlockContent
             return center + rotation;
         }
 
-        public static List<Vector2> ChainPoints(Vector2 startPoint, Vector2 endPoint, int pointCount)
+        public static bool GetNPCTarget(object attacker, Vector2 position, float maxDistance, out int npcIndex)
+        {
+            npcIndex = 0;
+            int? index = null;
+            float realDistance = maxDistance;
+            for (int i = 0; i < 200; i++)
+            {
+                NPC npc = Main.npc[i];
+                if (npc.CanBeChasedBy(attacker))
+                {
+                    float targetDistance = position.Distance(npc.Center);
+                    if (!(realDistance <= targetDistance))
+                    {
+                        index = i;
+                        realDistance = targetDistance;
+                    }
+                }
+            }
+            if (!index.HasValue)
+                return false;
+            npcIndex = index.Value;
+            return true;
+        }
+
+        [Obsolete]
+        public static List<Vector2> ChainPointsOld(Vector2 startPoint, Vector2 endPoint, int pointCount)
         {
             List<Vector2> controlPoints = new List<Vector2>();
             float interval = 1f / pointCount;
@@ -93,7 +118,8 @@ namespace BlockContent
             return controlPoints;
         }
 
-        public static List<Vector2> QuadraticBezierPoints(Vector2 startPoint, Vector2 midPoint, Vector2 endPoint, int pointCount)
+        [Obsolete]
+        public static List<Vector2> QuadraticBezierPointsOld(Vector2 startPoint, Vector2 midPoint, Vector2 endPoint, int pointCount)
         {
             List<Vector2> controlPoints = new List<Vector2>();
             float interval = 1f / (pointCount - 1);
@@ -120,7 +146,8 @@ namespace BlockContent
             return controlPoints;
         }
 
-        public static List<Vector2> CubicBezierPoints(Vector2 startPoint, Vector2 firstMidPoint, Vector2 secondMidPoint, Vector2 endPoint, int pointCount)
+        [Obsolete]
+        public static List<Vector2> CubicBezierPointsOld(Vector2 startPoint, Vector2 firstMidPoint, Vector2 secondMidPoint, Vector2 endPoint, int pointCount)
         {
             List<Vector2> controlPoints = new List<Vector2>();
             float interval = 1f / (pointCount - 1);
@@ -137,8 +164,8 @@ namespace BlockContent
                 for (float i = 0; i < pointCount - 1; i += interval)
                 {
                     float j = Math.Max(0, (int)(i * (pointCount - 1)));
-                    List<Vector2> midA = QuadraticBezierPoints(startPoint, firstMidPoint, secondMidPoint, pointCount);
-                    List<Vector2> midB = QuadraticBezierPoints(firstMidPoint, secondMidPoint, endPoint, pointCount);
+                    List<Vector2> midA = QuadraticBezierPointsOld(startPoint, firstMidPoint, secondMidPoint, pointCount);
+                    List<Vector2> midB = QuadraticBezierPointsOld(firstMidPoint, secondMidPoint, endPoint, pointCount);
 
                     Vector2 control = Vector2.Lerp(midA[(int)j], midB[(int)j], i);
 
@@ -146,30 +173,6 @@ namespace BlockContent
                 }
             }
             return controlPoints;
-        }
-
-        public static bool GetNPCTarget(object attacker, Vector2 position, float maxDistance, out int npcIndex)
-        {
-            npcIndex = 0;
-            int? index = null;
-            float realDistance = maxDistance;
-            for (int i = 0; i < 200; i++)
-            {
-                NPC npc = Main.npc[i];
-                if (npc.CanBeChasedBy(attacker))
-                {
-                    float targetDistance = position.Distance(npc.Center);
-                    if (!(realDistance <= targetDistance))
-                    {
-                        index = i;
-                        realDistance = targetDistance;
-                    }
-                }
-            }
-            if (!index.HasValue)
-                return false;
-            npcIndex = index.Value;
-            return true;
         }
     }
 }

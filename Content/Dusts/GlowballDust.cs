@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace BlockContent.Content.Dusts
 {
-    public class SparkleDust : ModDust
+    public class GlowballDust : ModDust
     {
         public override void OnSpawn(Dust dust)
         {

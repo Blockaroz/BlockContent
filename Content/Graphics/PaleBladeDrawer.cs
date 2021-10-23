@@ -34,7 +34,7 @@ namespace BlockContent.Content.Graphics
 
         private static Color EdgeGlowColor(float progressOnStrip) 
         {
-            Color result = Color.Lerp(Color.DimGray, Color.DarkSlateGray, Utils.GetLerpValue(0.2f, 1f, progressOnStrip, true));
+            Color result = Color.Lerp(Color.Gray, Color.DimGray, Utils.GetLerpValue(0.1f, 0.5f, progressOnStrip, true));
             result.A /= 3;
             return result;
         }
@@ -47,33 +47,29 @@ namespace BlockContent.Content.Graphics
 
         private static Color EdgeColor(float progressOnStrip)
         {
-            Color result = Color.Lerp(Color.White, Color.GhostWhite, Utils.GetLerpValue(0.2f, 1f, progressOnStrip, true));
+            Color result = Color.Lerp(Color.GhostWhite, Color.DimGray, Utils.GetLerpValue(0.3f, 1f, progressOnStrip, true));
             result.A /= 2;
             return result;
         }
 
         private static float EdgeWidth(float progressOnStrip)
         {
-            float num = Utils.GetLerpValue(0, 0.1f, progressOnStrip, true) * Utils.GetLerpValue(1, 0.2f, progressOnStrip);
-            return MathHelper.SmoothStep(0f, 16f, num);
+            float num = Utils.GetLerpValue(0, 0.1f, progressOnStrip, true) * Utils.GetLerpValue(1, 0.3f, progressOnStrip);
+            return MathHelper.SmoothStep(0f, 20f, num);
         }
 
         private void StripDust(float t, Vector2 centerPosition, float rotation)
         {
-            int random = Main.rand.Next(1, 5);
-            if (t < 65)
+            if (t < 50 && Main.rand.Next(1) == 0)
             {
-                for (int i = 0; i < random; i++)
-                {
-                    Color dustColor = Color.Lerp(Color.GhostWhite, Color.DimGray, Main.rand.NextFloat(0, 1));
-                    dustColor.A = 51;
-                    Dust dust = Dust.NewDustPerfect(centerPosition + Main.rand.NextVector2Square(-1, 1), ModContent.DustType<Dusts.SparkleDust>(), null, 100, dustColor, 1f);
-                    dust.fadeIn = 1f + Main.rand.NextFloat(-1, 1) * 0.6f;
-                    dust.noGravity = true;
-                    dust.velocity += Main.rand.NextVector2Circular(2, 2);
-                    dust.velocity += new Vector2(2, 0).RotatedBy(rotation);
-                    dust.noLightEmittence = true;
-                }
+                Color dustColor = Color.Lerp(Color.Gainsboro, Color.DimGray, Main.rand.NextFloat(0, 1));
+                dustColor.A = 51;
+                Dust dust = Dust.NewDustPerfect(centerPosition + Main.rand.NextVector2Square(-1, 1), ModContent.DustType<Dusts.GlowballDust>(), null, 100, dustColor, 1f);
+                dust.fadeIn = 1f + Main.rand.NextFloat(-1, 1) * 0.6f;
+                dust.noGravity = true;
+                dust.velocity += Main.rand.NextVector2Circular(2, 2);
+                dust.velocity += new Vector2(2, 0).RotatedBy(rotation);
+                dust.noLightEmittence = true;
             }
         }
     }

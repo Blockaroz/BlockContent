@@ -5,15 +5,16 @@ using Terraria.ModLoader;
 
 namespace BlockContent.Content.Items
 {
-    public class Heavenly : ModRarity
+    public class HeavenlyRarity : ModRarity
     {
         public override Color RarityColor
         {
             get
             {
-                float function = (float)(Math.Sin(MathHelper.Pi * Main.GlobalTimeWrappedHourly) + 1f) * 0.5f;
-                Color lerpColor = Color.Lerp(new(40, 170, 180, 130), new(255, 130, 210, 120), function);
-                return lerpColor;
+                Color[] colorArray = new Color[4] { new Color(212, 212, 219), new Color(255, 210, 30), new Color(0, 255, 205), new Color(255, 100, 230) };
+                Color result = new GradientColor(colorArray, 0.5f, 1f).Value;
+                result.A = 200;
+                return result;
             }
         }
         public override int GetPrefixedRarity(int offset, float valueMult)

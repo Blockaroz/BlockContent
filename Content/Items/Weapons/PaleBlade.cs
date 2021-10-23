@@ -58,7 +58,7 @@ namespace BlockContent.Content.Items.Weapons
             if (animation < 3)
             {
                 int index;
-                bool targetAcquired = BlockUtils.GetNPCTarget(player, reachPoint, 700, out index);
+                bool targetAcquired = MoreUtils.GetNPCTarget(player, reachPoint, 700, out index);
 
                 if (targetAcquired)
                     distance = Main.npc[index].Center - player.MountedCenter;

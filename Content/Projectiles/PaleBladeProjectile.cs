@@ -30,7 +30,7 @@ namespace BlockContent.Content.Projectiles
             Projectile.extraUpdates = 1;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.manualDirectionChange = true;
-            Projectile.localNPCHitCooldown = 5;
+            Projectile.localNPCHitCooldown = 10;
             Projectile.penetrate = -1;
             Projectile.noEnchantmentVisuals = true;
         }
@@ -106,20 +106,15 @@ namespace BlockContent.Content.Projectiles
             float fadeLerp = Utils.GetLerpValue(70, 50, Time, true) * Utils.GetLerpValue(0, 10, Time, true);
             lightColor = new Color(255, 255, 255, 51) * fadeLerp;
 
-            Asset<Texture2D> tex = Mod.Assets.Request<Texture2D>("Content/Projectiles/PaleBladeProjectile");
-            SpriteEffects direction = Projectile.spriteDirection > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-
-            //Main.EntitySpriteDraw(tex.Value, Projectile.Center - Main.screenPosition, null, lightColor, Projectile.rotation, new Vector2(tex.Width() / 2, 0), Projectile.scale * 0.75f, direction, 0);
-
             if (Time > 5 && Time < 55)
             {
-                for (int i = 0; i < 34; i++)
+                for (int i = 0; i < 36; i++)
                 {
-                    if (Main.rand.Next(5) == 0)
+                    if (Main.rand.Next(4) == 0)
                     {
-                        float scale = Utils.GetLerpValue(33, 27, i, true) * Utils.GetLerpValue(0, 12, i, true);
+                        float scale = MoreUtils.GetBellLerp(0, 25, 35, 60, Time, true);
                         Vector2 oldPos = Projectile.oldPos[i] + (Projectile.Size / 2);
-                        BlockUtils.DrawStreak(TextureAssets.Extra[98], SpriteEffects.None, oldPos - Main.screenPosition, TextureAssets.Extra[98].Size() / 2, scale + 0.4f, 0.5f, 2.5f, Projectile.velocity.ToRotation(), Color.DimGray, Color.Gainsboro);
+                        MoreUtils.DrawStreak(TextureAssets.Extra[98], SpriteEffects.None, oldPos - Main.screenPosition, TextureAssets.Extra[98].Size() / 2, scale + 0.5f, 0.4f, 2.75f, Projectile.velocity.ToRotation(), Color.DimGray, Color.GhostWhite);
                     }
                 }
             }
