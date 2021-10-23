@@ -146,11 +146,11 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                     if (PhaseCounter <= blastTime)
                     {
                         //sound
-                        ShootingStars(6, offsetX);
+                        ShootingStars(8, offsetX);
                     }
 
                     if (PhaseCounter > blastTime + 20 && PhaseCounter <= blastTimeSecond)
-                        ShootingStars(9, offsetX);
+                        ShootingStars(14, offsetX);
                 }
 
                 if (PhaseCounter > attackLength + 5)
@@ -164,8 +164,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             {
                 PhaseCounter++;
 
-                const int attackLength = 240;
-                const int begin = 10;
+                const int attackLength = 270;
+                const int begin = 40;
 
                 if (PhaseCounter < begin)
                     MoveToTarget(target, 10f, 10, targetPosOffset);

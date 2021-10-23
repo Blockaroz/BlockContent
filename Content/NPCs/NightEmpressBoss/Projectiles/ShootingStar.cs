@@ -66,7 +66,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             }
 
             if (Projectile.timeLeft == 125)
-                Projectile.velocity += Projectile.DirectionTo(predictedPosition) * 32;
+                Projectile.velocity += Projectile.DirectionTo(predictedPosition) * 28;
 
             if (Projectile.timeLeft == 69)
                 Projectile.localAI[0]++;
@@ -140,7 +140,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
 
             if (Main.rand.Next(3) == 0)
             {
-                Dust starDust = Dust.NewDustDirect(Projectile.Center - new Vector2(3), 6, 6, DustID.AncientLight, 0, 0, 0, starTrailColor, 1f);
+                Dust starDust = Dust.NewDustDirect(Projectile.Center - new Vector2(3), 6, 6, 278, 0, 0, 0, starTrailColor, 1f);
                 starDust.noGravity = true;
                 starDust.noLightEmittence = true;
             }
