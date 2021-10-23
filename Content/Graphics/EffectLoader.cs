@@ -18,9 +18,9 @@ namespace BlockContent.Content.Graphics
 
         public static void LoadEffects()
         {
-            SkyManager.Instance["BlockContent:ChadSky"] = new ChadEffectSky();
+            //SkyManager.Instance["BlockContent:Sky"] = new Sky();
 
-            GameShaders.Misc["BlockContent:OctaneBlade"] = new MiscShaderData(Main.VertexPixelShaderRef, "MagicMissile").UseProjectionMatrix(doUse: true);
+            GameShaders.Misc["BlockContent:PaleBlade"] = new MiscShaderData(Main.VertexPixelShaderRef, "MagicMissile").UseProjectionMatrix(doUse: true);
         }
     }
 }

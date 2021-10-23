@@ -14,8 +14,6 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("ROON");
-            ProjectileID.Sets.TrailCacheLength[Type] = 130;
-            ProjectileID.Sets.TrailingMode[Type] = 3;
         }
 
         public override void SetDefaults()
@@ -49,7 +47,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             }
 
             if (Projectile.timeLeft == _totalTime - _explodeTime)
-                Main.NewText("ch2");//SoundEngine.PlaySound(Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Item, "BlockContent/Assets/Sounds/SupernovaExplosion"), Projectile.Center);
+                SoundEngine.PlaySound(Mod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Custom, $"{nameof(BlockContent)}/Assets/Sounds/SupernovaExplosion"), Projectile.Center);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

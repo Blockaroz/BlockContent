@@ -106,7 +106,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             {
                 PhaseCounter++;
                 if (PhaseCounter == 5)
-                    Main.NewText("spawn");//SoundEngine.PlaySound(Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, ""), NPC.Center);
+                    SoundEngine.PlaySound(SoundID.Item160, NPC.Center);
 
                 float yLerp = Utils.GetLerpValue(0, 140, PhaseCounter, true);
 
@@ -144,7 +144,10 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                     MoveToTarget(target, speed, 15, followPos);
 
                     if (PhaseCounter <= blastTime)
+                    {
+                        //sound
                         ShootingStars(6, offsetX);
+                    }
 
                     if (PhaseCounter > blastTime + 20 && PhaseCounter <= blastTimeSecond)
                         ShootingStars(9, offsetX);
@@ -169,6 +172,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
                 if (PhaseCounter == begin)
                 {
+
                     NPC.velocity = Vector2.Zero;
                     Projectile radial = Projectile.NewProjectileDirect(NPC.GetProjectileSpawnSource(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<RuneCircleBomb>(), damageValue[1], 0);
                     radial.ai[0] = 180;
@@ -317,8 +321,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
         public void HandleDamageValues()
         {
             damageValue[0] = 90;//Contact Damage
-            damageValue[1] = 200;//Explosion
-            damageValue[2] = 90;//Flowering Night
+            damageValue[1] = 180;//Explosion
+            damageValue[2] = 105;//Flowering Night
             damageValue[3] = 75; //Star
             damageValue[4] = 0;
             damageValue[5] = 0;
@@ -330,11 +334,11 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
             NPC.damage = damageValue[0];
 
-            if (NightRage())
+            for (int i = 0; i < damageValue.Length; i++)
             {
-                for (int i = 0;  i < damageValue.Length; i++)
+                if (NightRage())
                     damageValue[i] = NPC.GetAttackDamage_ScaledByStrength(9999);
-            }    
+            }
         }
 
         #region Movement

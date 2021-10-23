@@ -1,18 +1,21 @@
 ﻿using BlockContent.Content.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace BlockContent.Content.Projectiles
 {
-    public class HeatBladeProjectile : ModProjectile
+    public class PaleBladeProjectile : ModProjectile
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Heat Blade");
-            ProjectileID.Sets.TrailCacheLength[Type] = 30;
+            DisplayName.SetDefault("Pale Blade");
+            ProjectileID.Sets.TrailCacheLength[Type] = 36;
             ProjectileID.Sets.TrailingMode[Type] = 4;
         }
 
@@ -39,32 +42,31 @@ namespace BlockContent.Content.Projectiles
             Player player = Main.player[Projectile.owner];
 
             float lerpValue = Utils.GetLerpValue(900f, 0f, Projectile.velocity.Length() * 2f, true);
-            float num = MathHelper.Lerp(0.7f, 2f, lerpValue);
+            float num = MathHelper.Lerp(0.7f, 2.5f, lerpValue);
             Time += num;
             if (Time >= 120f)
             {
                 Projectile.Kill();
                 return;
             }
-
-            float lerpValue2 = Utils.GetLerpValue(0f, 1f, Time / 60f, true);
-            float projAngle = Projectile.velocity.ToRotation();
+            float timeLerp = Utils.GetLerpValue(0f, 1f, Time / 60f, true);
+            float velocityAngle = Projectile.velocity.ToRotation();
             int direction = (Projectile.velocity.X > 0f) ? 1 : (-1);
-            float rotation = MathHelper.Pi + direction * lerpValue2 * MathHelper.TwoPi;
+            float rotation = MathHelper.Pi + direction * timeLerp * MathHelper.TwoPi;
 
-            float modifiedLength = Projectile.velocity.Length() + Utils.GetLerpValue(0.5f, 1f, lerpValue2, true) * 40f;
+            float modifiedLength = Projectile.velocity.Length() + Utils.GetLerpValue(0.5f, 1f, timeLerp, true) * 40f;
             if (modifiedLength < 60f)
                 modifiedLength = 60f;
 
             Vector2 spinningpoint = new Vector2(1f, 0f).RotatedBy(rotation) * new Vector2(modifiedLength, Projectile.ai[0] * MathHelper.Lerp(2f, 1f, lerpValue));
-            Vector2 value2 = (player.MountedCenter) + spinningpoint.RotatedBy(projAngle);
-            Vector2 value3 = (1f - Utils.GetLerpValue(0f, 0.5f, lerpValue2, clamped: true)) * new Vector2(((Projectile.velocity.X > 0f) ? 1 : (-1)) * (0f - modifiedLength) * 0.1f, (0f - Projectile.ai[0]) * 0.3f);
-            Projectile.rotation = rotation + projAngle + MathHelper.PiOver2;
+            Vector2 value2 = (player.MountedCenter) + spinningpoint.RotatedBy(velocityAngle);
+            Vector2 value3 = (1f - Utils.GetLerpValue(0f, 0.5f, timeLerp, clamped: true)) * new Vector2(direction * (0f - modifiedLength) * 0.1f, (0f - Projectile.ai[0]) * 0.3f);
+            Projectile.rotation = rotation + velocityAngle + MathHelper.PiOver2;
             Projectile.Center = value2 + value3;
             Projectile.spriteDirection = (direction = ((Projectile.velocity.X > 0f) ? 1 : (-1)));
             if (Projectile.ai[0] < 0f)
             {
-                Projectile.rotation = MathHelper.Pi + direction * lerpValue2 * (-MathHelper.TwoPi) + projAngle;
+                Projectile.rotation = MathHelper.Pi + direction * timeLerp * (-MathHelper.TwoPi) + velocityAngle;
                 Projectile.rotation += MathHelper.PiOver2;
                 Projectile.spriteDirection = (direction = ((!(Projectile.velocity.X > 0f)) ? 1 : (-1)));
             }
@@ -100,7 +102,25 @@ namespace BlockContent.Content.Projectiles
 
         public override bool PreDraw(ref Color lightColor)
         {
-            default(HeatBladeDrawer).Draw(Projectile);
+            default(PaleBladeDrawer).Draw(Projectile);
+            float fadeLerp = Utils.GetLerpValue(70, 50, Time, true) * Utils.GetLerpValue(0, 10, Time, true);
+            lightColor = new Color(255, 255, 255, 51) * fadeLerp;
+
+            Asset<Texture2D> tex = Mod.Assets.Request<Texture2D>("Content/Projectiles/PaleBladeProjectile");
+            SpriteEffects direction = Projectile.spriteDirection > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+
+            //Main.EntitySpriteDraw(tex.Value, Projectile.Center - Main.screenPosition, null, lightColor, Projectile.rotation, new Vector2(tex.Width() / 2, 0), Projectile.scale * 0.75f, direction, 0);
+
+            for (int i = 0; i < 32; i++)
+            {
+                if (Main.rand.Next(5) == 0 && Time < 65 && i > 4)
+                {
+                    float scale = Utils.GetLerpValue(36, 27, i, true) * Utils.GetLerpValue(0, 10, i, true);
+                    Vector2 oldPos = Projectile.oldPos[i] + (Projectile.Size / 2);
+                    BlockUtils.DrawStreak(TextureAssets.Extra[98], SpriteEffects.None, oldPos - Main.screenPosition, TextureAssets.Extra[98].Size() / 2, scale + 0.5f, 0.2f, 2f, Projectile.velocity.ToRotation(), Color.DimGray, Color.Gainsboro);
+                }
+            }
+
             return false;
         }
     }

@@ -13,11 +13,12 @@ using Terraria.DataStructures;
 
 namespace BlockContent.Content.Items.Weapons
 {
-    public class HeatBlade : ModItem
+    public class PaleBlade : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Heat Blade");
+            DisplayName.SetDefault("Pale Blade");
+            Tooltip.SetDefault("'The pinnacle of control'");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 
@@ -26,20 +27,20 @@ namespace BlockContent.Content.Items.Weapons
             Item.width = 24;
             Item.height = 24;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 30;
-            Item.useTime = Item.useAnimation / 3;
+            Item.useAnimation = 20;
+            Item.useTime = Item.useAnimation / 2;
             Item.damage = 190;
             Item.DamageType = DamageClass.Melee;
             Item.crit = 10;
             Item.knockBack = 5f;
-            Item.UseSound = SoundID.Item15;
+            Item.UseSound = SoundID.DD2_KoboldExplosion;
             Item.autoReuse = true;
             Item.rare = ItemRarityID.Red;
-            Item.value = Item.sellPrice(gold: 20);
+            Item.value = Item.sellPrice(gold: 23);
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.shootSpeed = 16f;
-            Item.shoot = ModContent.ProjectileType<HeatBladeProjectile>();
+            Item.shoot = ModContent.ProjectileType<PaleBladeProjectile>();
         }
 
         public override Color? GetAlpha(Color lightColor) => new(255, 255, 255, lightColor.A - Item.alpha);
@@ -53,7 +54,7 @@ namespace BlockContent.Content.Items.Weapons
             Vector2 reachPoint = Main.MouseWorld;
             player.LimitPointToPlayerReachableArea(ref reachPoint);
             Vector2 distance = reachPoint - player.MountedCenter;
-            
+
             if (animation < 3)
             {
                 int index;
@@ -67,11 +68,11 @@ namespace BlockContent.Content.Items.Weapons
                     isTwo = true;
 
                 if (isTwo)
-                    distance += Main.rand.NextVector2Circular(150f, 150f);
+                    distance += Main.rand.NextVector2Circular(160f, 160f);
             }
 
             velocityVector = distance / 2f;
-            float ai = Main.rand.Next(-100, 101);
+            float ai = Main.rand.Next(-70, 71);
             Projectile.NewProjectileDirect(source, position, velocityVector, type, damage, knockback, player.whoAmI, ai);
             return false;
         }
@@ -80,7 +81,8 @@ namespace BlockContent.Content.Items.Weapons
         {
             CreateRecipe()
                 .AddIngredient(ItemID.Zenith)
-                .AddIngredient(ItemID.MeteoriteBar, 12)
+                .AddIngredient(ItemID.LunarBar, 16)
+                .AddIngredient(ItemID.BeetleHusk, 90)
                 .AddTile(TileID.LunarCraftingStation)
                 .Register();
         }

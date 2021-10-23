@@ -20,8 +20,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
 
         public override void SetDefaults()
         {
-            Projectile.width = 38;
-            Projectile.height = 38;
+            Projectile.width = 45;
+            Projectile.height = 45;
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.tileCollide = false;
@@ -66,7 +66,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             }
 
             if (Projectile.timeLeft == 125)
-                Projectile.velocity += Projectile.DirectionTo(predictedPosition) * 36;
+                Projectile.velocity += Projectile.DirectionTo(predictedPosition) * 32;
 
             if (Projectile.timeLeft == 69)
                 Projectile.localAI[0]++;
@@ -108,9 +108,9 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             Color starColor = NightEmpress.NightColor(0, true);
             starColor.A /= 5;
             Color starAfterImageColor = NightEmpress.NightColor(0);
-            starAfterImageColor.A /= 5;
+            starAfterImageColor.A /= 7;
             Color starTrailColor = NightEmpress.NightColor(1);
-            starTrailColor.A /= 7;
+            starTrailColor.A /= 5;
 
             Projectile.localAI[1] += 0.05f * Projectile.direction;
             if (Projectile.localAI[1] >= MathHelper.TwoPi || Projectile.localAI[1] <= -MathHelper.TwoPi)
