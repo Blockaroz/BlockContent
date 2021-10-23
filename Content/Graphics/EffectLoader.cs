@@ -18,8 +18,6 @@ namespace BlockContent.Content.Graphics
 
         public static void LoadEffects()
         {
-            //SkyManager.Instance["BlockContent:Sky"] = new Sky();
-
             GameShaders.Misc["BlockContent:PaleBlade"] = new MiscShaderData(Main.VertexPixelShaderRef, "MagicMissile").UseProjectionMatrix(doUse: true);
         }
     }

@@ -172,7 +172,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
                 if (PhaseCounter == begin)
                 {
-
+                    SoundEngine.PlaySound(Mod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Assets/Sounds/Item/NightEmpress/eonExplosionCharge"), NPC.Center);
                     NPC.velocity = Vector2.Zero;
                     Projectile radial = Projectile.NewProjectileDirect(NPC.GetProjectileSpawnSource(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<RuneCircleBomb>(), damageValue[1], 0);
                     radial.ai[0] = 180;
@@ -321,9 +321,10 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
         public void HandleDamageValues()
         {
             damageValue[0] = 90;//Contact Damage
-            damageValue[1] = 180;//Explosion
-            damageValue[2] = 105;//Flowering Night
-            damageValue[3] = 75; //Star
+            //Note: Projectile damage is multiplied by 2 by default.
+            damageValue[1] = 95;//Explosion
+            damageValue[2] = 52;//Flowering Night
+            damageValue[3] = 36; //Star
             damageValue[4] = 0;
             damageValue[5] = 0;
             damageValue[6] = 0;
@@ -337,7 +338,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             for (int i = 0; i < damageValue.Length; i++)
             {
                 if (NightRage())
-                    damageValue[i] = NPC.GetAttackDamage_ScaledByStrength(9999);
+                    damageValue[i] = 9999;
             }
         }
 
