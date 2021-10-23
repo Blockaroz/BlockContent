@@ -11,12 +11,6 @@ namespace BlockContent.Content.Dusts
             dust.noGravity = true;
         }
 
-        public override bool Update(Dust dust)
-        {
-            if (Main.rand.Next(4) == 0)
-                dust.velocity += Main.rand.NextVector2Circular(1, 1);
-            return true;
-        }
         public override Color? GetAlpha(Dust dust, Color lightColor) => dust.color;
     }
 }

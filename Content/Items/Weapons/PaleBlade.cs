@@ -17,7 +17,7 @@ namespace BlockContent.Content.Items.Weapons
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Pale Blade");
+            DisplayName.SetDefault("Holy Blade");
             Tooltip.SetDefault("'The pinnacle of control'");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
@@ -68,12 +68,12 @@ namespace BlockContent.Content.Items.Weapons
                     isTwo = true;
 
                 if (isTwo)
-                    distance += Main.rand.NextVector2Circular(160f, 160f);
+                    distance += Main.rand.NextVector2Circular(48, 48);
             }
 
             velocityVector = distance / 2f;
-            float ai = Main.rand.Next(-70, 71);
-            Projectile.NewProjectileDirect(source, position, velocityVector, type, damage, knockback, player.whoAmI, ai);
+            float slashSize = Main.rand.Next(-50, 50);
+            Projectile.NewProjectileDirect(source, position, velocityVector, type, damage, knockback, player.whoAmI, slashSize);
             return false;
         }
 

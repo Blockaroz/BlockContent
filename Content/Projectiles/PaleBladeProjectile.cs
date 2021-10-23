@@ -14,7 +14,7 @@ namespace BlockContent.Content.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Pale Blade");
+            DisplayName.SetDefault("Holy Blade");
             ProjectileID.Sets.TrailCacheLength[Type] = 36;
             ProjectileID.Sets.TrailingMode[Type] = 4;
         }
@@ -30,7 +30,7 @@ namespace BlockContent.Content.Projectiles
             Projectile.extraUpdates = 1;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.manualDirectionChange = true;
-            Projectile.localNPCHitCooldown = 15;
+            Projectile.localNPCHitCooldown = 5;
             Projectile.penetrate = -1;
             Projectile.noEnchantmentVisuals = true;
         }
@@ -42,7 +42,7 @@ namespace BlockContent.Content.Projectiles
             Player player = Main.player[Projectile.owner];
 
             float lerpValue = Utils.GetLerpValue(900f, 0f, Projectile.velocity.Length() * 2f, true);
-            float num = MathHelper.Lerp(0.7f, 2.5f, lerpValue);
+            float num = MathHelper.Lerp(0.7f, 3f, lerpValue);
             Time += num;
             if (Time >= 120f)
             {
@@ -111,13 +111,16 @@ namespace BlockContent.Content.Projectiles
 
             //Main.EntitySpriteDraw(tex.Value, Projectile.Center - Main.screenPosition, null, lightColor, Projectile.rotation, new Vector2(tex.Width() / 2, 0), Projectile.scale * 0.75f, direction, 0);
 
-            for (int i = 0; i < 32; i++)
+            if (Time > 5 && Time < 55)
             {
-                if (Main.rand.Next(5) == 0 && Time < 65 && i > 4)
+                for (int i = 0; i < 34; i++)
                 {
-                    float scale = Utils.GetLerpValue(36, 27, i, true) * Utils.GetLerpValue(0, 10, i, true);
-                    Vector2 oldPos = Projectile.oldPos[i] + (Projectile.Size / 2);
-                    BlockUtils.DrawStreak(TextureAssets.Extra[98], SpriteEffects.None, oldPos - Main.screenPosition, TextureAssets.Extra[98].Size() / 2, scale + 0.5f, 0.2f, 2f, Projectile.velocity.ToRotation(), Color.DimGray, Color.Gainsboro);
+                    if (Main.rand.Next(5) == 0)
+                    {
+                        float scale = Utils.GetLerpValue(33, 27, i, true) * Utils.GetLerpValue(0, 12, i, true);
+                        Vector2 oldPos = Projectile.oldPos[i] + (Projectile.Size / 2);
+                        BlockUtils.DrawStreak(TextureAssets.Extra[98], SpriteEffects.None, oldPos - Main.screenPosition, TextureAssets.Extra[98].Size() / 2, scale + 0.4f, 0.5f, 2.5f, Projectile.velocity.ToRotation(), Color.DimGray, Color.Gainsboro);
+                    }
                 }
             }
 
