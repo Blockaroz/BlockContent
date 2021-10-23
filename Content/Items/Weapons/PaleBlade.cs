@@ -27,13 +27,13 @@ namespace BlockContent.Content.Items.Weapons
             Item.width = 24;
             Item.height = 24;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 20;
-            Item.useTime = Item.useAnimation / 2;
+            Item.useAnimation = 30;
+            Item.useTime = Item.useAnimation / 3;
             Item.damage = 190;
             Item.DamageType = DamageClass.Melee;
             Item.crit = 10;
             Item.knockBack = 5f;
-            Item.UseSound = SoundID.DD2_KoboldExplosion;
+            Item.UseSound = Mod.GetLegacySoundSlot(SoundType.Item, "Assets/Sounds/Item/PaleSlash");
             Item.autoReuse = true;
             Item.rare = ItemRarityID.Red;
             Item.value = Item.sellPrice(gold: 23);
@@ -68,7 +68,7 @@ namespace BlockContent.Content.Items.Weapons
                     isTwo = true;
 
                 if (isTwo)
-                    distance += Main.rand.NextVector2Circular(48, 48);
+                    distance += Main.rand.NextVector2Circular(16, 16);
             }
 
             velocityVector = distance / 2f;

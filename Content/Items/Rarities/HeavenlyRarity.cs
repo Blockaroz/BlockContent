@@ -11,8 +11,14 @@ namespace BlockContent.Content.Items
         {
             get
             {
-                Color[] colorArray = new Color[4] { new Color(212, 212, 219), new Color(255, 210, 30), new Color(0, 255, 205), new Color(255, 100, 230) };
-                Color result = new GradientColor(colorArray, 0.5f, 1f).Value;
+                Color[] colorArray = new Color[4] 
+                { 
+                    new Color(212, 212, 219), 
+                    new Color(0, 255, 205), 
+                    new Color(255, 100, 230),
+                    new Color(255, 210, 30),
+                };
+                Color result = new GradientColor(colorArray, 0.75f).Value;
                 result.A = 200;
                 return result;
             }
