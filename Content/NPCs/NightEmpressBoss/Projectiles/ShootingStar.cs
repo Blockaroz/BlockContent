@@ -34,8 +34,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
         {
             Player target = Main.player[(int)Projectile.ai[0]];
             Vector2 predictedPosition = target.Center + 
-                new Vector2(target.velocity.X * 25, (target.velocity.Y * 25) - Math.Abs(target.velocity.X * 0.15f)) + 
-                new Vector2(Projectile.ai[1] * 170, 0);
+                new Vector2(target.velocity.X * 20, (target.velocity.Y * 20) - Math.Abs(target.velocity.X * 0.15f)) + 
+                new Vector2(Projectile.ai[1] * 100, 0);
 
             _distance = Projectile.Distance(predictedPosition);
 
@@ -47,7 +47,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             if (Projectile.timeLeft > 170 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.velocity += Main.rand.NextVector2Circular(5, 5);
-                Projectile.velocity += Projectile.DirectionTo(target.Center + new Vector2(0, -10)) * Utils.GetLerpValue(20, 1000, (predictedPosition - Projectile.Center).Length());
+                Projectile.velocity += Projectile.DirectionTo(target.Center + new Vector2(0, -10)).SafeNormalize(Vector2.Zero) * Utils.GetLerpValue(20, 1000, predictedPosition.Distance(Projectile.Center));
                 Projectile.hostile = false;
             }
             else
@@ -59,14 +59,14 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
                 _lineRotation = Projectile.AngleTo(predictedPosition);
             }
 
-            if (Projectile.timeLeft == 140)
-            {
+            if (Projectile.timeLeft == 145)
                 Projectile.localAI[0]++;
-                Projectile.velocity *= 0.01f;
-            }
+
+            if (Projectile.timeLeft == 140)
+                Projectile.velocity = Vector2.Zero;
 
             if (Projectile.timeLeft == 125)
-                Projectile.velocity += Projectile.DirectionTo(predictedPosition) * 28;
+                Projectile.velocity += new Vector2(36, 0).RotatedBy(_lineRotation);
 
             if (Projectile.timeLeft == 69)
                 Projectile.localAI[0]++;
@@ -76,30 +76,18 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
         private float _lineRotation;
         private Vector2 _linePosition;
 
-        public override void Kill(int timeLeft)
-        {
-            for (int i = 0; i < Main.rand.Next(10, 20); i++)
-            {
-                Color color = NightEmpress.NightColor(Main.rand.NextFloat(0, 1));
-                Vector2 circular = Main.rand.NextVector2CircularEdge(10, 10);
-                Dust starDust = Dust.NewDustDirect(Projectile.Center, 0, 0, 278, circular.X, circular.Y, 0, color, 1f);
-                starDust.noGravity = true;
-                starDust.velocity += Main.rand.NextVector2Circular(2, 2);
-            }
-        }
-
         public override bool PreDraw(ref Color lightColor)
         {
             if (Projectile.localAI[0] == 1)
             {
-                float timeLerp = Utils.GetLerpValue(70, 95, Projectile.timeLeft, true);
+                float timeLerp = Utils.GetLerpValue(70, 100, Projectile.timeLeft, true);
                 float lineLength = Utils.GetLerpValue(0f, 128f, _distance);
                 Color lineColor = NightEmpress.NightColor(0);
                 lineColor.A /= 5;
                 Main.EntitySpriteDraw(TextureAssets.Extra[178].Value, _linePosition - Main.screenPosition, null, lineColor * timeLerp, _lineRotation, Vector2.One, new Vector2(lineLength, 1.5f), SpriteEffects.None, 0);
             }
 
-            Projectile.scale = Utils.GetLerpValue(190, 175, Projectile.timeLeft, true);
+            Projectile.scale = Utils.GetLerpValue(190, 175, Projectile.timeLeft, true) * Utils.GetLerpValue(0, 30, Projectile.timeLeft, true);
 
             Asset<Texture2D> star = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/Projectiles/ShootingStar");
             Asset<Texture2D> starTrail = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/Projectiles/ShootingStar_Trail");
@@ -119,6 +107,13 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             float ySquish = MathHelper.Lerp(1.8f, 0.2f, Utils.GetLerpValue(70, 0, Projectile.velocity.Length()));
             Vector2 trailSquish = new Vector2(Projectile.scale * xSquish, Projectile.scale * ySquish);
 
+            for (int i = 1; i < Projectile.oldPos.Length; i++)
+            {
+                float opacity = Utils.GetLerpValue(Projectile.oldPos.Length, 0, i, true) * 0.8f;
+                Vector2 oldCenter = Projectile.oldPos[i] + (Projectile.Size / 2);
+                Main.EntitySpriteDraw(TextureAssets.Extra[98].Value, oldCenter - Main.screenPosition, null, starTrailColor * opacity, Projectile.oldRot[i], TextureAssets.Extra[98].Size() / 2, Projectile.scale, SpriteEffects.None, 0);
+            }
+
             for (int i = 1; i <= 4; i++)
             {
                 Vector2 offset = new Vector2(8, 0).RotatedBy(Projectile.localAI[1]).RotatedBy((MathHelper.TwoPi / 4) * i);
@@ -136,10 +131,6 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             }
 
             Main.EntitySpriteDraw(star.Value, Projectile.Center - Main.screenPosition, null, NightEmpress.NightBlack, Projectile.localAI[1] * 4, star.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
-
-            Dust starDust = Dust.NewDustDirect(Projectile.Center - new Vector2(2), 4, 4, DustID.RainbowMk2, 0, 0, 0, NightEmpress.NightColor(1), 1.5f);
-            starDust.noGravity = true;
-            starDust.velocity += Main.rand.NextVector2Circular(2, 2);
 
             return false;
         }

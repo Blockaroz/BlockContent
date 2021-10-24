@@ -8,6 +8,7 @@ namespace BlockContent.Content.Dusts
     {
         public override void OnSpawn(Dust dust)
         {
+            dust.scale *= 1.2f;
             dust.noGravity = true;
         }
 

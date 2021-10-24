@@ -34,14 +34,16 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
 
         public override void AI()
         {
-            if (Projectile.timeLeft >= 219)
+            if (Projectile.timeLeft >= _totalTime - _explodeTime)
             {
-                for (int i = 0; i < 45; i++)
+                for (int i = 0; i < 4; i++)
                 {
-                    Vector2 vector2 = new Vector2(0, _safeRadius).RotatedBy((MathHelper.TwoPi / 45) * i).RotatedByRandom(0.5f);
-                    Dust dust = Dust.NewDustPerfect(Projectile.Center + vector2, DustID.RainbowMk2, Vector2.Zero, 0, NightEmpress.NightColor(1), 1.5f); 
+                    Vector2 vector2 = Main.rand.NextVector2CircularEdge(_safeRadius, _safeRadius);
+                    Vector2 velocity = Main.rand.NextVector2Circular(10, 10);
+                    Color color = NightEmpress.NightColor(0);
+                    color.A /= 5;
+                    Dust dust = Dust.NewDustPerfect(Projectile.Center + vector2, NightEmpress.GlowDustID, velocity, 0, color, 1.5f); 
                     dust.noGravity = true;
-                    dust.scale *= 0.87f;
                 }
             }
 
