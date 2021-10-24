@@ -31,15 +31,15 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
 
         public override void AI()
         {
-            const float piOverCircle = MathHelper.Pi / 360f;
-            const float value = 15;
+            const float twoDegrees = MathHelper.Pi / 360f;
+            const float value = 15;//Lower is stronger
             float rot = Projectile.ai[0] * Projectile.ai[1];
 
             Projectile.velocity = Projectile.velocity.RotatedBy(rot);
             Projectile.rotation = Projectile.velocity.ToRotation();
 
-            if (Projectile.ai[0] < piOverCircle)
-                Projectile.ai[0] += piOverCircle / value;
+            if (Projectile.ai[0] < twoDegrees)
+                Projectile.ai[0] += twoDegrees / value;
 
             if (Main.getGoodWorld)
                 Projectile.extraUpdates = 1;

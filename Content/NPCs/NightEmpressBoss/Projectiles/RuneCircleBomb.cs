@@ -13,7 +13,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("ROON");
+            DisplayName.SetDefault("Rune Circle");
         }
 
         public override void SetDefaults()
@@ -30,11 +30,13 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
 
         private ref float _safeRadius => ref Projectile.ai[0];
         private const int _explodeTime = 90;
-        private const int _totalTime = 240;
+        private const int _totalTime = 360;
 
         public override void AI()
         {
-            if (Projectile.timeLeft >= _totalTime - _explodeTime)
+            NPC owner = Main.npc[(int)Projectile.ai[1]];
+            Projectile.Center = owner.Center;
+            if (Projectile.timeLeft >= _explodeTime + 60)
             {
                 for (int i = 0; i < 4; i++)
                 {
@@ -47,15 +49,15 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
                 }
             }
 
-            if (Projectile.timeLeft == _totalTime - _explodeTime)
-                SoundEngine.PlaySound(Mod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Assets/Sounds/Item/NightEmpress/SupernovaExplosion"), Projectile.Center);
+            if (Projectile.timeLeft == _explodeTime + 60)
+                SoundEngine.PlaySound(Mod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Assets/Sounds/Item/NightEmpress/explod"), Projectile.Center);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float distance = targetHitbox.Distance(Projectile.Center);
             if (distance > _safeRadius && 
-                Projectile.timeLeft <= _totalTime - _explodeTime &&
+                Projectile.timeLeft <= _explodeTime + 60 &&
                 Projectile.timeLeft >= _explodeTime)
                 return true;
 

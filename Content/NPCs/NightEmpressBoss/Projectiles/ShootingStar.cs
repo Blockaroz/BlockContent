@@ -14,7 +14,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Shooting Star");
-            ProjectileID.Sets.TrailCacheLength[Type] = 10;
+            ProjectileID.Sets.TrailCacheLength[Type] = 20;
             ProjectileID.Sets.TrailingMode[Type] = 3;
         }
 
@@ -47,7 +47,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             if (Projectile.timeLeft > 170 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.velocity += Main.rand.NextVector2Circular(5, 5);
-                Projectile.velocity += Projectile.DirectionTo(target.Center + new Vector2(0, -10)).SafeNormalize(Vector2.Zero) * Utils.GetLerpValue(20, 1000, predictedPosition.Distance(Projectile.Center));
+                Projectile.velocity += Projectile.DirectionTo(target.Center).SafeNormalize(Vector2.Zero) * Utils.GetLerpValue(20, 1000, predictedPosition.Distance(Projectile.Center));
                 Projectile.hostile = false;
             }
             else
@@ -57,16 +57,16 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             {
                 _linePosition = Projectile.Center;
                 _lineRotation = Projectile.AngleTo(predictedPosition);
+
+                if (Projectile.timeLeft == 145)
+                    Projectile.localAI[0]++;
+
+                if (Projectile.timeLeft == 140)
+                    Projectile.velocity = Vector2.Zero;
             }
 
-            if (Projectile.timeLeft == 145)
-                Projectile.localAI[0]++;
-
-            if (Projectile.timeLeft == 140)
-                Projectile.velocity = Vector2.Zero;
-
-            if (Projectile.timeLeft == 125)
-                Projectile.velocity += new Vector2(36, 0).RotatedBy(_lineRotation);
+            if (Projectile.timeLeft == 130)
+                Projectile.velocity += new Vector2(33, 0).RotatedBy(_lineRotation);//speed of projectile
 
             if (Projectile.timeLeft == 69)
                 Projectile.localAI[0]++;
@@ -103,17 +103,18 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             if (Projectile.localAI[1] >= MathHelper.TwoPi || Projectile.localAI[1] <= -MathHelper.TwoPi)
                 Projectile.localAI[1] = 0;
 
+            //startrail
+            for (int i = 1; i < Projectile.oldPos.Length; i++)
+            {
+                float opacity = Utils.GetLerpValue(Projectile.oldPos.Length, 0, i, true);
+                Vector2 oldCenter = Projectile.oldPos[i] + (Projectile.Size / 2);
+                Main.EntitySpriteDraw(TextureAssets.Extra[98].Value, oldCenter - Main.screenPosition, null, starTrailColor * opacity, Projectile.oldRot[i] + MathHelper.PiOver2, TextureAssets.Extra[98].Size() / 2, new Vector2(Projectile.scale * 0.6f, Projectile.scale), SpriteEffects.None, 0);
+            }
+
+            //starfire
             float xSquish = MathHelper.Lerp(1f, 0.5f, Utils.GetLerpValue(0, 90, Projectile.velocity.Length()));
             float ySquish = MathHelper.Lerp(1.8f, 0.2f, Utils.GetLerpValue(70, 0, Projectile.velocity.Length()));
             Vector2 trailSquish = new Vector2(Projectile.scale * xSquish, Projectile.scale * ySquish);
-
-            for (int i = 1; i < Projectile.oldPos.Length; i++)
-            {
-                float opacity = Utils.GetLerpValue(Projectile.oldPos.Length, 0, i, true) * 0.8f;
-                Vector2 oldCenter = Projectile.oldPos[i] + (Projectile.Size / 2);
-                Main.EntitySpriteDraw(TextureAssets.Extra[98].Value, oldCenter - Main.screenPosition, null, starTrailColor * opacity, Projectile.oldRot[i], TextureAssets.Extra[98].Size() / 2, Projectile.scale, SpriteEffects.None, 0);
-            }
-
             for (int i = 1; i <= 4; i++)
             {
                 Vector2 offset = new Vector2(8, 0).RotatedBy(Projectile.localAI[1]).RotatedBy((MathHelper.TwoPi / 4) * i);
@@ -121,15 +122,14 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             }
             Main.EntitySpriteDraw(starTrail.Value, Projectile.Center - Main.screenPosition, null, starTrailColor, Projectile.oldRot[2] + MathHelper.PiOver2, new Vector2(19), trailSquish, SpriteEffects.None, 0); ;
 
+            //star
             Vector2 oldPos = Projectile.oldPos[1] + (Projectile.Size / 2);
             Main.EntitySpriteDraw(star.Value, oldPos - Main.screenPosition, null, starAfterImageColor * 0.5f, Projectile.localAI[1] * 3, star.Size() / 2, Projectile.scale * 1.4f, SpriteEffects.None, 0);
-
             for (int i = 1; i <= 5; i++)
             {
                 Vector2 offset = new Vector2(4, 0).RotatedBy((MathHelper.TwoPi / 5) * i).RotatedBy(Projectile.localAI[1]);
                 Main.EntitySpriteDraw(star.Value, Projectile.Center + offset - Main.screenPosition, null, starColor, Projectile.localAI[1] * 4, star.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
             }
-
             Main.EntitySpriteDraw(star.Value, Projectile.Center - Main.screenPosition, null, NightEmpress.NightBlack, Projectile.localAI[1] * 4, star.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
 
             return false;

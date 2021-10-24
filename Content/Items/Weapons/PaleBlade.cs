@@ -27,7 +27,7 @@ namespace BlockContent.Content.Items.Weapons
             Item.width = 24;
             Item.height = 24;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 30;
+            Item.useAnimation = 24;
             Item.useTime = Item.useAnimation / 3;
             Item.damage = 190;
             Item.DamageType = DamageClass.Melee;
@@ -58,7 +58,7 @@ namespace BlockContent.Content.Items.Weapons
             if (animation < 3)
             {
                 int index;
-                bool targetAcquired = MoreUtils.GetNPCTarget(player, reachPoint, 700, out index);
+                bool targetAcquired = MoreUtils.GetNPCTarget(player, reachPoint, 550, out index);
 
                 if (targetAcquired)
                     distance = Main.npc[index].Center - player.MountedCenter;
