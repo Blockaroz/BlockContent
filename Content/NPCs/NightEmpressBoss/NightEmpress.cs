@@ -493,6 +493,23 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             }
         }
 
+        public void DrawRuneCircle(Vector2 screenPos)
+        {
+            Asset<Texture2D> font = Mod.Assets.Request<Texture2D>("Assets/Textures/GalacticSmall");
+            int[] text = new int[]
+            {
+                12, 15, 22, 5, //Love
+                20, 8, 25, 19, 5, 12, 6, //Thyself
+                12, 15, 22, 5, //Love
+                2, 12, 15, 3, 11, 1, 18, 15, 26 //Blockaroz
+            };
+            for (int i = 0; i < text.Length; i++)
+            {
+                Rectangle? frame = font.Frame(26, 1, text[i]);
+
+            }
+        }
+
         public static int GlowDustID { get => ModContent.DustType<Dusts.GlowballDust>(); }
 
         public void DoDust()

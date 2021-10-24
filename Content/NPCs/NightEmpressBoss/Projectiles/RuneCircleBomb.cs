@@ -29,7 +29,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
         }
 
         private ref float _safeRadius => ref Projectile.ai[0];
-        private const int _explodeTime = 90;
+        private const int _explodeTime = 60;
         private const int _totalTime = 300;
 
         public override void AI()
@@ -57,7 +57,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
         {
             float distance = targetHitbox.Distance(Projectile.Center);
             if (distance > _safeRadius && 
-                Projectile.timeLeft <= _explodeTime)
+                Projectile.timeLeft <= _explodeTime + 60)
                 return true;
 
             return false;
