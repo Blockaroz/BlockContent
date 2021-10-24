@@ -106,7 +106,7 @@ namespace BlockContent.Content.Projectiles
             float fadeLerp = Utils.GetLerpValue(70, 50, Time, true) * Utils.GetLerpValue(0, 10, Time, true);
             lightColor = new Color(255, 255, 255, 51) * fadeLerp;
 
-            if (Time > 5 && Time < 55)
+            if (Time > 5 && Time < 65)
             {
                 for (int i = 0; i < 36; i++)
                 {

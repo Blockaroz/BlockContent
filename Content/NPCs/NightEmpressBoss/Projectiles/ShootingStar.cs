@@ -34,7 +34,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
         {
             Player target = Main.player[(int)Projectile.ai[0]];
             Vector2 predictedPosition = target.Center + 
-                new Vector2(target.velocity.X * 18, (target.velocity.Y * 20) - Math.Abs(target.velocity.X * 0.12f)) + 
+                new Vector2(target.velocity.X * 25, (target.velocity.Y * 25) - Math.Abs(target.velocity.X * 0.15f)) + 
                 new Vector2(Projectile.ai[1] * 170, 0);
 
             _distance = Projectile.Distance(predictedPosition);
@@ -82,9 +82,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             {
                 Color color = NightEmpress.NightColor(Main.rand.NextFloat(0, 1));
                 Vector2 circular = Main.rand.NextVector2CircularEdge(10, 10);
-                Dust starDust = Dust.NewDustDirect(Projectile.Center, 0, 0, DustID.AncientLight, circular.X, circular.Y, 0, color, 1f);
+                Dust starDust = Dust.NewDustDirect(Projectile.Center, 0, 0, 278, circular.X, circular.Y, 0, color, 1f);
                 starDust.noGravity = true;
-                starDust.noLightEmittence = true;
                 starDust.velocity += Main.rand.NextVector2Circular(2, 2);
             }
         }
@@ -110,14 +109,14 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
             Color starAfterImageColor = NightEmpress.NightColor(0);
             starAfterImageColor.A /= 7;
             Color starTrailColor = NightEmpress.NightColor(1);
-            starTrailColor.A /= 5;
+            starTrailColor.A /= 7;
 
             Projectile.localAI[1] += 0.05f * Projectile.direction;
             if (Projectile.localAI[1] >= MathHelper.TwoPi || Projectile.localAI[1] <= -MathHelper.TwoPi)
                 Projectile.localAI[1] = 0;
 
-            float xSquish = MathHelper.Lerp(1.5f, 0.1f, Utils.GetLerpValue(0, 90, Projectile.velocity.Length()));
-            float ySquish = MathHelper.Lerp(1.5f, 0.1f, Utils.GetLerpValue(70, 0, Projectile.velocity.Length()));
+            float xSquish = MathHelper.Lerp(1f, 0.5f, Utils.GetLerpValue(0, 90, Projectile.velocity.Length()));
+            float ySquish = MathHelper.Lerp(1.8f, 0.2f, Utils.GetLerpValue(70, 0, Projectile.velocity.Length()));
             Vector2 trailSquish = new Vector2(Projectile.scale * xSquish, Projectile.scale * ySquish);
 
             for (int i = 1; i <= 4; i++)
@@ -136,14 +135,11 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
                 Main.EntitySpriteDraw(star.Value, Projectile.Center + offset - Main.screenPosition, null, starColor, Projectile.localAI[1] * 4, star.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
             }
 
-            Main.EntitySpriteDraw(star.Value, Projectile.Center - Main.screenPosition, null, Color.Black, Projectile.localAI[1] * 4, star.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(star.Value, Projectile.Center - Main.screenPosition, null, NightEmpress.NightBlack, Projectile.localAI[1] * 4, star.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
 
-            if (Main.rand.Next(3) == 0)
-            {
-                Dust starDust = Dust.NewDustDirect(Projectile.Center - new Vector2(3), 6, 6, 278, 0, 0, 0, starTrailColor, 1f);
-                starDust.noGravity = true;
-                starDust.noLightEmittence = true;
-            }
+            Dust starDust = Dust.NewDustDirect(Projectile.Center - new Vector2(2), 4, 4, DustID.RainbowMk2, 0, 0, 0, NightEmpress.NightColor(1), 1.5f);
+            starDust.noGravity = true;
+            starDust.velocity += Main.rand.NextVector2Circular(2, 2);
 
             return false;
         }
