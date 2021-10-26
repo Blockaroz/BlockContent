@@ -33,7 +33,7 @@ namespace BlockContent.Content.Items.Weapons
             Item.DamageType = DamageClass.Melee;
             Item.crit = 10;
             Item.knockBack = 5f;
-            Item.UseSound = Mod.GetLegacySoundSlot(SoundType.Item, "Assets/Sounds/Item/PaleSlash");
+            Item.UseSound = SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/Items/PaleSlash");
             Item.autoReuse = true;
             Item.rare = ItemRarityID.Red;
             Item.value = Item.sellPrice(gold: 23);

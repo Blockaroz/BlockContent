@@ -22,7 +22,7 @@ namespace BlockContent.Content.Graphics
             shader.UseImage1("Images/Extra_197");
             shader.UseImage2("Images/Extra_194");
             shader.Apply();
-            _strip.PrepareStrip(projectile.oldPos, projectile.oldRot, EdgeGlowColor, EdgeGlowWidth, -Main.screenPosition + (projectile.Size / 2),  projectile.oldPos.Length, true);
+            _strip.PrepareStrip(projectile.oldPos, projectile.oldRot, EdgeGlowColor, EdgeGlowWidth, -Main.screenPosition + (projectile.Size / 2), projectile.oldPos.Length, true);
             _strip.DrawTrail();
             _strip2.PrepareStrip(projectile.oldPos, projectile.oldRot, EdgeColor, EdgeWidth, -Main.screenPosition + (projectile.Size / 2), projectile.oldPos.Length, true);
             _strip2.DrawTrail();
@@ -35,14 +35,14 @@ namespace BlockContent.Content.Graphics
         private static Color EdgeGlowColor(float progressOnStrip) 
         {
             Color result = Color.Lerp(Color.Gray, Color.DimGray, Utils.GetLerpValue(0.1f, 0.5f, progressOnStrip, true));
-            result.A /= 3;
+            result.A = 200;
             return result;
         }
 
         private static float EdgeGlowWidth(float progressOnStrip)
         {
             float num = Utils.GetLerpValue(0, 0.1f, progressOnStrip, true) * Utils.GetLerpValue(1, 0.2f, progressOnStrip);
-            return MathHelper.SmoothStep(0f, 48f, num);
+            return MathHelper.SmoothStep(0f, 50f, num);
         }
 
         private static Color EdgeColor(float progressOnStrip)
@@ -55,7 +55,7 @@ namespace BlockContent.Content.Graphics
         private static float EdgeWidth(float progressOnStrip)
         {
             float num = Utils.GetLerpValue(0, 0.1f, progressOnStrip, true) * Utils.GetLerpValue(1, 0.3f, progressOnStrip);
-            return MathHelper.SmoothStep(0f, 20f, num);
+            return MathHelper.SmoothStep(0f, 23f, num);
         }
 
         private void StripDust(float t, Vector2 centerPosition, float rotation)

@@ -9,7 +9,7 @@ using Terraria.Audio;
 
 namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
 {
-    public class RuneCircleBomb : ModProjectile
+    public class RuneCircle : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -29,14 +29,14 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
         }
 
         private ref float _safeRadius => ref Projectile.ai[0];
-        private const int _explodeTime = 60;
+        private const int _explodeTime = 30;
         private const int _totalTime = 300;
 
         public override void AI()
         {
             NPC owner = Main.npc[(int)Projectile.ai[1]];
             Projectile.Center = owner.Center;
-            if (Projectile.timeLeft >= _explodeTime)
+            if (Projectile.timeLeft > _explodeTime && Projectile.timeLeft <= _explodeTime + 90)
             {
                 for (int i = 0; i < 4; i++)
                 {
@@ -44,20 +44,20 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
                     Vector2 velocity = Main.rand.NextVector2Circular(10, 10);
                     Color color = NightEmpress.NightColor(0);
                     color.A /= 5;
-                    Dust dust = Dust.NewDustPerfect(Projectile.Center + vector2, NightEmpress.GlowDustID, velocity, 0, color, 1.5f); 
+                    Dust dust = Dust.NewDustPerfect(Projectile.Center + vector2, NightEmpress.GlowDustID, velocity, 0, color, 1f); 
                     dust.noGravity = true;
                 }
             }
 
-            if (Projectile.timeLeft == _explodeTime + 60)
-                SoundEngine.PlaySound(Mod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Assets/Sounds/Item/NightEmpress/explod"), Projectile.Center);
+            if (Projectile.timeLeft == _explodeTime + 90)
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/NightEmpress/explod"), Projectile.Center);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float distance = targetHitbox.Distance(Projectile.Center);
             if (distance > _safeRadius && 
-                Projectile.timeLeft <= _explodeTime + 60)
+                Projectile.timeLeft <= _explodeTime + 90)
                 return true;
 
             return false;

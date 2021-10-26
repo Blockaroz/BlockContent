@@ -112,7 +112,7 @@ namespace BlockContent.Content.Projectiles
                 {
                     if (Main.rand.Next(4) == 0)
                     {
-                        float scale = MoreUtils.GetBellLerp(0, 25, 35, 60, Time, true);
+                        float scale = MoreUtils.DualLerp(0, 25, 35, 60, Time, true);
                         Vector2 oldPos = Projectile.oldPos[i] + (Projectile.Size / 2);
                         MoreUtils.DrawStreak(TextureAssets.Extra[98], SpriteEffects.None, oldPos - Main.screenPosition, TextureAssets.Extra[98].Size() / 2, scale + 0.5f, 0.4f, 2.75f, Projectile.velocity.ToRotation(), Color.DimGray, Color.GhostWhite);
                     }

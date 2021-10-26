@@ -9,10 +9,6 @@ namespace BlockContent
 {
     public partial class MoreUtils
     {
-        ///Credits
-        ///Seraph for Bezier help
-        ///NotLe0n for Bezier help
-
         /// <summary>
         /// Modular sparkle drawer. Works best with symmetrical textures.
         /// </summary>
@@ -48,12 +44,12 @@ namespace BlockContent
             Main.EntitySpriteDraw(texture.Value, drawCenter, null, color2, rotation + MathHelper.PiOver2, origin, vector * 0.56f, dir, 0);
         }
 
-        public static float GetBellLerp(float start, float middle, float end, float value, bool clamp = true)
+        public static float DualLerp(float start, float middle, float end, float value, bool clamp = true)
         {
             return Utils.GetLerpValue(start, middle, value, clamp) * Utils.GetLerpValue(end, middle, value, clamp);
         }
 
-        public static float GetBellLerp(float start, float middleOne, float middleTwo, float end, float value, bool clamp = true)
+        public static float DualLerp(float start, float middleOne, float middleTwo, float end, float value, bool clamp = true)
         {
             return Utils.GetLerpValue(start, middleOne, value, clamp) * Utils.GetLerpValue(end, middleTwo, value, clamp);
         }

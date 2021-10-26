@@ -122,7 +122,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 if (PhaseCounter >= 240)
                 {
                     NPC.dontTakeDamage = false;
-                    Phase++;
+                    Phase = 1;
                     PhaseCounter = -1;
                 }
             }
@@ -169,7 +169,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                     float offsetY = (float)Math.Sin((MathHelper.Pi * PhaseCounter) / (attackLength / 6));
                     Vector2 followPos = new Vector2(offsetX * 500, (offsetY * 80) - 250);
 
-                    MoveToTarget(targetPos + targetPosOffset, 5, 15);
+                    MoveToTarget(targetPos + followPos, 5, 15);
 
                     if (PhaseCounter <= blastTime)
                     {
@@ -195,7 +195,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             {
                 PhaseCounter++;
 
-                const int attackLength = 360;
+                const int attackLength = 390;
                 const int begin = 30;
                 const int explosion = 180;
                 //This is not for the explosion, its just so the empress stops before she does the explosion
@@ -207,8 +207,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
                 if (PhaseCounter == begin)
                 {
-                    SoundEngine.PlaySound(Mod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Assets/Sounds/Item/NightEmpress/charg"), NPC.Center);
-                    Projectile radial = Projectile.NewProjectileDirect(NPC.GetProjectileSpawnSource(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<RuneCircleBomb>(), damageValue[1], 0);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/NightEmpress/charg"), NPC.Center);
+                    Projectile radial = Projectile.NewProjectileDirect(NPC.GetProjectileSpawnSource(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<RuneCircle>(), damageValue[1], 0);
                     radial.ai[0] = 180;
                     radial.ai[1] = NPC.whoAmI;
                 }
@@ -443,6 +443,9 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
             DrawSpawnColor(out drawColor);
 
+            if (Phase == 3)
+                DrawRuneCircle(spriteBatch, screenPos);
+
             DrawWings(spriteBatch, screenPos, drawColor);
             if (State == 0)
             {
@@ -463,7 +466,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             NPC.localAI[0]++;
             int wingCount = (int)(NPC.localAI[0] / 3f) % 11;
             Rectangle? frame = wings.Frame(1, 11, 0, wingCount);
-            spriteBatch.Draw(wings.Value, NPC.Center - screenPos, frame, drawColor, NPC.rotation, new Vector2(frame.Value.Width / 2, frame.Value.Height / 2), NPC.scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(wings.Value, NPC.Center - screenPos, frame, drawColor, NPC.rotation, new Vector2(frame.Value.Width / 2, frame.Value.Height / 2), NPC.scale * 2, SpriteEffects.None, 0);
         }
 
         public void DrawSpawnColor(out Color drawColor)
@@ -493,20 +496,60 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             }
         }
 
-        public void DrawRuneCircle(Vector2 screenPos)
+        public void DrawRuneCircle(SpriteBatch spriteBatch, Vector2 screenPos)
         {
-            Asset<Texture2D> font = Mod.Assets.Request<Texture2D>("Assets/Textures/GalacticSmall");
-            int[] text = new int[]
-            {
-                12, 15, 22, 5, //Love
-                20, 8, 25, 19, 5, 12, 6, //Thyself
-                12, 15, 22, 5, //Love
-                2, 12, 15, 3, 11, 1, 18, 15, 26 //Blockaroz
-            };
-            for (int i = 0; i < text.Length; i++)
-            {
-                Rectangle? frame = font.Frame(26, 1, text[i]);
+            Asset<Texture2D>[] runeCircle = new Asset<Texture2D>[3];
+            for (int i = 0; i < runeCircle.Length; i++)
+                runeCircle[i] = Mod.Assets.Request<Texture2D>("Assets/Textures/NightEmpress/RuneCircle_" + i);
+            Asset<Texture2D> font = Mod.Assets.Request<Texture2D>("Assets/Textures/NightEmpress/Runes");
+            Asset<Texture2D> blackFade = Mod.Assets.Request<Texture2D>("Assets/Textures/LargeGlowball");
 
+            float scaleLerp = MathHelper.SmoothStep(0, 1, MoreUtils.DualLerp(0, 80, 330, 400, PhaseCounter, true));
+            float colorLerp = MathHelper.SmoothStep(0, 1, MoreUtils.DualLerp(20, 80, 300, 360, PhaseCounter, true));
+
+            float cClockwise = (Main.GlobalTimeWrappedHourly % 360) * MathHelper.ToRadians(-15);
+            float clockwise = (Main.GlobalTimeWrappedHourly % 360) * MathHelper.ToRadians(28);
+
+            Color lightShade = NightColor(0) * colorLerp;
+            lightShade.A /= 4;
+            Color darkShade = NightColor(0.66f) * colorLerp;
+            darkShade.A /= 4;
+
+            //draw back fade
+            spriteBatch.Draw(blackFade.Value, NPC.Center - screenPos, null, Color.Black * colorLerp * 0.9f, 0, blackFade.Size() / 2, 0.5f + scaleLerp, SpriteEffects.None, 0);
+
+            //draw circles
+            for (int i = 0; i < 2; i++)
+            {
+                Vector2 pos = NPC.Center + new Vector2(0.66f, 0).RotatedBy(MoreUtils.GetCircle(i, 4));
+                spriteBatch.Draw(runeCircle[0].Value, pos - screenPos, null, lightShade, cClockwise, runeCircle[0].Size() / 2, scaleLerp, SpriteEffects.None, 0);
+                spriteBatch.Draw(runeCircle[1].Value, pos - screenPos, null, darkShade, clockwise, runeCircle[0].Size() / 2, scaleLerp, SpriteEffects.None, 0);
+                spriteBatch.Draw(runeCircle[2].Value, pos - screenPos, null, lightShade, 0, runeCircle[0].Size() / 2, scaleLerp, SpriteEffects.None, 0);
+            }
+
+            //draw text
+            int[] character = new int[]
+            {
+                //moonburn
+                //fivetwozeroeight
+                //ondiscord
+                //isanawesomeandlikeableperson
+                13, 15, 15, 14, 2, 21, 18, 14, 
+                6, 9, 22, 5, 20, 23, 15, 26, 5, 18, 15, 5, 9, 7, 8, 20, 
+                15, 14, 4, 9, 19, 3, 15, 18, 4, 
+                9, 19, 1, 14, 1, 23, 5, 19, 15, 13, 5, 1, 14, 4, 12, 9, 11, 5, 1, 2, 12, 5, 16, 5, 18, 19, 15, 14
+            };
+            for (int i = 0; i < character.Length; i++)
+            {
+                Rectangle? frame = font.Frame(26, 1, character[i], 0);
+                float runeRotation = ((MathHelper.TwoPi / character.Length) * i) + (cClockwise * 2);
+                Vector2 circlePos = Vector2.Lerp(Vector2.Zero, Vector2.UnitX * 186, scaleLerp).RotatedBy(runeRotation);
+                for (int j = 0; j < 4; j++)
+                {
+                    Vector2 characterGlowOffset = circlePos + new Vector2(1.5f * scaleLerp, 0).RotatedBy(((MathHelper.TwoPi / 4) * j) + MathHelper.PiOver4);
+                    spriteBatch.Draw(font.Value, NPC.Center + characterGlowOffset - screenPos, frame, lightShade, runeRotation + MathHelper.PiOver2, new Vector2(frame.Value.Width / 2, frame.Value.Height / 2) * colorLerp, scaleLerp, SpriteEffects.None, 0);
+                }
+                spriteBatch.Draw(font.Value, NPC.Center + circlePos - screenPos, frame, new Color(255, 255, 255, 0) * colorLerp, runeRotation + MathHelper.PiOver2, new Vector2(frame.Value.Width / 2, frame.Value.Height / 2), scaleLerp, SpriteEffects.None, 0);
             }
         }
 
@@ -518,7 +561,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             {
                 Color glowColor = NightColor(Utils.GetLerpValue(95, 120, PhaseCounter, true));
                 glowColor.A /= 5;
-                Dust glowDust = Dust.NewDustDirect(NPC.Center - new Vector2(35, 48), 70, 80, GlowDustID, 0, 0, 0, glowColor, 1.5f);
+                Dust glowDust = Dust.NewDustDirect(NPC.Center - new Vector2(35, 48), 70, 80, GlowDustID, 0, 0, 0, glowColor, 1f);
                 glowDust.noGravity = true;
                 glowDust.velocity = glowDust.position.DirectionFrom(NPC.Center) * (NPC.Distance(glowDust.position) * 0.2f);
                 glowDust.velocity *= 0.93f;
@@ -537,7 +580,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                     glowColor.A /= 5;
                     Vector2 circle = Main.rand.NextVector2CircularEdge(80, 80);
                     Vector2 velocity = Main.rand.NextVector2Circular(10, 10);
-                    Dust dust = Dust.NewDustDirect(NPC.Center + circle, 2, 2, GlowDustID, -velocity.X, -velocity.Y, 0, glowColor, 1.5f);
+                    Dust dust = Dust.NewDustDirect(NPC.Center + circle, 2, 2, GlowDustID, -velocity.X, -velocity.Y, 0, glowColor, 1);
                     dust.noGravity = true;
                 }
             }
