@@ -105,9 +105,12 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && Phase != 0)
+            {
                 TryDespawn(target);
+                TryPhaseTwo();
+            }
 
-            if (Phase == 0) //spawn
+            if (Phase == 0) //Spawn
             {
                 PhaseCounter++;
                 if (PhaseCounter == 5)
@@ -309,7 +312,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                     SoundEngine.PlaySound(SoundID.Item162, NPC.Center);
                 }
 
-                NPC.velocity *= 0.7f;
+                NPC.velocity.X *= 0.2f;
+                NPC.velocity.Y = MathHelper.SmoothStep(0, -5, Utils.GetLerpValue(0, 125, PhaseCounter, true));
                 
                 PhaseCounter++;
 
@@ -322,6 +326,16 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
                     return;
                 }
+            }
+        }
+
+        public void TryPhaseTwo()
+        {
+            bool shouldDoPhase2 = false;
+
+            if (shouldDoPhase2)
+            {
+                NPC.dontTakeDamage = true;
             }
         }
 
@@ -416,15 +430,16 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
         public static Color NightColor(float t, bool useSecondColor = false)
         {
             Color light = new Color(162, 95, 234);
-            Color dark = new Color(73, 30, 123);//new Color(105, 0, 205);
             Color lightEnrage = new Color(154, 54, 255);
-            Color darkEnrage = new Color(73, 30, 123);
+            Color dark = new GradientColor(new Color[] { new Color(40, 40, 128), new Color(73, 30, 123) }, 2, 1).Value;
+            //new Color(73, 30, 123);
+            //new Color(105, 0, 205);
 
             if (useSecondColor == true)
                 lightEnrage = new Color(255, 200, 100);
 
             if (!Main.dayTime)
-                return Color.Lerp(lightEnrage, darkEnrage, t);
+                return Color.Lerp(lightEnrage, dark, t);
 
             return Color.Lerp(light, dark, t);
         }
@@ -441,7 +456,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
             drawColor = Color.White;
 
-            DrawSpawnColor(out drawColor);
+            if (Phase == 0)
+                DrawSpawnColor(out drawColor);
 
             if (Phase == 3)
                 DrawRuneCircle(spriteBatch, screenPos);
