@@ -5,23 +5,23 @@ public struct GradientColor
 {
     private Color[] _color;
     private float _fadeSpeed;
-    private float _totalTime;
+    private float _timeOnColor;
 
-    public GradientColor(Color[] colors, float totalTime = 1, float fadeSpeed = 1)
+    public GradientColor(Color[] colors, float timePerColor = 1, float fadeSpeed = 1)
     {
         _color = colors;
         _fadeSpeed = fadeSpeed * 60;
-        _totalTime = totalTime * 60;
-        if (_fadeSpeed > _totalTime)
-            _fadeSpeed = _totalTime;
+        _timeOnColor = timePerColor * 60;
+        if (_fadeSpeed > _timeOnColor)
+            _fadeSpeed = _timeOnColor;
     }
 
     public Color Value
     {
         get
         {
-            float t = Main.GameUpdateCount % _totalTime / _fadeSpeed;
-            int index = (int)((Main.GameUpdateCount / _totalTime) % _color.Length);
+            float t = Main.GameUpdateCount % _timeOnColor / _fadeSpeed;
+            int index = (int)((Main.GameUpdateCount / _timeOnColor) % _color.Length);
             return Color.Lerp(_color[index], _color[(index + 1) % _color.Length], t);
         }
     }

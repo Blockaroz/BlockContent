@@ -11,21 +11,17 @@ namespace BlockContent.Content.Items
         {
             get
             {
-                Color[] colorArray = new Color[4] 
-                { 
-                    new Color(212, 212, 219), 
-                    new Color(0, 255, 205), 
+                Color[] colorArray = new Color[]
+                {
+                    new Color(90, 255, 220),
                     new Color(255, 100, 230),
-                    new Color(255, 210, 30),
+                    new Color(255, 228, 70),
+                    new Color(255, 255, 255)
                 };
-                Color result = new GradientColor(colorArray, 0.75f).Value;
-                result.A = 200;
+                Color result = new GradientColor(colorArray, 0.5f, 0.45f).Value;
+                result.A = 180;
                 return result;
             }
-        }
-        public override int GetPrefixedRarity(int offset, float valueMult)
-        {
-            return offset;
         }
     }
 }

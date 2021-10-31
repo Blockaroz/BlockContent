@@ -8,7 +8,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace BlockContent.Content.Projectiles
+namespace BlockContent.Content.Projectiles.Holy
 {
     public class PaleBladeProjectile : ModProjectile
     {
@@ -106,15 +106,15 @@ namespace BlockContent.Content.Projectiles
             float fadeLerp = Utils.GetLerpValue(70, 50, Time, true) * Utils.GetLerpValue(0, 10, Time, true);
             lightColor = new Color(255, 255, 255, 51) * fadeLerp;
 
-            if (Time > 5 && Time < 65)
+            if (Time > 10 && Time < 80)
             {
-                for (int i = 0; i < 36; i++)
+                for (int i = 1; i < 27; i++)
                 {
                     if (Main.rand.Next(4) == 0)
                     {
-                        float scale = MoreUtils.DualLerp(0, 25, 35, 60, Time, true);
+                        float scale = MoreUtils.DualLerp(10, 40, 50, 80, Time, true);
                         Vector2 oldPos = Projectile.oldPos[i] + (Projectile.Size / 2);
-                        MoreUtils.DrawStreak(TextureAssets.Extra[98], SpriteEffects.None, oldPos - Main.screenPosition, TextureAssets.Extra[98].Size() / 2, scale + 0.5f, 0.4f, 2.75f, Projectile.velocity.ToRotation(), Color.DimGray, Color.GhostWhite);
+                        MoreUtils.DrawStreak(TextureAssets.Extra[98], SpriteEffects.None, oldPos - Main.screenPosition, TextureAssets.Extra[98].Size() / 2, scale + 0.5f, 0.4f, 2.75f, Projectile.velocity.ToRotation(), MoreColor.PaleGray, Color.GhostWhite);
                     }
                 }
             }

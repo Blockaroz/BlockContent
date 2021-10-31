@@ -6,8 +6,9 @@ using Terraria.ID;
 using ReLogic.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.Audio;
+using BlockContent.Content.NPCs.NightEmpressBoss;
 
-namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
+namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectiles
 {
     public class RuneCircle : ModProjectile
     {
@@ -29,40 +30,28 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
         }
 
         private ref float _safeRadius => ref Projectile.ai[0];
-        private const int _explodeTime = 30;
-        private const int _totalTime = 300;
+        private const int _explodeTime = 120;
+        private const int _totalTime = 330;
 
         public override void AI()
         {
             NPC owner = Main.npc[(int)Projectile.ai[1]];
             Projectile.Center = owner.Center;
-            if (Projectile.timeLeft > _explodeTime && Projectile.timeLeft <= _explodeTime + 90)
-            {
-                for (int i = 0; i < 4; i++)
-                {
-                    Vector2 vector2 = Main.rand.NextVector2CircularEdge(_safeRadius, _safeRadius);
-                    Vector2 velocity = Main.rand.NextVector2Circular(10, 10);
-                    Color color = NightEmpress.NightColor(0);
-                    color.A /= 5;
-                    Dust dust = Dust.NewDustPerfect(Projectile.Center + vector2, NightEmpress.GlowDustID, velocity, 0, color, 1f); 
-                    dust.noGravity = true;
-                }
-            }
 
-            if (Projectile.timeLeft == _explodeTime + 90)
+            if (Projectile.timeLeft == _explodeTime)
                 SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/NightEmpress/explod"), Projectile.Center);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float distance = targetHitbox.Distance(Projectile.Center);
-            if (distance > _safeRadius && 
-                Projectile.timeLeft <= _explodeTime + 90)
+            if (distance > _safeRadius &&
+                Projectile.timeLeft <= _explodeTime)
                 return true;
 
             return false;
         }
 
-        public override bool PreDraw(ref Color lightColor) => false; //The circle's drawing effects will be handled by the empress herself
+        public override bool PreDraw(ref Color lightColor) => false;
     }
 }

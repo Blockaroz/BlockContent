@@ -34,7 +34,7 @@ namespace BlockContent.Content.Graphics
 
         private static Color EdgeGlowColor(float progressOnStrip) 
         {
-            Color result = Color.Lerp(Color.Gray, Color.DimGray, Utils.GetLerpValue(0.1f, 0.5f, progressOnStrip, true));
+            Color result = Color.Lerp(MoreColor.PaleGray, Color.DimGray, Utils.GetLerpValue(0.1f, 0.5f, progressOnStrip, true));
             result.A = 200;
             return result;
         }
@@ -42,12 +42,12 @@ namespace BlockContent.Content.Graphics
         private static float EdgeGlowWidth(float progressOnStrip)
         {
             float num = Utils.GetLerpValue(0, 0.1f, progressOnStrip, true) * Utils.GetLerpValue(1, 0.2f, progressOnStrip);
-            return MathHelper.SmoothStep(0f, 50f, num);
+            return MathHelper.SmoothStep(0f, 36f, num);
         }
 
         private static Color EdgeColor(float progressOnStrip)
         {
-            Color result = Color.Lerp(Color.GhostWhite, Color.DimGray, Utils.GetLerpValue(0.3f, 1f, progressOnStrip, true));
+            Color result = Color.Lerp(Color.GhostWhite, MoreColor.PaleGray, Utils.GetLerpValue(0.3f, 1f, progressOnStrip, true));
             result.A /= 2;
             return result;
         }
@@ -55,14 +55,14 @@ namespace BlockContent.Content.Graphics
         private static float EdgeWidth(float progressOnStrip)
         {
             float num = Utils.GetLerpValue(0, 0.1f, progressOnStrip, true) * Utils.GetLerpValue(1, 0.3f, progressOnStrip);
-            return MathHelper.SmoothStep(0f, 23f, num);
+            return MathHelper.SmoothStep(0f, 21f, num);
         }
 
         private void StripDust(float t, Vector2 centerPosition, float rotation)
         {
             if (t < 50 && Main.rand.Next(1) == 0)
             {
-                Color dustColor = Color.Lerp(Color.Gainsboro, Color.DimGray, Main.rand.NextFloat(0, 1));
+                Color dustColor = Color.Lerp(MoreColor.PaleGray, Color.DimGray, Main.rand.NextFloat(0, 1));
                 dustColor.A = 51;
                 Dust dust = Dust.NewDustPerfect(centerPosition + Main.rand.NextVector2Square(-1, 1), ModContent.DustType<Dusts.GlowballDust>(), null, 100, dustColor, 1f);
                 dust.fadeIn = 1f + Main.rand.NextFloat(-1, 1) * 0.6f;

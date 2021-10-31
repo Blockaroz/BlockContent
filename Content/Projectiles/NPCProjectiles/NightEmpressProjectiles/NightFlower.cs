@@ -5,8 +5,9 @@ using Terraria.GameContent;
 using Terraria.ID;
 using ReLogic.Content;
 using Microsoft.Xna.Framework.Graphics;
+using BlockContent.Content.NPCs.NightEmpressBoss;
 
-namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
+namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectiles
 {
     public class NightFlower : ModProjectile
     {
@@ -60,7 +61,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
         {
             float opacity = Utils.GetLerpValue(720, 690, Projectile.timeLeft, true) * Utils.GetLerpValue(0, 60, Projectile.timeLeft, true);
 
-            Asset<Texture2D> baseTexture = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/Projectiles/NightFlower");
+            Asset<Texture2D> baseTexture = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/NightFlower");
 
             Color nightShade = NightEmpress.NightColor(0, true);
             nightShade.A /= 5;

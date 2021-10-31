@@ -2,16 +2,11 @@
 using Terraria.ModLoader;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
-using BlockContent.Content.Graphics;
-using Terraria.GameContent.Drawing;
-using ReLogic.Content;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using Terraria.Graphics.Renderers;
-using BlockContent.Content.Projectiles;
 using Terraria.DataStructures;
+using BlockContent.Content.Projectiles.Holy;
 
-namespace BlockContent.Content.Items.Weapons
+namespace BlockContent.Content.Items.Weapons.Holy
 {
     public class PaleBlade : ModItem
     {
@@ -31,11 +26,11 @@ namespace BlockContent.Content.Items.Weapons
             Item.useTime = Item.useAnimation / 3;
             Item.damage = 190;
             Item.DamageType = DamageClass.Melee;
-            Item.crit = 10;
-            Item.knockBack = 5f;
-            Item.UseSound = SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/Items/PaleSlash");
+            Item.crit = 12;
+            Item.knockBack = 5;
+            Item.UseSound = SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/Items/PaleSlash").WithPitchVariance(0.33f);
             Item.autoReuse = true;
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ModContent.RarityType<HeavenlyRarity>();
             Item.value = Item.sellPrice(gold: 23);
             Item.noUseGraphic = true;
             Item.noMelee = true;

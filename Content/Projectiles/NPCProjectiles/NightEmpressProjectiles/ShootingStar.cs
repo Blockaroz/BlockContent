@@ -6,8 +6,9 @@ using Terraria.ID;
 using ReLogic.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using BlockContent.Content.NPCs.NightEmpressBoss;
 
-namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
+namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectiles
 {
     public class ShootingStar : ModProjectile
     {
@@ -89,15 +90,15 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss.Projectiles
 
             Projectile.scale = Utils.GetLerpValue(190, 175, Projectile.timeLeft, true) * Utils.GetLerpValue(0, 30, Projectile.timeLeft, true);
 
-            Asset<Texture2D> star = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/Projectiles/ShootingStar");
-            Asset<Texture2D> starTrail = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/Projectiles/ShootingStar_Trail");
+            Asset<Texture2D> star = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/ShootingStar");
+            Asset<Texture2D> starTrail = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/ShootingStar_Trail");
 
             Color starColor = NightEmpress.NightColor(0, true);
-            starColor.A /= 5;
+            starColor.A /= 4;
             Color starAfterImageColor = NightEmpress.NightColor(0);
-            starAfterImageColor.A /= 7;
+            starAfterImageColor.A /= 5;
             Color starTrailColor = NightEmpress.NightColor(1);
-            starTrailColor.A /= 7;
+            starTrailColor.A /= 5;
 
             Projectile.localAI[1] += 0.05f * Projectile.direction;
             if (Projectile.localAI[1] >= MathHelper.TwoPi || Projectile.localAI[1] <= -MathHelper.TwoPi)
