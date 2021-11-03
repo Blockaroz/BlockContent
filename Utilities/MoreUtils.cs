@@ -76,7 +76,7 @@ public partial class MoreUtils
         return center + rotation;
     }
 
-    public static bool GetNPCTarget(object attacker, Vector2 position, float maxDistance, out int npcIndex)
+    public static bool NPCInRange(object attacker, Vector2 position, float maxDistance, out int npcIndex)
     {
         npcIndex = 0;
         int? index = null;

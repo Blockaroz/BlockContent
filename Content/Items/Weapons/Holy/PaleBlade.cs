@@ -53,7 +53,7 @@ namespace BlockContent.Content.Items.Weapons.Holy
             if (animation < 3)
             {
                 int index;
-                bool targetAcquired = MoreUtils.GetNPCTarget(player, reachPoint, 550, out index);
+                bool targetAcquired = MoreUtils.NPCInRange(player, reachPoint, 550, out index);
 
                 if (targetAcquired)
                     distance = Main.npc[index].Center - player.MountedCenter;

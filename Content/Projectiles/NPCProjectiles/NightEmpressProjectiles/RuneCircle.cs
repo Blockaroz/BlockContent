@@ -30,26 +30,21 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
         }
 
         private ref float _safeRadius => ref Projectile.ai[0];
-        private const int _explodeTime = 120;
-        private const int _totalTime = 330;
+        private const int _totalTime = 120;
 
         public override void AI()
         {
             NPC owner = Main.npc[(int)Projectile.ai[1]];
             Projectile.Center = owner.Center;
-
-            if (Projectile.timeLeft == _explodeTime)
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/NightEmpress/explod"), Projectile.Center);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float distance = targetHitbox.Distance(Projectile.Center);
-            if (distance > _safeRadius &&
-                Projectile.timeLeft <= _explodeTime)
-                return true;
+            if (distance < _safeRadius)
+                return false;
 
-            return false;
+            return true;
         }
 
         public override bool PreDraw(ref Color lightColor) => false;

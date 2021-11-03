@@ -1,10 +1,10 @@
-﻿using BlockContent.Content.Graphics;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using Terraria;
-using Terraria.GameContent;
+using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -15,20 +15,172 @@ namespace BlockContent.Content.Projectiles.Red
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sanctuary");
-            ProjectileID.Sets.TrailCacheLength[Type] = 36;
-            ProjectileID.Sets.TrailingMode[Type] = 4;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 32;
-            Projectile.height = 32;
+            Projectile.width = 24;
+            Projectile.height = 24;
             Projectile.friendly = true;
-            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            Projectile.penetrate = -1;
-            Projectile.noEnchantmentVisuals = true;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.hide = true;
+        }
+
+        public override void AI()
+        {
+            DoHoldLogic();
+        }
+
+        public void DoHoldLogic()
+        {
+            Player player = Main.player[Projectile.owner];
+            float pointAngle = Projectile.spriteDirection == -1 ? MathHelper.Pi : 0f;
+            Projectile.ai[0] += 1;
+            int extraFrameSpeed = 0;
+            if (Projectile.ai[0] > 40)
+                extraFrameSpeed++;
+            if (Projectile.ai[0] > 100)
+                extraFrameSpeed++;
+            int resetAI1 = 15 - 5 * extraFrameSpeed;
+            Projectile.ai[1] -= 1;
+            int missile = -1;
+            bool tryShoot = false;
+            if (Projectile.ai[1] <= 0)
+            {
+                Projectile.ai[1] = resetAI1;
+                tryShoot = true;
+                if ((Projectile.ai[0] / resetAI1) % 7 == 0)
+                    missile = 0;
+            }
+            Projectile.frameCounter += 1 + extraFrameSpeed;
+            if (Projectile.frameCounter >= 6)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame++;
+                if (Projectile.frame > 6)
+                    Projectile.frame = 0;
+            }
+            if (Projectile.soundDelay <= 0)
+            {
+                Projectile.soundDelay = resetAI1;
+                if (Projectile.ai[0] != 1)
+                    SoundEngine.PlaySound(SoundID.Item40.WithPitchVariance(0.1f), Projectile.Center);
+            }
+            float randomRotation = MathHelper.ToRadians(Main.rand.NextFloat(-0.66f, 0.66f));
+            if (tryShoot && Main.myPlayer == Projectile.owner)
+            {
+                Item selection = player.inventory[player.selectedItem];
+                bool canShoot = player.channel && player.HasAmmo(selection, true) && !player.noItems && !player.CCed;
+
+                int bulletType = ProjectileID.Bullet;
+                float bulletSpeed = 36f;
+                int bulletDamage = player.GetWeaponDamage(selection);
+                float bulletKnockBack = selection.knockBack;
+                if (canShoot)
+                {
+                    player.PickAmmo(selection, ref bulletType, ref bulletSpeed, ref canShoot, ref bulletDamage, ref bulletKnockBack, out int usedAmmoItemID);
+                    IProjectileSource projSource = player.GetProjectileSource_Item_WithPotentialAmmo(player.HeldItem, usedAmmoItemID);
+                    float bulletShootSpeed = selection.shootSpeed * Projectile.scale;
+                    Vector2 spinPoint = player.RotatedRelativePoint(player.MountedCenter);
+                    Vector2 shootDir0 = Main.screenPosition + Main.MouseScreen - spinPoint;
+                    if (player.gravDir == -1)
+                        shootDir0.Y = (float)(Main.screenHeight - Main.MouseScreen.Y) + Main.screenPosition.Y - shootDir0.Y;
+                    Vector2 shootDir1 = Vector2.Normalize(shootDir0);
+                    if (shootDir1.HasNaNs())
+                        shootDir1 = -Vector2.UnitY;
+                    shootDir1 *= bulletShootSpeed;
+                    shootDir1 = shootDir1.RotatedBy(randomRotation);
+                    if (shootDir1.X != Projectile.velocity.X || shootDir1.Y != Projectile.velocity.Y)
+                        Projectile.netUpdate = true;
+                    Projectile.velocity = shootDir1;
+                    
+                    for (int n = 0; n < 1; n++)
+                    {
+                        Vector2 bulletDir = Vector2.Normalize(Projectile.velocity) * bulletSpeed;
+                        bulletDir = bulletDir.RotatedBy(randomRotation);
+                        if (bulletDir.HasNaNs())
+                            bulletDir = -Vector2.UnitY;
+
+                        Projectile.NewProjectileDirect(projSource, spinPoint, bulletDir, bulletType, bulletDamage, bulletKnockBack, Projectile.owner);
+                    }
+
+                    if (missile == 0)
+                    {
+                        bulletType = ProjectileID.Bullet;
+                        bulletSpeed = 10f;
+                        for (int n = 0; n < 1; n++)
+                        {
+                            Vector2 missileDirection = Vector2.Normalize(Projectile.velocity) * bulletSpeed;
+                            missileDirection = missileDirection.RotatedBy(randomRotation);
+                            if (missileDirection.HasNaNs())
+                                missileDirection = -Vector2.UnitY;
+
+                            Projectile.NewProjectileDirect(projSource, spinPoint, missileDirection, bulletType, bulletDamage, bulletKnockBack, Projectile.owner);
+                        }
+                    }
+                }
+            }
+            else if (!player.channel)
+                Projectile.Kill();
+
+            Projectile.Center = player.RotatedRelativePoint(player.MountedCenter, false, false);
+            Projectile.rotation = Projectile.velocity.ToRotation() + pointAngle;
+            Projectile.spriteDirection = Projectile.direction;
+            Projectile.timeLeft = 2;
+            player.SetDummyItemTime(2);
+            player.ChangeDir(Projectile.direction);
+            player.heldProj = Projectile.whoAmI;
+            player.itemRotation = MathHelper.WrapAngle((float)Math.Atan2(Projectile.velocity.Y * Projectile.direction, Projectile.velocity.X * Projectile.direction) + randomRotation);
+            Projectile.position.Y += player.gravDir * 2f;
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            DrawItem();
+            //do flare 
+            //do machine gun
+            return false;
+        }
+
+        public void DrawItem()
+        {
+            Player player = Main.player[Projectile.owner];
+            SpriteEffects spriteEffects = Projectile.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            if (player.gravDir == -1f)
+            {
+                if (player.direction == 1)
+                    spriteEffects = SpriteEffects.FlipVertically;
+                if (player.direction == -1)
+                    spriteEffects = SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically;
+            }
+            Color baseColor = Color.White;
+            Color glowColor = new(233, 33, 33, 33);
+            if (player.shroomiteStealth && player.inventory[player.selectedItem].DamageType == DamageClass.Ranged)
+            {
+                float stealthValue = player.stealth;
+                if ((double)stealthValue < 0.03)
+                    stealthValue = 0.03f;
+                baseColor *= stealthValue;
+                glowColor *= stealthValue;
+            }
+            if (player.shroomiteStealth && player.inventory[player.selectedItem].DamageType == DamageClass.Ranged)
+            {
+                float stealthValue = player.stealth;
+                if ((double)stealthValue < 0.03)
+                    stealthValue = 0.03f;
+                baseColor = baseColor.MultiplyRGBA(new Color(Vector4.Lerp(Vector4.One, new(0f, 0.12f, 0.16f, 0f), 1f - stealthValue)));
+                glowColor = glowColor.MultiplyRGBA(new Color(Vector4.Lerp(Vector4.One, new(0f, 0.12f, 0.16f, 0f), 1f - stealthValue)));
+            }
+            Vector2 drawPos = Projectile.Center + new Vector2(0, Projectile.gfxOffY);
+            Asset<Texture2D> baseTexture = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Red/Sanctuary");
+            Asset<Texture2D> glowTexture = Mod.Assets.Request<Texture2D>("Content/Projectiles/Red/SanctuaryProjectile");
+            Rectangle glowFrame = glowTexture.Frame(1, 6, 0, Projectile.frame);
+
+            Main.EntitySpriteDraw(baseTexture.Value, drawPos - Main.screenPosition, null, baseColor, Projectile.rotation, baseTexture.Size() / 2, Projectile.scale, spriteEffects, 0);
+            Main.EntitySpriteDraw(glowTexture.Value, drawPos - Main.screenPosition, glowFrame, glowColor, Projectile.rotation, glowFrame.Size() / 2, Projectile.scale, spriteEffects, 0);
         }
     }
 }
