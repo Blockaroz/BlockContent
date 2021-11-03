@@ -43,7 +43,7 @@ namespace BlockContent.Content.Items.Weapons.Red
         {
             int projType = ModContent.ProjectileType<SanctuaryProjectile>();
             Vector2 point = player.RotatedRelativePoint(player.MountedCenter, true);
-            Projectile.NewProjectile(source, point, velocity, projType, damage, knockback, player.whoAmI, 5 * Main.rand.Next(1, 20), 1);
+            Projectile.NewProjectile(source, point, velocity, projType, damage, knockback, player.whoAmI, 5 * Main.rand.Next(0, 10), 0);
             return false;
         }
 
