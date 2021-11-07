@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
+using Terraria.GameContent.Dyes;
 using Terraria.GameContent.Shaders;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
@@ -19,6 +20,8 @@ namespace BlockContent.Content.Graphics
         public static void LoadEffects()
         {
             GameShaders.Misc["BlockContent:PaleBlade"] = new MiscShaderData(Main.VertexPixelShaderRef, "MagicMissile").UseProjectionMatrix(doUse: true);
+
+            GameShaders.Misc["BlockContent:Test"] = new MiscShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Assets/Effects/Grayscale", AssetRequestMode.ImmediateLoad).Value), "GrayscaleFunction");
         }
     }
 }

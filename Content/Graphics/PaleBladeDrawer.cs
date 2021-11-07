@@ -3,7 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.Drawing;
 using Terraria.Graphics;
+using Terraria.Graphics.Renderers;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -15,33 +17,43 @@ namespace BlockContent.Content.Graphics
         private static VertexStrip _strip = new();
         private static VertexStrip _strip2 = new();
 
-        public void Draw(Projectile projectile)
+        public void Draw(Projectile proj)
         {
             MiscShaderData shader = GameShaders.Misc["BlockContent:PaleBlade"];
-            shader.UseImage0("Images/Extra_197");
+            shader.UseImage0("Images/Extra_195");
             shader.UseImage1("Images/Extra_197");
             shader.UseImage2("Images/Extra_194");
             shader.Apply();
-            _strip.PrepareStrip(projectile.oldPos, projectile.oldRot, EdgeGlowColor, EdgeGlowWidth, -Main.screenPosition + (projectile.Size / 2), projectile.oldPos.Length, true);
+            _strip.PrepareStrip(proj.oldPos, proj.oldRot, EdgeGlowColor, EdgeGlowWidth, -Main.screenPosition + (proj.Size / 2), proj.oldPos.Length, true);
             _strip.DrawTrail();
-            _strip2.PrepareStrip(projectile.oldPos, projectile.oldRot, EdgeColor, EdgeWidth, -Main.screenPosition + (projectile.Size / 2), projectile.oldPos.Length, true);
+            _strip2.PrepareStrip(proj.oldPos, proj.oldRot, EdgeColor, EdgeWidth, -Main.screenPosition + (proj.Size / 2), proj.oldPos.Length, true);
             _strip2.DrawTrail();
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();
 
-            Player player = Main.player[projectile.owner];
-            StripDust(projectile.localAI[0], projectile.Center + (projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * MathHelper.Lerp(0.5f, 3f, Main.rand.NextFloat()), projectile.rotation);
+            ParticleOrchestraSettings settings = new ParticleOrchestraSettings()
+            {
+                PositionInWorld = proj.Center,
+                MovementVector = proj.velocity * 0.02f
+            };
+            if (proj.localAI[0] > 30 && proj.localAI[0] < 50)
+                ParticleEffects.CreatePaleSparkles(settings, MoreColor.PaleGray);
+
+            CreateDust(proj);
         }
 
         private static Color EdgeGlowColor(float progressOnStrip) 
         {
             Color result = Color.Lerp(MoreColor.PaleGray, Color.DimGray, Utils.GetLerpValue(0.1f, 0.5f, progressOnStrip, true));
-            result.A = 200;
+            result.A /= 2;
             return result;
         }
 
         private static float EdgeGlowWidth(float progressOnStrip)
         {
-            float num = Utils.GetLerpValue(0, 0.1f, progressOnStrip, true) * Utils.GetLerpValue(1, 0.2f, progressOnStrip);
+            float num = 1f;
+            float lerpValue = Utils.GetLerpValue(0f, 0.2f, progressOnStrip, clamped: true);
+            num *= 1f - (1f - lerpValue) * (1f - lerpValue);
+            //float num = Utils.GetLerpValue(0, 0.1f, progressOnStrip, true) * Utils.GetLerpValue(1, 0.2f, progressOnStrip);
             return MathHelper.SmoothStep(0f, 36f, num);
         }
 
@@ -54,13 +66,17 @@ namespace BlockContent.Content.Graphics
 
         private static float EdgeWidth(float progressOnStrip)
         {
-            float num = Utils.GetLerpValue(0, 0.1f, progressOnStrip, true) * Utils.GetLerpValue(1, 0.3f, progressOnStrip);
+            float num = 1f;
+            float lerpValue = Utils.GetLerpValue(0f, 0.2f, progressOnStrip, clamped: true);
+            num *= 1f - (1f - lerpValue) * (1f - lerpValue);
+            //float num = Utils.GetLerpValue(0, 0.1f, progressOnStrip, true) * Utils.GetLerpValue(1, 0.3f, progressOnStrip);
             return MathHelper.SmoothStep(0f, 21f, num);
         }
 
-        private void StripDust(float t, Vector2 centerPosition, float rotation)
+        private void CreateDust(Projectile proj)
         {
-            if (t < 50 && Main.rand.Next(1) == 0)
+            Vector2 centerPosition = proj.Center + (proj.rotation - MathHelper.PiOver2).ToRotationVector2() * MathHelper.Lerp(0.5f, 3f, Main.rand.NextFloat());
+            if (proj.localAI[0] < 50 && Main.rand.Next(4) == 0)
             {
                 Color dustColor = Color.Lerp(MoreColor.PaleGray, Color.DimGray, Main.rand.NextFloat(0, 1));
                 dustColor.A = 51;
@@ -68,7 +84,7 @@ namespace BlockContent.Content.Graphics
                 dust.fadeIn = 1f + Main.rand.NextFloat(-1, 1) * 0.6f;
                 dust.noGravity = true;
                 dust.velocity += Main.rand.NextVector2Circular(2, 2);
-                dust.velocity += new Vector2(2, 0).RotatedBy(rotation);
+                dust.velocity += new Vector2(2, 0).RotatedBy(proj.rotation);
                 dust.noLightEmittence = true;
             }
         }

@@ -23,7 +23,7 @@ namespace BlockContent.Content.Items.Weapons.Red
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 5;
             Item.useTime = 5;
-            Item.damage = 140;
+            Item.damage = 170;
             Item.DamageType = DamageClass.Ranged;
             Item.crit = 10;
             Item.knockBack = 2;
@@ -43,7 +43,7 @@ namespace BlockContent.Content.Items.Weapons.Red
         {
             int projType = ModContent.ProjectileType<SanctuaryProjectile>();
             Vector2 point = player.RotatedRelativePoint(player.MountedCenter, true);
-            Projectile.NewProjectile(source, point, velocity, projType, damage, knockback, player.whoAmI, 5 * Main.rand.Next(0, 10), 0);
+            Projectile.NewProjectile(source, point, velocity, projType, damage, knockback, player.whoAmI, 5 * Main.rand.Next(0, 2), 0);
             return false;
         }
 

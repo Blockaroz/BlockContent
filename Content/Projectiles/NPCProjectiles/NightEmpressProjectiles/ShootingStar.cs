@@ -35,20 +35,20 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
         {
             Player target = Main.player[(int)Projectile.ai[0]];
             Vector2 predictedPosition = target.Center + 
-                new Vector2(target.velocity.X * 20, (target.velocity.Y * 20) - Math.Abs(target.velocity.X * 0.15f)) + 
+                new Vector2(target.velocity.X * 20, (target.velocity.Y * 18) - Math.Abs(target.velocity.X * 0.15f)) + 
                 new Vector2(Projectile.ai[1] * 100, 0);
 
             _distance = Projectile.Distance(predictedPosition);
 
-            Projectile.rotation = Projectile.velocity.ToRotation();
-
             if (Projectile.velocity == Vector2.Zero)
                 Projectile.rotation = MathHelper.Pi;
+            else
+                Projectile.rotation = Projectile.velocity.ToRotation();
 
             if (Projectile.timeLeft > 170 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.velocity += Main.rand.NextVector2Circular(5, 5);
-                Projectile.velocity += Projectile.DirectionTo(target.Center).SafeNormalize(Vector2.Zero) * Utils.GetLerpValue(20, 1000, predictedPosition.Distance(Projectile.Center));
+                Projectile.velocity += Main.rand.NextVector2Circular(3, 3);
+                Projectile.velocity += Projectile.DirectionTo(target.Center).SafeNormalize(Vector2.Zero) * Utils.GetLerpValue(1000, 200, predictedPosition.Distance(Projectile.Center));
                 Projectile.hostile = false;
             }
             else
@@ -60,10 +60,10 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 _lineRotation = Projectile.AngleTo(predictedPosition);
 
                 if (Projectile.timeLeft == 145)
-                    Projectile.localAI[0]++;
-
-                if (Projectile.timeLeft == 140)
+                {
                     Projectile.velocity = Vector2.Zero;
+                    Projectile.localAI[0]++;
+                }
             }
 
             if (Projectile.timeLeft == 130)
@@ -92,6 +92,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
 
             Asset<Texture2D> star = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/ShootingStar");
             Asset<Texture2D> starTrail = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/ShootingStar_Trail");
+            Asset<Texture2D> flashBall = Mod.Assets.Request<Texture2D>("Assets/Textures/Glowball_" + (short)0);
 
             Color starColor = NightEmpress.NightColor(0, true);
             starColor.A /= 4;
@@ -132,6 +133,10 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 Main.EntitySpriteDraw(star.Value, Projectile.Center + offset - Main.screenPosition, null, starColor, Projectile.localAI[1] * 4, star.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
             }
             Main.EntitySpriteDraw(star.Value, Projectile.Center - Main.screenPosition, null, NightEmpress.NightBlack, Projectile.localAI[1] * 4, star.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
+
+            //flash
+            float flashScale = MoreUtils.DualLerp(140, 135, 120, Projectile.timeLeft, true);
+            MoreUtils.DrawStreak(flashBall, SpriteEffects.None, Projectile.Center - Main.screenPosition, flashBall.Size() / 2, flashScale, 5, 5, Projectile.localAI[1] * 4, starTrailColor, starAfterImageColor);
 
             return false;
         }

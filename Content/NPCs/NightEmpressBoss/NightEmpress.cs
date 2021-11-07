@@ -1,4 +1,5 @@
-﻿using BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectiles;
+﻿using BlockContent.Content.Graphics;
+using BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -9,6 +10,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.Drawing;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -124,7 +126,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             {
                 PhaseCounter++;
                 if (PhaseCounter == 10)
-                    SoundEngine.PlaySound(SoundID.Item160, NPC.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/NightEmpress/EmpressSpawn"), NPC.Center);
 
                 float yLerp = Utils.GetLerpValue(0, 140, PhaseCounter, true);
 
@@ -171,7 +173,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             if (Phase == 2)//Shooting Star Barrage
             {
                 PhaseCounter++;
-                const int attackLength = 270;
+                const int attackLength = 185;
                 const int dashCap = 10;
                 const int blastTime = 100;
                 const int blastTimeSecond = 180;
@@ -184,11 +186,11 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
                     MoveToTarget(targetPos + followPos, 5, 15);
 
+                    if (PhaseCounter == 10)
+                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/NightEmpress/EmpressShootingStars"), NPC.Center);
+
                     if (PhaseCounter <= blastTime)
-                    {
-                        //sound
                         ShootingStarBarrage(6, offsetX);
-                    }
 
                     if (PhaseCounter > blastTime + 20 && PhaseCounter <= blastTimeSecond)
                         ShootingStarBarrage(10, offsetX);
@@ -219,11 +221,11 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                     NPC.velocity *= 0.3f;
 
                 if (PhaseCounter == createCircle)
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/NightEmpress/charg"), NPC.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/NightEmpress/EmpressRuneCharge"), NPC.Center);
 
                 if (PhaseCounter == explode)
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/NightEmpress/explod"), NPC.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/NightEmpress/EmpressRuneExplosion"), NPC.Center);
                     Projectile radial = Projectile.NewProjectileDirect(NPC.GetProjectileSpawnSource(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<RuneCircle>(), damageValue[3], 0);
                     radial.ai[0] = 190;
                     radial.ai[1] = NPC.whoAmI;
@@ -324,14 +326,14 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 NPC.dontTakeDamage = true;
                 if (PhaseCounter == 0 && Phase > 0)
                 {
-                    Phase = float.MinValue;
+                    Phase = short.MinValue;
                     SoundEngine.PlaySound(SoundID.Item162, NPC.Center);
                 }
 
-                if (Phase <= float.MinValue)
+                if (Phase <= short.MinValue)
                 {
                     NPC.velocity.X *= 0.2f;
-                    NPC.velocity.Y = MathHelper.SmoothStep(0, -5, Utils.GetLerpValue(0, 125, PhaseCounter, true));
+                    NPC.velocity.Y = MathHelper.Lerp(-3, 0, Utils.GetLerpValue(0, 125, PhaseCounter, true));
                 }
 
                 PhaseCounter++;
@@ -508,7 +510,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 MoreUtils.DrawSparkle(TextureAssets.Extra[98], SpriteEffects.None, NPC.Center + handPosition - screenPos, flareOrigin, flareScale[1], 1, 60 * flareScale[1], 10 * flareScale[1], MathHelper.PiOver2, NightColor(1), NightColor(0, true), alpha: 51);
             }
 
-            DoDust();
+            CreateMagicParticles();
+            CreateDusts();
         }
 
         public void DrawEmpress(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor, Color glowColor, bool wingOverlay = true)
@@ -528,16 +531,12 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
         public void DrawWings(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor, bool includeOverlay = true)
         {
             Asset<Texture2D> wings = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/NightEmpressWings");
-            Asset<Texture2D> wingsGlow = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/NightEmpressWings_Glow");
+            Asset<Texture2D> wingsMask = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/NightEmpressWings_Glow");
 
             NPC.localAI[0]++;
             int wingCount = (int)(NPC.localAI[0] / 3f) % 11;
             Rectangle? frame = wings.Frame(1, 11, 0, wingCount);
             spriteBatch.Draw(wings.Value, NPC.Center - screenPos, frame, drawColor, NPC.rotation, new Vector2(frame.Value.Width / 2, frame.Value.Height / 2), NPC.scale * 2, SpriteEffects.None, 0);
-            if (includeOverlay)
-            {
-                //draw overlay
-            }
         }
 
         //Arms methods
@@ -548,7 +547,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             for (int i = 0; i < runeCircle.Length; i++)
                 runeCircle[i] = Mod.Assets.Request<Texture2D>("Assets/Textures/NightEmpress/RuneCircle_" + i);
             Asset<Texture2D> font = Mod.Assets.Request<Texture2D>("Assets/Textures/NightEmpress/Runes");
-            Asset<Texture2D> blackFade = Mod.Assets.Request<Texture2D>("Assets/Textures/LargeGlowball");
+            Asset<Texture2D> blackFade = Mod.Assets.Request<Texture2D>("Assets/Textures/Glowball_" + (short)1);
 
             float scaleValue = MathHelper.SmoothStep(0, 1, Utils.GetLerpValue(0, 80, PhaseCounter, true));
             float opacity = MathHelper.SmoothStep(0, 1, MoreUtils.DualLerp(20, 80, 330, 390, PhaseCounter, true));
@@ -590,7 +589,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 Vector2 placeInSentence = new Vector2(186 * scaleValue, 0).RotatedBy(runeRotation);
                 for (int j = 0; j < 4; j++)
                 {
-                    Vector2 placeInSentenceGlow = placeInSentence + new Vector2(1.5f * scaleValue, 0).RotatedBy((MathHelper.TwoPi / 4 * j) + MathHelper.PiOver4);
+                    Vector2 placeInSentenceGlow = placeInSentence + new Vector2(2 * scaleValue, 0).RotatedBy((MathHelper.TwoPi / 4 * j) + MathHelper.PiOver4);
                     spriteBatch.Draw(font.Value, NPC.Center + placeInSentenceGlow - screenPos, frame, darkShade, runeRotation + MathHelper.PiOver2, frame.Value.Size() / 2, scaleValue, SpriteEffects.None, 0);
                 }
                 spriteBatch.Draw(font.Value, NPC.Center + placeInSentence - screenPos, frame, new Color(255, 255, 255, 0) * opacity, runeRotation + MathHelper.PiOver2, frame.Value.Size() / 2, scaleValue, SpriteEffects.None, 0);
@@ -613,7 +612,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 drawColor = Color.Lerp(changeColor, Color.White, appearFade);
             }
             
-            if (Phase <= float.MinValue)
+            if (Phase <= short.MinValue)
             {
                 //despawn animation
                 float colorFade = Utils.GetLerpValue(95, 120, PhaseCounter, true);
@@ -629,14 +628,23 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
         public static int GlowDustID { get => ModContent.DustType<Dusts.HaloDust>(); }
 
-        public void DoHandMagic()
+        public void CreateMagicParticles()
         {
-
+            if (Phase <= short.MinValue)
+            {
+                ParticleOrchestraSettings despawnSettings = new ParticleOrchestraSettings()
+                {
+                    PositionInWorld = NPC.Center + new Vector2(0, -20) + Main.rand.NextVector2Circular(90, 90),
+                    MovementVector = new Vector2(Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-7, -4))
+                };
+                for (int i = 0; i < Main.rand.Next(3); i++)
+                    ParticleEffects.CreateNightMagic(despawnSettings, NightColor(Main.rand.NextFloat()));
+            }
         }
 
-        public void DoDust()
+        public void CreateDusts()
         {
-            if (Phase <= float.MinValue)
+            if (Phase <= short.MinValue)
             {
                 Color glowColor = NightColor(Utils.GetLerpValue(95, 120, PhaseCounter, true));
                 glowColor.A /= 5;

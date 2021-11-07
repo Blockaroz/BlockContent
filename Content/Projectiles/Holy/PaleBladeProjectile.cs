@@ -110,11 +110,11 @@ namespace BlockContent.Content.Projectiles.Holy
             {
                 for (int i = 1; i < 27; i++)
                 {
-                    if (Main.rand.Next(4) == 0)
+                    if (Main.rand.Next(5) == 0)
                     {
                         float scale = MoreUtils.DualLerp(10, 40, 50, 80, Time, true);
                         Vector2 oldPos = Projectile.oldPos[i] + (Projectile.Size / 2);
-                        MoreUtils.DrawStreak(TextureAssets.Extra[98], SpriteEffects.None, oldPos - Main.screenPosition, TextureAssets.Extra[98].Size() / 2, scale + 0.5f, 0.4f, 2.75f, Projectile.velocity.ToRotation(), MoreColor.PaleGray, Color.GhostWhite);
+                        MoreUtils.DrawStreak(TextureAssets.Extra[98], SpriteEffects.None, oldPos - Main.screenPosition, TextureAssets.Extra[98].Size() / 2, scale + 0.4f, 0.5f, 2.5f, Projectile.velocity.ToRotation(), MoreColor.PaleGray, Color.GhostWhite);
                     }
                 }
             }
