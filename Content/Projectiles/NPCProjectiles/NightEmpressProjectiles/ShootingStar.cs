@@ -116,7 +116,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             //starfire
             if (Projectile.timeLeft <= 120)
             {
-                Vector2 scale = new Vector2(Projectile.scale * Utils.GetLerpValue(110, 120, Projectile.timeLeft, true) * 2f);
+                Vector2 scale = new Vector2(Projectile.scale * Utils.GetLerpValue(120, 110, Projectile.timeLeft, true));
                 for (int i = 1; i <= 4; i++)
                 {
                     Vector2 offset = new Vector2(8, 0).RotatedBy(Projectile.localAI[1]).RotatedBy((MathHelper.TwoPi / 4) * i);

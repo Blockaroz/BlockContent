@@ -42,7 +42,7 @@ namespace BlockContent.Content.Projectiles.Holy
             Player player = Main.player[Projectile.owner];
 
             float lerpValue = Utils.GetLerpValue(900f, 0f, Projectile.velocity.Length() * 2f, true);
-            float num = MathHelper.Lerp(0.7f, 4f, lerpValue);
+            float num = MathHelper.Lerp(0.7f, 3.7f, lerpValue);
             Time += num;
             if (Time >= 120f)
             {
