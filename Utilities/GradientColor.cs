@@ -20,8 +20,9 @@ public struct GradientColor
     {
         get
         {
-            float t = Main.GameUpdateCount % _timeOnColor / _fadeSpeed;
-            int index = (int)((Main.GameUpdateCount / _timeOnColor) % _color.Length);
+            float count = Main.GlobalTimeWrappedHourly * 60;
+            float t = count % _timeOnColor / _fadeSpeed;
+            int index = (int)((count / _timeOnColor) % _color.Length);
             return Color.Lerp(_color[index], _color[(index + 1) % _color.Length], t);
         }
     }

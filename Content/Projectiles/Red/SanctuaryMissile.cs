@@ -17,7 +17,7 @@ namespace BlockContent.Content.Projectiles.Red
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sanctuary Missile");
-            ProjectileID.Sets.TrailCacheLength[Type] = 15;
+            ProjectileID.Sets.TrailCacheLength[Type] = 18;
             ProjectileID.Sets.TrailingMode[Type] = 3;
         }
 
@@ -79,7 +79,7 @@ namespace BlockContent.Content.Projectiles.Red
             Rectangle glowFrame = missileTexture.Frame(2, 1, 1, 0);
 
             Color glowColor = MoreColor.Sanguine;
-            glowColor.A /= 3;
+            glowColor.A /= 2;
             if (Projectile.ai[0] == 0)
             {
                 for (int i = 1; i < ProjectileID.Sets.TrailCacheLength[Type]; i++)
@@ -100,7 +100,7 @@ namespace BlockContent.Content.Projectiles.Red
                 //CameraUtils.Screenshake(scale * 1.5f, 10);
             }
 
-            if (Main.rand.Next(7) == 0)
+            if (Main.rand.Next(3) == 0)
             {
                 for (int i = 0; i < Main.rand.Next(1, 5); i++)
                 {

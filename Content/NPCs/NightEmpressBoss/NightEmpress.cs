@@ -11,6 +11,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.Drawing;
+using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -371,10 +372,12 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                     DashToTarget(targetPosition);
                 }
 
+                if (PhaseCounter >= 210)
+                    NPC.dontTakeDamage = false;
+
                 if (PhaseCounter >= 240)
                 {
                     Phase = _oldPhase;
-                    NPC.dontTakeDamage = false;
                     EnterPhaseTwo = false;
                     PhaseCounter = 0;
                 }
@@ -546,8 +549,9 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    Vector2 offset = new Vector2(MathHelper.Max(0, (float)Math.Sin(Main.GlobalTimeWrappedHourly % 50)), 0).RotatedBy(MathHelper.TwoPi / 4 * i);
-                    spriteBatch.Draw(bodyGlow.Value, NPC.Center + offset - screenPos, null, glowColor, NPC.rotation, bodyGlow.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+                    float sine = MathHelper.Max((float)Math.Sin(Main.GlobalTimeWrappedHourly % 3), 0);
+                    Vector2 offset = new Vector2(sine * 5, 0).RotatedBy(MathHelper.TwoPi / 4 * i);
+                    spriteBatch.Draw(bodyGlow.Value, NPC.Center + offset - screenPos, null, glowColor * ((sine * 0.5f) + 0.3f), NPC.rotation, bodyGlow.Size() / 2, NPC.scale, SpriteEffects.None, 0);
                 }
             }
 
@@ -626,7 +630,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
         public void HandleDrawColor(out Color drawColor, out Color glowColor)
         {
             drawColor = Color.White;
-            glowColor = Color.Transparent;
+            glowColor = NightColor(0.5f, true);
             if (Phase == 0)
             {
                 //spawn animation
@@ -637,6 +641,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 changeColor.A = (byte)(Utils.GetLerpValue(0, 18, PhaseCounter, true) * 5);
                 NPC.Opacity = appearFade;
                 drawColor = Color.Lerp(changeColor, Color.White, appearFade);
+                glowColor = Color.Lerp(changeColor, NightColor(0), appearFade);
             }
             
             if (Phase <= short.MinValue)
@@ -649,8 +654,10 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 changeColor.A = (byte)(Utils.GetLerpValue(90, 120, PhaseCounter, true) * 5);
                 NPC.Opacity = appearFade;
                 drawColor = Color.Lerp(Color.White, changeColor, appearFade);
-                glowColor = Color.Lerp(Color.Transparent, changeColor, appearFade);
+                glowColor = Color.Lerp(NightColor(0.5f, true), changeColor, appearFade);
             }
+
+            glowColor.A = 0;
         }
 
         public static int GlowDustID { get => ModContent.DustType<Dusts.HaloDust>(); }
@@ -671,19 +678,6 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
         public void CreateDusts()
         {
-            if (Phase <= short.MinValue)
-            {
-                Color glowColor = NightColor(Utils.GetLerpValue(95, 120, PhaseCounter, true));
-                glowColor.A /= 5;
-                Dust glowDust = Dust.NewDustDirect(NPC.Center - new Vector2(35, 48), 70, 80, GlowDustID, 0, 0, 0, glowColor, 1f);
-                glowDust.noGravity = true;
-                glowDust.velocity = glowDust.position.DirectionFrom(NPC.Center) * (NPC.Distance(glowDust.position) * 0.2f);
-                glowDust.velocity *= 0.93f;
-
-                Dust darkDust = Dust.NewDustDirect(NPC.Center - new Vector2(35, 24), 70, 80, DustID.Wraith, 0, -3, 9, NightBlack, 1f);
-                darkDust.noGravity = true;
-                darkDust.velocity = darkDust.position.DirectionFrom(NPC.Center) * (NPC.Distance(glowDust.position) * 0.3f);
-            }
             if (Phase == 3)
             {
                 Color color = NightColor(0);
