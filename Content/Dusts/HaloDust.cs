@@ -24,7 +24,7 @@ namespace BlockContent.Content.Dusts
 
         public override void SetStaticDefaults()
         {
-            UpdateType = DustID.Vortex;
+            UpdateType = 278;
         }
 
         public override Color? GetAlpha(Dust dust, Color lightColor) => dust.color;

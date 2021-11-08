@@ -30,7 +30,8 @@ public class CameraUtils : ModSystem
             return;
         }
 
-        Main.screenPosition.X += Main.rand.NextFloat(-_shakeIntensity, _shakeIntensity);
-        Main.screenPosition.Y += Main.rand.NextFloat(-_shakeIntensity, _shakeIntensity);
+        Vector2 shakeVector = new Vector2(Main.rand.NextFloat(-_shakeIntensity, _shakeIntensity), Main.rand.NextFloat(-_shakeIntensity, _shakeIntensity));
+        Main.screenPosition.X += shakeVector.X;
+        Main.screenPosition.Y += shakeVector.Y;
     }
 }

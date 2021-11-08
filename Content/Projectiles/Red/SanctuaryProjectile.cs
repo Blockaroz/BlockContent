@@ -70,6 +70,9 @@ namespace BlockContent.Content.Projectiles.Red
                     Projectile.frame = 0;
             }
             float randomRotation = MathHelper.ToRadians(Main.rand.NextFloat(-0.66f, 0.66f));
+
+
+
             if (tryShoot && Main.myPlayer == Projectile.owner)
             {
                 Item selection = player.inventory[player.selectedItem];
@@ -119,7 +122,7 @@ namespace BlockContent.Content.Projectiles.Red
                     if (missile == 0)
                     {
                         bulletType = ModContent.ProjectileType<SanctuaryMissile>();
-                        bulletSpeed = 10f;
+                        bulletSpeed = 13f;
                         for (int n = 0; n < 1; n++)
                         {
                             Vector2 missileDir = Vector2.Normalize(Projectile.velocity) * bulletSpeed;

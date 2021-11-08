@@ -38,6 +38,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
 
             NPCID.Sets.BossBestiaryPriority.Add(Type);
+            NPCID.Sets.ShouldBeCountedAsBoss[Type] = true;
         }
 
         public override string BossHeadTexture => "BlockContent/Content/NPCs/NightEmpressBoss/NightEmpress_BossHead";
@@ -119,7 +120,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             if (Main.netMode != NetmodeID.MultiplayerClient && Phase != 0)
             {
                 TryDespawn(target);
-                TryPhaseTwo();
+                TryPhaseTwo(targetPos + targetPosOffset);
             }
 
             if (Phase == 0) //Spawn
@@ -216,9 +217,12 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 const int stopMovement = 220;
 
                 if (PhaseCounter < stopMovement)
-                    MoveToTarget(targetPos + new Vector2(-100 * _direction, -400), 0.5f, 10);
+                {
+                    float speed = Utils.GetLerpValue(190, 0, PhaseCounter, true) * 0.5f;
+                    MoveToTarget(targetPos + new Vector2(-200 * _direction, -360), speed, 10);
+                }
                 else
-                    NPC.velocity *= 0.3f;
+                    NPC.velocity = Vector2.Zero;
 
                 if (PhaseCounter == createCircle)
                     SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/NightEmpress/EmpressRuneCharge"), NPC.Center);
@@ -285,19 +289,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             }
         }
 
-        private void Debug(NPCAimedTarget target)
-        {
-            if (PhaseCounter == 0)
-            {
-                Main.NewText("Phase: " + Phase, Color.Red);
-                Main.NewText("PhaseCounter: " + PhaseCounter, Color.DarkRed);
-                Main.NewText(target, Color.DarkGoldenrod);
-                for (int i = 0; i < damageValue.Length; i++)
-                {
-                    Main.NewText("damageValue[" + i + "]: " + damageValue[i], Color.MediumPurple);
-                }
-            }
-        }
+        #region Phase Checks
 
         private bool NightRage()
         {
@@ -350,50 +342,46 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             }
         }
 
-        public void TryPhaseTwo()
+        private float _oldPhase = 0;
+
+        public void TryPhaseTwo(Vector2 targetPosition)
         {
             if (!EnterPhaseTwo)
             {
                 bool notAttacking = PhaseCounter == 0;
                 bool lifeCheck = NPC.life < (NPC.lifeMax / 2);
-                EnterPhaseTwo = EnterPhaseTwo || (notAttacking && lifeCheck && !ShouldDespawn);
+                EnterPhaseTwo = EnterPhaseTwo || (notAttacking && lifeCheck && !ShouldDespawn && !(State == 1));
             }
 
             if (EnterPhaseTwo)
             {
                 if (PhaseCounter == 0 && Phase > 0)
-                    Phase += 0.5f;
-
+                {
+                    _oldPhase = Phase;
+                    Phase = short.MaxValue; 
+                    NPC.dontTakeDamage = true;
+                }
                 PhaseCounter++;
-                NPC.dontTakeDamage = true;
+
+                NPC.velocity *= 0;
+
+                if (PhaseCounter > 100 && PhaseCounter <= 120)
+                {
+                    State = 1;
+                    DashToTarget(targetPosition);
+                }
+
+                if (PhaseCounter >= 240)
+                {
+                    Phase = _oldPhase;
+                    NPC.dontTakeDamage = false;
+                    EnterPhaseTwo = false;
+                    PhaseCounter = 0;
+                }
             }
         }
 
-        public int[] damageValue = new int[8];
-
-        public void HandleDamageValues()
-        {
-            damageValue[0] = 90;//Contact Damage
-            //Note: Projectile damage is multiplied by 2 by default.
-            damageValue[1] = 95;
-            damageValue[2] = 36;//Shooting Star Barrage
-            damageValue[3] = 95;//Explosi
-            damageValue[4] = 52;//Flowering Night
-            damageValue[5] = 0;
-            damageValue[6] = 0;
-            damageValue[7] = 0;
-
-            if (Phase == 0)
-                damageValue[0] = -1;
-
-            NPC.damage = damageValue[0];
-
-            for (int i = 0; i < damageValue.Length; i++)
-            {
-                if (NightRage() || Main.getGoodWorld)
-                    damageValue[i] = 9999;
-            }
-        }
+        #endregion
 
         #region Movement
 
@@ -428,6 +416,32 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
         }
 
         #endregion
+
+        public int[] damageValue = new int[8];
+
+        public void HandleDamageValues()
+        {
+            damageValue[0] = 90;//Contact Damage
+            //Note: Projectile damage is multiplied by 2 by default.
+            damageValue[1] = 95;
+            damageValue[2] = 36;//Shooting Star Barrage
+            damageValue[3] = 95;//Explosi
+            damageValue[4] = 52;//Flowering Night
+            damageValue[5] = 0;
+            damageValue[6] = 0;
+            damageValue[7] = 0;
+
+            if (Phase == 0)
+                damageValue[0] = -1;
+
+            NPC.damage = damageValue[0];
+
+            for (int i = 0; i < damageValue.Length; i++)
+            {
+                if (NightRage() || Main.getGoodWorld)
+                    damageValue[i] = 9999;
+            }
+        }
 
         #region Attacks
 
@@ -514,16 +528,29 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             CreateDusts();
         }
 
-        public void DrawEmpress(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor, Color glowColor, bool wingOverlay = true)
+        public void DrawEmpress(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor, Color glowColor, bool includeGlows = true)
         {
             Asset<Texture2D> body = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/NightEmpress");
+            Asset<Texture2D> bodyGlow = Mod.Assets.Request<Texture2D>("Content/NPCs/NightEmpressBoss/NightEmpress_Glow");
+            //Asset<Texture2D> spikes
             Rectangle? frame = body.Frame(1, 2, 0, (int)State);
 
-            DrawWings(spriteBatch, screenPos, drawColor, wingOverlay);
+            DrawWings(spriteBatch, screenPos, drawColor, includeGlows);
             if (State == 1)
             {
+                //draw spikes
+                //if (includeGlows) { }
             }
             spriteBatch.Draw(body.Value, NPC.Center - screenPos, frame, drawColor, NPC.rotation, new Vector2(frame.Value.Width, frame.Value.Height) / 2, NPC.scale, SpriteEffects.None, 0);
+            if (State == 1 && includeGlows)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    Vector2 offset = new Vector2(MathHelper.Max(0, (float)Math.Sin(Main.GlobalTimeWrappedHourly % 50)), 0).RotatedBy(MathHelper.TwoPi / 4 * i);
+                    spriteBatch.Draw(bodyGlow.Value, NPC.Center + offset - screenPos, null, glowColor, NPC.rotation, bodyGlow.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+                }
+            }
+
             //DrawArms
 
         }
@@ -659,19 +686,23 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             }
             if (Phase == 3)
             {
-                if (PhaseCounter > 240 && PhaseCounter <= 380)
+                Color color = NightColor(0);
+                color.A = 0;
+                for (int i = 0; i < Main.rand.Next(70, 120); i++)
                 {
-                    Vector2 position = Main.rand.NextVector2CircularEdge(200, 200);
-                    Vector2 glowVelocity = Main.rand.NextVector2CircularEdge(6, 6);
-                    Color color = NightColor(0);
-                    color.A /= 5;
-                    Dust glowDust = Dust.NewDustPerfect(NPC.Center + position, GlowDustID, glowVelocity, 0, color, 1f);
-                    glowDust.noGravity = true;
-                    if (Main.rand.Next(2) == 0)
+                    if (PhaseCounter <= 220 && PhaseCounter > 40 && PhaseCounter % 54 == 0)
                     {
-                        Vector2 shadeVelocity = Main.rand.NextVector2CircularEdge(9, 9);
-                        Dust shadeDust = Dust.NewDustPerfect(NPC.Center + position, DustID.Wraith, shadeVelocity, 0, NightBlack, 1f);
-                        shadeDust.noGravity = true;
+                        float size = Main.rand.Next(250, 300);
+                        Vector2 position = Main.rand.NextVector2CircularEdge(size, size);
+                        Dust dust = Dust.NewDustPerfect(NPC.Center + position, GlowDustID, Vector2.Zero, 0, color, 1f);
+                        dust.noGravity = true;
+                        dust.velocity = NPC.velocity + dust.position.DirectionTo(NPC.Center) * Main.rand.NextFloat(7, 9);
+                    }
+                    if (PhaseCounter == 240)
+                    {
+                        Vector2 speed = Main.rand.NextVector2Circular(100, 100);
+                        Dust dust = Dust.NewDustDirect(NPC.Center - new Vector2(10), 20, 20, GlowDustID, speed.X, speed.Y, 0, color, 1f);
+                        dust.noGravity = true;
                     }
                 }
             }

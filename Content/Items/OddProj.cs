@@ -10,7 +10,7 @@ namespace BlockContent.Content.Items
 {
     public class OddProj : ModProjectile
     {
-        public override string Texture => "BlockContent/Assets/Textures/BlessingChad/BlessingChad1";
+        public override string Texture => "BlockContent/Assets/Textures/Glowball_" + (short)0;
 
         public override void SetStaticDefaults()
         {

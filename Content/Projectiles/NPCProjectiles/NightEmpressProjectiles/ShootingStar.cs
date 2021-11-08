@@ -66,8 +66,8 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 }
             }
 
-            if (Projectile.timeLeft == 130)
-                Projectile.velocity += new Vector2(33, 0).RotatedBy(_lineRotation);//speed of projectile
+            if (Projectile.timeLeft == 120)
+                Projectile.velocity += new Vector2(40, 0).RotatedBy(_lineRotation);//speed of projectile
 
             if (Projectile.timeLeft == 69)
                 Projectile.localAI[0]++;
@@ -81,7 +81,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
         {
             if (Projectile.localAI[0] == 1)
             {
-                float timeLerp = Utils.GetLerpValue(70, 100, Projectile.timeLeft, true);
+                float timeLerp = MoreUtils.DualLerp(120, 110, 70, Projectile.timeLeft, true);
                 float lineLength = Utils.GetLerpValue(0f, 128f, _distance);
                 Color lineColor = NightEmpress.NightColor(0);
                 lineColor.A /= 5;
@@ -92,14 +92,13 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
 
             Asset<Texture2D> star = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/ShootingStar");
             Asset<Texture2D> starTrail = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/ShootingStar_Trail");
-            Asset<Texture2D> flashBall = Mod.Assets.Request<Texture2D>("Assets/Textures/Glowball_" + (short)0);
-
+            
             Color starColor = NightEmpress.NightColor(0, true);
             starColor.A /= 4;
             Color starAfterImageColor = NightEmpress.NightColor(0);
-            starAfterImageColor.A /= 5;
+            starAfterImageColor.A = 12;
             Color starTrailColor = NightEmpress.NightColor(1);
-            starTrailColor.A /= 5;
+            starTrailColor.A = 12;
 
             Projectile.localAI[1] += 0.05f * Projectile.direction;
             if (Projectile.localAI[1] >= MathHelper.TwoPi || Projectile.localAI[1] <= -MathHelper.TwoPi)
@@ -135,8 +134,8 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Main.EntitySpriteDraw(star.Value, Projectile.Center - Main.screenPosition, null, NightEmpress.NightBlack, Projectile.localAI[1] * 4, star.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
 
             //flash
-            float flashScale = MoreUtils.DualLerp(140, 135, 120, Projectile.timeLeft, true);
-            MoreUtils.DrawStreak(flashBall, SpriteEffects.None, Projectile.Center - Main.screenPosition, flashBall.Size() / 2, flashScale, 5, 5, Projectile.localAI[1] * 4, starTrailColor, starAfterImageColor);
+            float flashScale = MoreUtils.DualLerp(145, 144, 120, Projectile.timeLeft, true);
+            MoreUtils.DrawSparkle(TextureAssets.Extra[98], SpriteEffects.None, Projectile.Center - Main.screenPosition, TextureAssets.Extra[98].Size() / 2, flashScale, 3, 4, 4, Projectile.localAI[1] * -4, starTrailColor, starAfterImageColor, alpha: 12);
 
             return false;
         }
