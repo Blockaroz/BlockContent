@@ -478,9 +478,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
         {
             Color light = new Color(162, 95, 234);
             Color lightEnrage = new Color(154, 54, 255);
-            Color dark = new Color(73, 30, 123);
+            Color dark = new Color(60, 30, 123);
             //new Color(73, 30, 123);
-            //new Color(105, 0, 205);
 
             if (useSecondColor == true)
                 lightEnrage = new GradientColor(new Color[] { new Color(255, 200, 100), new Color(255, 155, 255), new Color(100, 255, 200) }, 0.5f).Value;
@@ -550,7 +549,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 for (int i = 0; i < 4; i++)
                 {
                     float sine = MathHelper.Max((float)Math.Sin(Main.GlobalTimeWrappedHourly % 3), 0);
-                    Vector2 offset = new Vector2(sine * 5, 0).RotatedBy(MathHelper.TwoPi / 4 * i);
+                    Vector2 offset = new Vector2(sine * 4, 0).RotatedBy(MathHelper.TwoPi / 4 * i);
                     spriteBatch.Draw(bodyGlow.Value, NPC.Center + offset - screenPos, null, glowColor * ((sine * 0.5f) + 0.3f), NPC.rotation, bodyGlow.Size() / 2, NPC.scale, SpriteEffects.None, 0);
                 }
             }

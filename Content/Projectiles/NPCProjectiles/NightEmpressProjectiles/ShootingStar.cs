@@ -92,6 +92,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
 
             Asset<Texture2D> star = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/ShootingStar");
             Asset<Texture2D> starTrail = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/ShootingStar_Trail");
+            Asset<Texture2D> starSparkle = Mod.Assets.Request<Texture2D>("Assets/Textures/Streak_" + (short)0);
             
             Color starColor = NightEmpress.NightColor(0, true);
             starColor.A /= 4;
@@ -113,29 +114,30 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             }
 
             //starfire
-            float xSquish = MathHelper.Lerp(1f, 0.5f, Utils.GetLerpValue(0, 90, Projectile.velocity.Length()));
-            float ySquish = MathHelper.Lerp(1.8f, 0.2f, Utils.GetLerpValue(70, 0, Projectile.velocity.Length()));
-            Vector2 trailSquish = new Vector2(Projectile.scale * xSquish, Projectile.scale * ySquish);
-            for (int i = 1; i <= 4; i++)
+            if (Projectile.timeLeft <= 120)
             {
-                Vector2 offset = new Vector2(8, 0).RotatedBy(Projectile.localAI[1]).RotatedBy((MathHelper.TwoPi / 4) * i);
-                Main.EntitySpriteDraw(starTrail.Value, Projectile.Center + offset - Main.screenPosition, null, starTrailColor * 0.4f, Projectile.oldRot[2] + MathHelper.PiOver2, new Vector2(19), trailSquish * 1.4f, SpriteEffects.None, 0); ;
-            }
-            Main.EntitySpriteDraw(starTrail.Value, Projectile.Center - Main.screenPosition, null, starTrailColor, Projectile.oldRot[2] + MathHelper.PiOver2, new Vector2(19), trailSquish, SpriteEffects.None, 0); ;
+                Vector2 scale = new Vector2(Projectile.scale * Utils.GetLerpValue(110, 120, Projectile.timeLeft, true) * 2f);
+                for (int i = 1; i <= 4; i++)
+                {
+                    Vector2 offset = new Vector2(8, 0).RotatedBy(Projectile.localAI[1]).RotatedBy((MathHelper.TwoPi / 4) * i);
+                    Main.EntitySpriteDraw(starTrail.Value, Projectile.Center + offset - Main.screenPosition, null, starTrailColor * 0.4f, Projectile.oldRot[2] + MathHelper.PiOver2, new Vector2(starTrail.Width() / 2), scale * 1.4f, SpriteEffects.None, 0); ;
+                }
+                Main.EntitySpriteDraw(starTrail.Value, Projectile.Center - Main.screenPosition, null, starTrailColor, Projectile.oldRot[2] + MathHelper.PiOver2, new Vector2(starTrail.Width() / 2), scale, SpriteEffects.None, 0); ;
 
+            }
             //star
             Vector2 oldPos = Projectile.oldPos[1] + (Projectile.Size / 2);
             Main.EntitySpriteDraw(star.Value, oldPos - Main.screenPosition, null, starAfterImageColor * 0.5f, Projectile.localAI[1] * 3, star.Size() / 2, Projectile.scale * 1.4f, SpriteEffects.None, 0);
             for (int i = 1; i <= 5; i++)
             {
-                Vector2 offset = new Vector2(4, 0).RotatedBy((MathHelper.TwoPi / 5) * i).RotatedBy(Projectile.localAI[1]);
+                Vector2 offset = new Vector2(3, 0).RotatedBy((MathHelper.TwoPi / 5) * i).RotatedBy(Projectile.localAI[1]);
                 Main.EntitySpriteDraw(star.Value, Projectile.Center + offset - Main.screenPosition, null, starColor, Projectile.localAI[1] * 4, star.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
             }
             Main.EntitySpriteDraw(star.Value, Projectile.Center - Main.screenPosition, null, NightEmpress.NightBlack, Projectile.localAI[1] * 4, star.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
 
             //flash
             float flashScale = MoreUtils.DualLerp(145, 144, 120, Projectile.timeLeft, true);
-            MoreUtils.DrawSparkle(TextureAssets.Extra[98], SpriteEffects.None, Projectile.Center - Main.screenPosition, TextureAssets.Extra[98].Size() / 2, flashScale, 3, 4, 4, Projectile.localAI[1] * -4, starTrailColor, starAfterImageColor, alpha: 12);
+            MoreUtils.DrawSparkle(starSparkle, SpriteEffects.None, Projectile.Center - Main.screenPosition, starSparkle.Size() / 2, flashScale, 3, 2, 2, Projectile.localAI[1] * -4, starTrailColor, starColor, alpha: 12);
 
             return false;
         }
