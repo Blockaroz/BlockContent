@@ -192,10 +192,10 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                         SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/NightEmpress/EmpressShootingStars"), NPC.Center);
 
                     if (PhaseCounter <= blastTime)
-                        ShootingStarBarrage(6, offsetX);
+                        ShootingStarBarrage(5, offsetX);
 
                     if (PhaseCounter > blastTime + 20 && PhaseCounter <= blastTimeSecond)
-                        ShootingStarBarrage(10, offsetX);
+                        ShootingStarBarrage(7, offsetX);
                 }
 
                 if (PhaseCounter > attackLength && PhaseCounter <= attackLength + dashCap)
