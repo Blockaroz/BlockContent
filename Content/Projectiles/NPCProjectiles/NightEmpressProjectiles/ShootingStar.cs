@@ -137,7 +137,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
 
             //flash
             float flashScale = MoreUtils.DualLerp(145, 144, 120, Projectile.timeLeft, true);
-            MoreUtils.DrawSparkle(starSparkle, SpriteEffects.None, Projectile.Center - Main.screenPosition, starSparkle.Size() / 2, flashScale, 3, 2, 2, Projectile.localAI[1] * -4, starTrailColor, starColor, alpha: 12);
+            MoreUtils.DrawSparkle(starSparkle, SpriteEffects.None, Projectile.Center - Main.screenPosition, starSparkle.Size() / 2, flashScale, 4, 3, 3, Projectile.localAI[1] * -4, starTrailColor, starColor, alpha: 12);
 
             return false;
         }

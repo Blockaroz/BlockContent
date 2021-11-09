@@ -33,7 +33,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
         public override void AI()
         {
             const float twoDegrees = MathHelper.Pi / 360f;
-            const float value = 15;//Lower is stronger
+            const float value = 10;//Lower is stronger
             float rot = Projectile.ai[0] * Projectile.ai[1];
 
             Projectile.velocity = Projectile.velocity.RotatedBy(rot);
