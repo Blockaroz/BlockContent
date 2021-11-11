@@ -41,9 +41,9 @@ namespace BlockContent.Content.Projectiles.Holy
         {
             Player player = Main.player[Projectile.owner];
 
-            float lerpValue = Utils.GetLerpValue(900f, 0f, Projectile.velocity.Length() * 2f, true);
-            float num = MathHelper.Lerp(0.7f, 3.7f, lerpValue);
-            Time += num;
+            float slashLength = Utils.GetLerpValue(880, 0, Projectile.velocity.Length() * 1.1f, true);
+            float timeValue = MathHelper.Lerp(0.7f, 3.9f, slashLength);
+            Time += timeValue;
             if (Time >= 120f)
             {
                 Projectile.Kill();
@@ -58,7 +58,7 @@ namespace BlockContent.Content.Projectiles.Holy
             if (modifiedLength < 60f)
                 modifiedLength = 60f;
 
-            Vector2 spinningpoint = new Vector2(1f, 0f).RotatedBy(rotation) * new Vector2(modifiedLength, Projectile.ai[0] * MathHelper.Lerp(2f, 1f, lerpValue));
+            Vector2 spinningpoint = new Vector2(1f, 0f).RotatedBy(rotation) * new Vector2(modifiedLength, Projectile.ai[0] * MathHelper.Lerp(2f, 1f, slashLength));
             Vector2 value2 = (player.MountedCenter) + spinningpoint.RotatedBy(velocityAngle);
             Vector2 value3 = (1f - Utils.GetLerpValue(0f, 0.5f, timeLerp, clamped: true)) * new Vector2(direction * (0f - modifiedLength) * 0.1f, (0f - Projectile.ai[0]) * 0.3f);
             Projectile.rotation = rotation + velocityAngle + MathHelper.PiOver2;

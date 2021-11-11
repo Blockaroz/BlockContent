@@ -133,7 +133,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 Vector2 offset = new Vector2(3, 0).RotatedBy((MathHelper.TwoPi / 5) * i).RotatedBy(Projectile.localAI[1]);
                 Main.EntitySpriteDraw(star.Value, Projectile.Center + offset - Main.screenPosition, null, starColor, Projectile.localAI[1] * 4, star.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
             }
-            Main.EntitySpriteDraw(star.Value, Projectile.Center - Main.screenPosition, null, NightEmpress.NightBlack, Projectile.localAI[1] * 4, star.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(star.Value, Projectile.Center - Main.screenPosition, null, MoreColor.NightSky, Projectile.localAI[1] * 4, star.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
 
             //flash
             float flashScale = MoreUtils.DualLerp(145, 144, 120, Projectile.timeLeft, true);
