@@ -22,7 +22,7 @@ public class CameraUtils : ModSystem
         if (_shakeTime < _shakeDuration)
             _shakeTime++;
 
-        if (_shakeTime > _shakeDuration)
+        if (_shakeTime >= _shakeDuration)
         {
             _shakeIntensity = 0;
             _shakeDuration = 0;

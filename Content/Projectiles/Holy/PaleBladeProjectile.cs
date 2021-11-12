@@ -110,7 +110,7 @@ namespace BlockContent.Content.Projectiles.Holy
             {
                 for (int i = 1; i < 27; i++)
                 {
-                    if (Main.rand.Next(5) == 0)
+                    if (Main.rand.Next(6) == 0)
                     {
                         float scale = MoreUtils.DualLerp(10, 40, 50, 80, Time, true);
                         Vector2 oldPos = Projectile.oldPos[i] + (Projectile.Size / 2);

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using static Microsoft.Xna.Framework.Color;
 
 public struct MoreColor
 {

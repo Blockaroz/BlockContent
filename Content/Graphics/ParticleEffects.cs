@@ -33,7 +33,7 @@ namespace BlockContent.Content.Graphics
             {
                 PrettySparkleParticle particle = new PrettySparkleParticle();
                 particle.Velocity = settings.MovementVector * 0.2f;
-                particle.Scale = new Vector2(Main.rand.NextFloat());
+                particle.Scale = new Vector2(Main.rand.NextFloat(), Main.rand.NextFloat());
                 particle.Rotation = MathHelper.PiOver2;
                 particle.ColorTint = color;
                 particle.ColorTint.A /= 2;

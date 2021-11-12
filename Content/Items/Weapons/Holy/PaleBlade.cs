@@ -13,7 +13,7 @@ namespace BlockContent.Content.Items.Weapons.Holy
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Holy Blade");
-            Tooltip.SetDefault("'The pinnacle of control'");
+            Tooltip.SetDefault("'Coalesce and control'");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 

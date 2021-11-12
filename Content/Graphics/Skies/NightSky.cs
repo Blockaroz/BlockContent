@@ -33,7 +33,7 @@ namespace BlockContent.Content.Skies
         public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
         {
             if (maxDepth >= float.MinValue && minDepth < float.MaxValue)
-                spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.Black * 0.2f * _opacity);
+                spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.Lerp(MoreColor.NightSky, Color.Black, 0.4f) * 0.2f * _opacity);
         }
 
         public override void Update(GameTime gameTime)
