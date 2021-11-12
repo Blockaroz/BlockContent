@@ -302,7 +302,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                     Projectile radial = Projectile.NewProjectileDirect(NPC.GetProjectileSpawnSource(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<RuneCircle>(), damageValue[4], 0);
                     radial.ai[0] = 190;
                     radial.ai[1] = NPC.whoAmI;
-                    Main.LocalPlayer.AddBuff(BuffID.Obstructed, 100);
+                    //Main.LocalPlayer.AddBuff(BuffID.Obstructed, 100);
                 }
                 if (PhaseCounter >= explode)
                 {
@@ -668,7 +668,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                     Vector2 placeInSentenceGlow = placeInSentence + new Vector2(Main.rand.NextFloat(-4, 4) * scaleValue, Main.rand.NextFloat(-1, 1) * scaleValue).RotatedBy((MathHelper.TwoPi / 4 * j) + MathHelper.PiOver4);
                     spriteBatch.Draw(font.Value, NPC.Center + placeInSentenceGlow - screenPos, frame, lightShade, runeRotation + MathHelper.PiOver2, frame.Value.Size() / 2, scaleValue, SpriteEffects.None, 0);
                 }
-                spriteBatch.Draw(font.Value, NPC.Center + placeInSentence - screenPos, frame, Color.Lerp(Color.White, nightShade, 0.8f) * opacity, runeRotation + MathHelper.PiOver2, frame.Value.Size() / 2, scaleValue, SpriteEffects.None, 0);
+                spriteBatch.Draw(font.Value, NPC.Center + placeInSentence - screenPos, frame, nightShade * opacity, runeRotation + MathHelper.PiOver2, frame.Value.Size() / 2, scaleValue, SpriteEffects.None, 0);
             }
         }
 
@@ -702,7 +702,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             }
             if (Phase == 4)
             {
-                float fade = MoreUtils.DualLerp(220, 260, 300, 340, PhaseCounter, true) * 0.8f;
+                float fade = MoreUtils.DualLerp(200, 250, 300, 360, PhaseCounter, true);
                 drawColor = Color.Lerp(Color.White, MoreColor.NightSky, fade);
             }
 
