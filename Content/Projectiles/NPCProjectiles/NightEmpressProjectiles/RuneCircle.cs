@@ -45,11 +45,8 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            float distance = targetHitbox.Distance(Projectile.Center);
-            if (distance < _safeRadius)
-                return false;
-
-            if (distance > 7800f)
+            bool isSafe = targetHitbox.Distance(Projectile.Center) < _safeRadius && targetHitbox.Distance(Projectile.Center) > 7200f;
+            if (isSafe)
                 return false;
 
             return true;

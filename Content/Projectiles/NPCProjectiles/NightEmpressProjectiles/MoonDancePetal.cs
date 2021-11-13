@@ -78,7 +78,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
 
             Vector2 scale = new Vector2(0.8f, 0.66f) * Projectile.scale;
 
-            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, baseFrame, Color.Black * 0.15f, Projectile.rotation, origin, scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, baseFrame, Color.Black * 0.15f, Projectile.rotation, origin, scale * 1.1f, SpriteEffects.None, 0);
             Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, baseFrame, light, Projectile.rotation, origin, scale * 0.95f, SpriteEffects.None, 0);
             //overlay
             Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, overlayFrame, night, Projectile.rotation, origin, scale * 0.92f, SpriteEffects.None, 0);
