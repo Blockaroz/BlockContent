@@ -41,8 +41,8 @@ namespace BlockContent.Content.Projectiles.Holy
         {
             Player player = Main.player[Projectile.owner];
 
-            float slashLength = Utils.GetLerpValue(880, 0, Projectile.velocity.Length() * 1.1f, true);
-            float timeValue = MathHelper.Lerp(0.7f, 3.9f, slashLength);
+            float slashLength = Utils.GetLerpValue(900, 0, Projectile.velocity.Length() * 2f, true);
+            float timeValue = MathHelper.Lerp(1f, 3.5f, slashLength);
             Time += timeValue;
             if (Time >= 120f)
             {

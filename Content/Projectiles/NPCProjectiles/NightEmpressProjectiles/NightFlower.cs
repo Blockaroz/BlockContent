@@ -64,9 +64,9 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
 
             Asset<Texture2D> baseTexture = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/NightFlower");
 
-            Color nightShade = NightEmpress.GlowColor(0, true);
+            Color nightShade = NightEmpress.SpecialColor(0, true);
             nightShade.A = 25;
-            Color darkShade = NightEmpress.GlowColor(1);
+            Color darkShade = NightEmpress.SpecialColor(1);
             darkShade.A = 0;
 
             Vector2 origin = new Vector2(29, 27);
@@ -77,7 +77,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             for (int i = 1; i < ProjectileID.Sets.TrailCacheLength[Type]; i++)
             {
                 float trailLerp = 0.3f + (Utils.GetLerpValue(ProjectileID.Sets.TrailCacheLength[Type], 0, i, true) * 0.7f);
-                Color trailColor = NightEmpress.GlowColor(Utils.GetLerpValue(5, ProjectileID.Sets.TrailCacheLength[Type], i, true));
+                Color trailColor = NightEmpress.SpecialColor(Utils.GetLerpValue(5, ProjectileID.Sets.TrailCacheLength[Type], i, true));
                 trailColor.A = 0;
                 Vector2 oldposition = Projectile.oldPos[i] + (Projectile.Size / 2);
 

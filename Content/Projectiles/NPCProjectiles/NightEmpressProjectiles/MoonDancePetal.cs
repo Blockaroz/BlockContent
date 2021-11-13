@@ -71,9 +71,9 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Rectangle baseFrame = texture.Frame(1, 2, 0, 0);
             Rectangle overlayFrame = texture.Frame(1, 2, 0, 1);
             Vector2 origin = baseFrame.Size() * new Vector2(0.04f, 0.5f);
-            Color light = NightEmpress.GlowColor(0.66f);
+            Color light = NightEmpress.SpecialColor(0.66f);
             light.A = 25;
-            Color night = NightEmpress.GlowColor(0, true);
+            Color night = NightEmpress.SpecialColor(0, true);
             night.A = 25;
 
             Vector2 scale = new Vector2(0.8f, 0.66f) * Projectile.scale;

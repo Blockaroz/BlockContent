@@ -24,7 +24,7 @@ namespace BlockContent.Content.Items.Weapons.Holy
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 24;
             Item.useTime = Item.useAnimation / 3;
-            Item.damage = 190;
+            Item.damage = 240;
             Item.DamageType = DamageClass.Melee;
             Item.crit = 12;
             Item.knockBack = 5;

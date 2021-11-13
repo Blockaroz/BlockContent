@@ -83,7 +83,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             {
                 float timeLerp = MoreUtils.DualLerp(140, 120, 90, Projectile.timeLeft, true);
                 float lineLength = Utils.GetLerpValue(0f, 128f, _distance);
-                Color lineColor = NightEmpress.GlowColor(0);
+                Color lineColor = NightEmpress.SpecialColor(0);
                 lineColor.A /= 5;
                 Main.EntitySpriteDraw(TextureAssets.Extra[178].Value, _linePosition - Main.screenPosition, null, lineColor * timeLerp, _lineRotation, Vector2.One, new Vector2(lineLength, 1.5f), SpriteEffects.None, 0);
             }
@@ -94,11 +94,11 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Asset<Texture2D> starTrail = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/ShootingStar_Trail");
             Asset<Texture2D> starSparkle = Mod.Assets.Request<Texture2D>("Assets/Textures/Streak_" + (short)0);
             
-            Color starColor = NightEmpress.GlowColor(0, true);
+            Color starColor = NightEmpress.SpecialColor(0, true);
             starColor.A = 25;
-            Color starAfterImageColor = NightEmpress.GlowColor(0);
+            Color starAfterImageColor = NightEmpress.SpecialColor(0);
             starAfterImageColor.A = 12;
-            Color starTrailColor = NightEmpress.GlowColor(1);
+            Color starTrailColor = NightEmpress.SpecialColor(1);
             starTrailColor.A = 12;
 
             Projectile.localAI[1] += 0.05f * Projectile.direction;
