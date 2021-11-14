@@ -43,7 +43,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 float rotation = Utils.GetLerpValue(_maxTime, 15, Projectile.localAI[0], true);
                 Projectile.rotation = Projectile.ai[0] - (rotation * MathHelper.ToRadians(45));
 
-                float centerLerp = MathHelper.SmoothStep(0, 1, MoreUtils.DualLerp(30, 60, _maxTime - 90, _maxTime - 60, Projectile.localAI[0], true));
+                float centerLerp = MathHelper.SmoothStep(0, 1, MoreUtils.DualLerp(45, _maxTime - 90, _maxTime - 45, Projectile.localAI[0], true));
                 _modifiedCenter = Projectile.Center + new Vector2(centerLerp * 340, 0).RotatedBy(Projectile.rotation);
             }
             else
@@ -74,7 +74,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Asset<Texture2D> texture = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/MoonDancePetal");
             Rectangle baseFrame = texture.Frame(1, 2, 0, 0);
             Rectangle overlayFrame = texture.Frame(1, 2, 0, 1);
-            Vector2 origin = baseFrame.Size() * new Vector2(0.04f, 0.5f);
+            Vector2 origin = baseFrame.Size() * new Vector2(0.08f, 0.5f);
             Color dark = NightEmpress.SpecialColor(1);
             dark.A = 25;
             Color light = NightEmpress.SpecialColor(0);
@@ -82,7 +82,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Color night = NightEmpress.SpecialColor(0, true);
             night.A = 25;
 
-            Vector2 scale = new Vector2(0.8f, 0.66f) * Projectile.scale;
+            Vector2 scale = new Vector2(0.9f, 0.7f) * Projectile.scale;
 
             Main.EntitySpriteDraw(texture.Value, _modifiedCenter - Main.screenPosition, baseFrame, Color.Black * 0.15f, Projectile.rotation, origin, scale * 1.1f, SpriteEffects.None, 0);
             Main.EntitySpriteDraw(texture.Value, _modifiedCenter - Main.screenPosition, baseFrame, dark, Projectile.rotation, origin, scale, SpriteEffects.None, 0);

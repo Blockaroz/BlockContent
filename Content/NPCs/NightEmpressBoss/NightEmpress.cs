@@ -202,14 +202,14 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                         MoonDanceProjectiles(9, Main.rand.NextFloat() * MathHelper.TwoPi);
 
                     if (PhaseCounter % interval <= 50 && NPC.Distance(targetPos) > 250)
-                        NPC.velocity += NPC.DirectionTo(targetPos).SafeNormalize(Vector2.Zero) * Utils.GetLerpValue(20, 200, NPC.Distance(targetPos)) * 0.4f;
+                        NPC.velocity += NPC.DirectionTo(targetPos).SafeNormalize(Vector2.Zero) * Utils.GetLerpValue(20, 200, NPC.Distance(targetPos)) * 0.3f;
                     else
                         NPC.velocity = NPC.velocity.RotatedBy(MathHelper.ToRadians(0.1f) * _direction) * 0.98f;
 
 
                 }
                 if (PhaseCounter == 280)
-                    NPC.velocity = NPC.DirectionFrom(targetPos).SafeNormalize(Vector2.Zero) * 12;
+                    NPC.velocity = NPC.DirectionFrom(targetPos).SafeNormalize(Vector2.Zero) * 10;
 
                 if (PhaseCounter > attackLength)
                 {
