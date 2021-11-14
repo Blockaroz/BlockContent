@@ -162,7 +162,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 if (PhaseCounter >= 240)
                 {
                     NPC.dontTakeDamage = false;
-                    Phase = 6;
+                    Phase++;
                     PhaseCounter = -1;
                 }
             }
@@ -379,9 +379,9 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                         new Vector2(0, -550)
                     };
 
-                    if (PhaseCounter % interval == interval - 30)
+                    if (PhaseCounter % interval == interval - 20)
                         _staticPosition = targetPos + Main.rand.Next(triangle);
-                    if (PhaseCounter % interval > interval - 30)
+                    if (PhaseCounter % interval > interval - 20)
                         DashToTarget(_staticPosition);
 
                     if (PhaseCounter % interval == interval - 1)
