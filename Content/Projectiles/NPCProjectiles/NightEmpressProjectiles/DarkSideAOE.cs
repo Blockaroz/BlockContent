@@ -30,7 +30,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
         }
 
         private ref float _safeRadius => ref Projectile.ai[0];
-        private const int _totalTime = 150;
+        private const int _totalTime = 130;
 
         public override void AI()
         {

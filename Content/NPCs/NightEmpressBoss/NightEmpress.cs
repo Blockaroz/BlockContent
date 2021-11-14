@@ -311,7 +311,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 const int attackLength = 400;
                 const int charge = 30;
                 const int explode = 240;
-                const int safeRadius = 200;
+                const int safeRadius = 230;
+                //190 would be ideal, but we give the player some leeway
 
                 if (PhaseCounter < explode)
                     MoveToTarget(targetPos + new Vector2(-200 * _direction, -360), 0.2f, 2);
