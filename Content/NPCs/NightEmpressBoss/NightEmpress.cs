@@ -733,19 +733,21 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             Asset<Texture2D> wings = Mod.Assets.Request<Texture2D>("Assets/Textures/NightEmpress/NightEmpress_Wings");
             Asset<Texture2D> wingsMask = Mod.Assets.Request<Texture2D>("Assets/Textures/NightEmpress/NightEmpress_WingsMask");
 
-            int wingCount = (int)(NPC.localAI[0] / 3f) % 11;
-            Rectangle frame = wings.Frame(1, 11, 0, wingCount);
-            spriteBatch.Draw(wings.Value, NPC.Center - offset, frame, baseColor, NPC.rotation, frame.Size() / 2, NPC.scale * 2, SpriteEffects.None, 0);
+            int wingCount = (int)(NPC.localAI[0] / 8) % 4;
+            if (Phase == 0)
+                NPC.localAI[0] = 0;
+            Rectangle frame = wings.Frame(1, 4, 0, wingCount);
+            spriteBatch.Draw(wings.Value, NPC.Center - offset, frame, baseColor, NPC.rotation, frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
             if (includeOverlay)
             {
-                spriteBatch.Draw(wingsMask.Value, NPC.Center - offset, frame, glowColor, NPC.rotation, frame.Size() / 2, NPC.scale * 2, SpriteEffects.None, 0);
+                spriteBatch.Draw(wingsMask.Value, NPC.Center - offset, frame, glowColor, NPC.rotation, frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
                 if (State == 1)
                 {
                     for (int i = 0; i < 4; i++)
                     {
                         float sine = MathHelper.Max((float)Math.Sin(Main.GlobalTimeWrappedHourly % 3), 0);
                         Vector2 maskOffset = new Vector2(sine * 4, 0).RotatedBy(MathHelper.TwoPi / 4 * i);
-                        spriteBatch.Draw(wingsMask.Value, NPC.Center + maskOffset - offset, frame, glowColor * ((sine * 0.5f) + 0.3f), NPC.rotation, frame.Size() / 2, NPC.scale * 2, SpriteEffects.None, 0);
+                        spriteBatch.Draw(wingsMask.Value, NPC.Center + maskOffset - offset, frame, glowColor * ((sine * 0.5f) + 0.3f), NPC.rotation, frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
                     }
                 }
             }
@@ -758,12 +760,12 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
             Rectangle leftFrame = arms.Frame(2, 6, 1, left);
             Vector2 leftOrigin = leftFrame.Size() / 2;
-            Vector2 leftOffset = new Vector2(31, -26);
+            Vector2 leftOffset = new Vector2(31, -26).RotatedBy(NPC.rotation) * NPC.scale;
             spriteBatch.Draw(arms.Value, NPC.Center + leftOffset - offset, leftFrame, baseColor, NPC.rotation, leftOrigin, NPC.scale, SpriteEffects.None, 0);
 
             Rectangle rightFrame = arms.Frame(2, 6, 0, right);
             Vector2 rightOrigin = rightFrame.Size() / 2;
-            Vector2 rightOffset = new Vector2(-31, -26);
+            Vector2 rightOffset = new Vector2(-31, -26).RotatedBy(NPC.rotation) * NPC.scale;
             spriteBatch.Draw(arms.Value, NPC.Center + rightOffset - offset, rightFrame, baseColor, NPC.rotation, rightOrigin, NPC.scale, SpriteEffects.None, 0);
         }
 
@@ -907,7 +909,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 changeColor.A = (byte)(Utils.GetLerpValue(0, 18, PhaseCounter, true) * 5);
                 NPC.Opacity = appearFade;
                 drawColor = Color.Lerp(changeColor, Color.White, appearFade);
-                glowColor = Color.Lerp(changeColor, SpecialColor(1), appearFade);
+                glowColor = Color.Lerp(changeColor, SpecialColor(0), appearFade);
             }
             if (Phase <= short.MinValue)
             {
@@ -925,19 +927,19 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             {
                 //turns glowy
                 float fade = MoreUtils.DualLerp(30, 50, 70, 100, PhaseCounter, true);
-                drawColor = Color.Lerp(Color.White, new(220, 220, 220, 50), fade);
+                drawColor = Color.Lerp(Color.White, new Color(220, 220, 220, 25), fade);
             }
             if (Phase == 4)
             {
-                //darkens
+                //turns dark
                 float fade = MoreUtils.DualLerp(200, 230, 330, 360, PhaseCounter, true);
                 drawColor = Color.Lerp(Color.White, MoreColor.NightSky, fade);
             }
             if (Phase == 6)
             {
-                //darkens
-                float fade = MoreUtils.DualLerp(5, 25, 190, 200, true);
-                drawColor = Color.Lerp(Color.White, MoreColor.NightSky, fade);
+                //turns glowy
+                float fade = MoreUtils.DualLerp(5, 25, 190, 200, PhaseCounter, true);
+                drawColor = Color.Lerp(Color.White, new Color(220, 220, 220, 25), fade);
             }
             if (NPC.IsABestiaryIconDummy)
             {

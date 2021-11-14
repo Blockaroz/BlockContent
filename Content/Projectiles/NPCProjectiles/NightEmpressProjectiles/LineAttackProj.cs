@@ -67,6 +67,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Asset<Texture2D> streakTexture = Mod.Assets.Request<Texture2D>("Assets/Textures/Streak_" + (short)1);
             Color light = NightEmpress.SpecialColor(0);
             light.A = 25;
+            Projectile.localAI[0]++;
 
             for (int i = 0; i < 2; i++)
             {
@@ -85,14 +86,16 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                     float opacity = MoreUtils.DualLerp(32, 30, 15, 5, Projectile.timeLeft + (j * 1.5f), true) * Utils.GetLerpValue(0, 5, Projectile.timeLeft, true);
                     float lerp = Utils.GetLerpValue(35, 5, Projectile.timeLeft + (j * 2));
                     Vector2 pos = Projectile.Center + (Vector2.SmoothStep(Vector2.Zero, _lineLength * 1.2f, lerp) * direction);
-                    DrawEmpressImage(pos + Main.rand.NextVector2CircularEdge(7, 7), glowColor * 0.5f * opacity, j);
-                    DrawEmpressImage(pos + Main.rand.NextVector2CircularEdge(3, 3), glowColor * 0.5f * opacity, j);
-                    DrawEmpressImage(pos, glowColor * 0.5f * opacity, j);
+
+                    int wingFrame = (int)(Projectile.localAI[0] / 8) + j;
+                    DrawEmpressImage(pos + Main.rand.NextVector2CircularEdge(7, 7), glowColor * 0.5f * opacity, wingFrame);
+                    DrawEmpressImage(pos + Main.rand.NextVector2CircularEdge(3, 3), glowColor * 0.5f * opacity, wingFrame);
+                    DrawEmpressImage(pos, glowColor * 0.5f * opacity, wingFrame);
                 }
 
                 Vector2 streakPos = Vector2.SmoothStep(Vector2.Zero, _lineLength * 1.3f, Utils.GetLerpValue(35, 5, Projectile.timeLeft + 5)) * direction;
                 Vector2 streakScale = new Vector2(MoreUtils.DualLerp(25, 15, 5, 0, Projectile.timeLeft, true), Utils.GetLerpValue(2, 12, Projectile.timeLeft, true));
-                MoreUtils.DrawStreak(streakTexture, SpriteEffects.None, Projectile.Center + streakPos - Main.screenPosition, streakTexture.Size() / 2, 1, 8 * streakScale.X, 5 * streakScale.Y, Projectile.rotation + dirRotation, NightEmpress.SpecialColor(1), NightEmpress.SpecialColor(0, true), 0.7f);
+                MoreUtils.DrawStreak(streakTexture, SpriteEffects.None, Projectile.Center + streakPos - Main.screenPosition, streakTexture.Size() / 2, 1, 7 * streakScale.X, 4 * streakScale.Y, Projectile.rotation + dirRotation, NightEmpress.SpecialColor(1), NightEmpress.SpecialColor(0, true));
 
                 Dust dust = Dust.NewDustPerfect(Projectile.Center + (_lineLength * direction) + Main.rand.NextVector2Circular(80, 80), NightEmpress.GlowDustID, Vector2.Zero, 0, light, 1f);
                 dust.noGravity = true;
@@ -108,13 +111,13 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Asset<Texture2D> wingTexture = Mod.Assets.Request<Texture2D>("Assets/Textures/NightEmpress/NightEmpress_Wings");
 
             Rectangle bodyFrame = bodyTexture.Frame(1, 2, 0, 1);
-            Rectangle wingFrame = wingTexture.Frame(1, 11, 0, wingCounter);
+            Rectangle wingFrame = wingTexture.Frame(1, 4, 0, wingCounter % 4);
             Rectangle armFrameLeft = armTexture.Frame(2, 6, 1, 0);
             Rectangle armFrameRight = armTexture.Frame(2, 6, 0, 0);
             Vector2 armOffsetLeft = new Vector2(31, -26).RotatedBy(Projectile.rotation) * Projectile.scale;
             Vector2 armOffsetRight = new Vector2(-31, -26).RotatedBy(Projectile.rotation) * Projectile.scale;
 
-            Main.EntitySpriteDraw(wingTexture.Value, position - Main.screenPosition, wingFrame, color, 0, wingFrame.Size() / 2, Projectile.scale * 2, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(wingTexture.Value, position - Main.screenPosition, wingFrame, color, 0, wingFrame.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
 
             Main.EntitySpriteDraw(bodyTexture.Value, position - Main.screenPosition, bodyFrame, color, 0, bodyFrame.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
 
