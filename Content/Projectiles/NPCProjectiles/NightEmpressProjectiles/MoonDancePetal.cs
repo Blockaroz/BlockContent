@@ -43,7 +43,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 float rotation = Utils.GetLerpValue(_maxTime, 15, Projectile.localAI[0], true);
                 Projectile.rotation = Projectile.ai[0] - (rotation * MathHelper.ToRadians(45));
 
-                float centerLerp = MathHelper.SmoothStep(0, 1, MoreUtils.DualLerp(45, _maxTime - 90, _maxTime - 45, Projectile.localAI[0], true));
+                float centerLerp = MathHelper.SmoothStep(0, 1, MoreUtils.DualLerp(45, 60, _maxTime - 90, _maxTime - 45, Projectile.localAI[0], true));
                 _modifiedCenter = Projectile.Center + new Vector2(centerLerp * 340, 0).RotatedBy(Projectile.rotation);
             }
             else
