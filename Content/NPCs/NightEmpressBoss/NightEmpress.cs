@@ -199,7 +199,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 if (PhaseCounter <= 200)
                 {
                     if ((PhaseCounter % interval) - 1 == 0)
-                        MoonDanceProjectiles(9, Main.rand.NextFloat() * MathHelper.TwoPi);
+                        MoonDanceProjectiles(8, Main.rand.NextFloat() * MathHelper.TwoPi);
 
                     if (PhaseCounter % interval <= 50 && NPC.Distance(targetPos) > 250)
                         NPC.velocity += NPC.DirectionTo(targetPos).SafeNormalize(Vector2.Zero) * Utils.GetLerpValue(20, 200, NPC.Distance(targetPos)) * 0.3f;

@@ -57,7 +57,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Vector2 outward = Projectile.rotation.ToRotationVector2() * modif;
             if (Collision.CheckAABBvLineCollision(targetHitbox.Center(), targetHitbox.Size(), _modifiedCenter, _modifiedCenter + (outward * 170), modif * 70, ref collisionPoint))
                 return true;
-            if (Collision.CheckAABBvLineCollision(targetHitbox.Center(), targetHitbox.Size(), _modifiedCenter, _modifiedCenter + (outward * 350), modif * 40, ref collisionPoint))
+            if (Collision.CheckAABBvLineCollision(targetHitbox.Center(), targetHitbox.Size(), _modifiedCenter, _modifiedCenter + (outward * 340), modif * 40, ref collisionPoint))
                 return true;
             if (Collision.CheckAABBvLineCollision(targetHitbox.Center(), targetHitbox.Size(), _modifiedCenter, _modifiedCenter + (outward * 420), modif * 20, ref collisionPoint))
                 return true;
