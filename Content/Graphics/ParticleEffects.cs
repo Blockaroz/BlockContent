@@ -44,7 +44,7 @@ namespace BlockContent.Content.Graphics
             {
                 PrettySparkleParticle particle = new PrettySparkleParticle();
                 particle.Velocity = settings.MovementVector * 0.2f;
-                particle.Scale = new Vector2(Main.rand.NextFloat());
+                particle.Scale = new Vector2(Main.rand.NextFloat()) * 0.6f;
                 particle.Rotation = MathHelper.PiOver2 + Main.rand.NextFloat(-0.1f, 0.1f);
                 particle.ColorTint = color;
                 particle.ColorTint.A = 25;

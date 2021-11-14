@@ -27,7 +27,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
             NPCID.Sets.TrailingMode[Type] = 1;
             NPCID.Sets.TrailCacheLength[Type] = 15;
-
+            NPCID.Sets.ShouldBeCountedAsBoss[Type] = true;
             NPCID.Sets.MPAllowedEnemies[Type] = true;
 
             NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
@@ -38,8 +38,13 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             };
             NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
 
+            NPCID.Sets.NPCBestiaryDrawModifiers drawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            {
+                PortraitPositionYOverride = 36f,
+                Position = new Vector2(0, 48)
+            };
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, drawModifiers);
             NPCID.Sets.BossBestiaryPriority.Add(Type);
-            NPCID.Sets.ShouldBeCountedAsBoss[Type] = true;
         }
 
         public override string BossHeadTexture => "BlockContent/Content/NPCs/NightEmpressBoss/NightEmpress_BossHead";
@@ -52,7 +57,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
             NPC.lifeMax = 90000;
             NPC.damage = damageValue[0];
-            NPC.defense = 80;
+            NPC.defense = 90;
             NPC.knockBackResist = 0f;
             NPC.value = Item.buyPrice(gold: 30);
 
@@ -72,6 +77,16 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.GreaterHealingPotion;
+        }
+
+        public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
+        {
+            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
+            {
+                BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Times.DayTime,
+                new MoonLordPortraitBackgroundProviderBestiaryInfoElement(),
+                new FlavorTextBestiaryInfoElement("Unchained from vengeance, now the night presides over all."),
+            });
         }
 
         public ref float Phase => ref NPC.ai[0];
@@ -153,6 +168,9 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 //if (PhaseCounter == 10)
                 //    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/NightEmpress/EmpressSpawn"), NPC.Center);
 
+                float shakeIntensity = Utils.GetLerpValue(40, 5, PhaseCounter, true);
+                CameraUtils.Screenshake(shakeIntensity * 3, 40);
+
                 float yLerp = Utils.GetLerpValue(0, 140, PhaseCounter, true);
 
                 NPC.velocity = new Vector2(0, MathHelper.SmoothStep(0.5f, 0f, yLerp));
@@ -167,14 +185,14 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 }
             }
 
-            NPC.velocity.Y *= 0.97f;
-
             if (Phase == 1)//Moon Dance
             {
                 PhaseCounter++;
 
                 const int attackLength = 330;
                 const int interval = 70;
+
+                NPC.velocity.Y *= 0.95f;
 
                 if (PhaseCounter == 1)
                     SoundEngine.PlaySound(SoundID.Item165, NPC.Center);
@@ -187,6 +205,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                         NPC.velocity += NPC.DirectionTo(targetPos).SafeNormalize(Vector2.Zero) * Utils.GetLerpValue(20, 200, NPC.Distance(targetPos)) * 0.4f;
                     else
                         NPC.velocity = NPC.velocity.RotatedBy(MathHelper.ToRadians(0.1f) * _direction) * 0.98f;
+
+
                 }
                 if (PhaseCounter == 280)
                     NPC.velocity = NPC.DirectionFrom(targetPos).SafeNormalize(Vector2.Zero) * 12;
@@ -224,8 +244,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 {
                     NPC.damage = damageValue[1];
                     NPC.dontTakeDamage = true;
-                    float speedLerp = MathHelper.SmoothStep(0.03f, 0.08f, Utils.GetLerpValue(beginCharge, finalizeDirection, PhaseCounter, true));
-                    NPC.velocity = Vector2.Lerp(NPC.velocity, _staticPosition * 50, speedLerp);
+                    float speedLerp = MathHelper.SmoothStep(0.02f, 0.08f, Utils.GetLerpValue(beginCharge, finalizeDirection, PhaseCounter, true));
+                    NPC.velocity = Vector2.Lerp(NPC.velocity, _staticPosition * 60, speedLerp);
                     if (PhaseCounter == attackLength - 10)
                     {
                         NPC.damage = damageValue[0];
@@ -234,11 +254,11 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                     }
                 }
 
-                //We check if the timer is below the limit to allow for dashCap frames of stillness
+                //We check if the timer is below the limit to allow for 10 frames of stillness
                 if (PhaseCounter > attackLength && PhaseCounter <= attackLength + dashCap)
                     DashToTarget(targetPos + targetPosOffset);
 
-                if (PhaseCounter > attackLength + dashCap)
+                if (PhaseCounter > attackLength + dashCap + 10)
                 {
                     Phase++;
                     PhaseCounter = -1;
@@ -255,7 +275,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
                 if (PhaseCounter <= attackLength && PhaseCounter > 0)//It shoots a star at PhaseCounter = 0, due to modulo funky
                 {
-                    float offsetX = (float)Math.Cos((MathHelper.Pi * PhaseCounter) / (attackLength / 3)) * _direction;
+                    float offsetX = (float)Math.Cos((MathHelper.Pi * PhaseCounter) / (attackLength / 3));
                     float offsetY = (float)Math.Sin((MathHelper.Pi * PhaseCounter) / (attackLength / 6));
                     Vector2 followPos = new Vector2(offsetX * 500, (offsetY * 80) - 250);
 
@@ -771,8 +791,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             {
                 if (PhaseCounter < 100)
                 {
-                    left = 4;
-                    right = 1;
+                    left = 1;
+                    right = 4;
                 }
                 else if (PhaseCounter < 380)
                 {
@@ -784,6 +804,11 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             {
                 left = 5;
                 right = 5;
+            }
+            if (NPC.IsABestiaryIconDummy)
+            {
+                left = 1;
+                right = 4;
             }
         }
 
@@ -869,8 +894,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
         public void HandleDrawColor(out Color drawColor, out Color glowColor)
         {
             drawColor = Color.White;
-            glowColor = SpecialColor(0.5f, true);
-            Color glowReal = SpecialColor(1);
+            glowColor = SpecialColor(0);
             if (Phase == 0)
             {
                 //spawn animation
@@ -893,14 +917,13 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 changeColor.A = (byte)(Utils.GetLerpValue(90, 120, PhaseCounter, true) * 5);
                 NPC.Opacity = appearFade;
                 drawColor = Color.Lerp(Color.White, changeColor, appearFade);
-                glowColor = Color.Lerp(glowReal, changeColor, appearFade);
+                glowColor = Color.Lerp(SpecialColor(0), changeColor, appearFade);
             }
             if (Phase == 2)
             {
                 //turns glowy
                 float fade = MoreUtils.DualLerp(30, 50, 70, 100, PhaseCounter, true);
                 drawColor = Color.Lerp(Color.White, new(220, 220, 220, 50), fade);
-                glowColor = Color.Lerp(glowReal, Color.Transparent, fade);
             }
             if (Phase == 4)
             {
@@ -908,7 +931,11 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 float fade = MoreUtils.DualLerp(200, 230, 330, 360, PhaseCounter, true);
                 drawColor = Color.Lerp(Color.White, MoreColor.NightSky, fade);
             }
-            glowReal.A = 0;
+            if (NPC.IsABestiaryIconDummy)
+            {
+                drawColor = Color.White;
+                glowColor = SpecialColor(0);
+            }
             glowColor.A = 0;
         }
 
