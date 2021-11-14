@@ -39,7 +39,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
         public override void AI()
         {
             Projectile.velocity = Vector2.Zero;
-            _lineLength = new Vector2(MathHelper.SmoothStep(120, 1100, Utils.GetLerpValue(30, 10, Projectile.timeLeft, true)), 0).RotatedBy(Projectile.rotation);
+            _lineLength = new Vector2(MathHelper.SmoothStep(120, 1200, Utils.GetLerpValue(30, 10, Projectile.timeLeft, true)), 0).RotatedBy(Projectile.rotation);
             if (Projectile.timeLeft == 30)
                 SoundEngine.PlaySound(SoundID.Item164, Projectile.Center);
             if (Projectile.timeLeft == 28)

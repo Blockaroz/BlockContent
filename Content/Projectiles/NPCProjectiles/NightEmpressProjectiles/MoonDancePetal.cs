@@ -30,6 +30,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
         }
 
         private const int _maxTime = 190;
+        private Vector2 _modifiedCenter;
 
         public override void AI()
         {
@@ -41,6 +42,9 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 Projectile.scale = MoreUtils.DualLerp(0, 20, _maxTime - 60, _maxTime, Projectile.localAI[0], true);
                 float rotation = Utils.GetLerpValue(_maxTime, 15, Projectile.localAI[0], true);
                 Projectile.rotation = Projectile.ai[0] - (rotation * MathHelper.ToRadians(45));
+
+                float centerLerp = MathHelper.SmoothStep(0, 1, MoreUtils.DualLerp(30, 60, _maxTime - 90, _maxTime - 60, Projectile.localAI[0], true));
+                _modifiedCenter = Projectile.Center + new Vector2(centerLerp * 340, 0).RotatedBy(Projectile.rotation);
             }
             else
                 Projectile.Kill();
@@ -51,11 +55,11 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             float collisionPoint = 0;
             float modif = Projectile.scale * 0.85f;
             Vector2 outward = Projectile.rotation.ToRotationVector2() * modif;
-            if (Collision.CheckAABBvLineCollision(targetHitbox.Center(), targetHitbox.Size(), Projectile.Center, Projectile.Center + (outward * 170), modif * 70, ref collisionPoint))
+            if (Collision.CheckAABBvLineCollision(targetHitbox.Center(), targetHitbox.Size(), _modifiedCenter, _modifiedCenter + (outward * 170), modif * 70, ref collisionPoint))
                 return true;
-            if (Collision.CheckAABBvLineCollision(targetHitbox.Center(), targetHitbox.Size(), Projectile.Center, Projectile.Center + (outward * 350), modif * 40, ref collisionPoint))
+            if (Collision.CheckAABBvLineCollision(targetHitbox.Center(), targetHitbox.Size(), _modifiedCenter, _modifiedCenter + (outward * 350), modif * 40, ref collisionPoint))
                 return true;
-            if (Collision.CheckAABBvLineCollision(targetHitbox.Center(), targetHitbox.Size(), Projectile.Center, Projectile.Center + (outward * 420), modif * 20, ref collisionPoint))
+            if (Collision.CheckAABBvLineCollision(targetHitbox.Center(), targetHitbox.Size(), _modifiedCenter, _modifiedCenter + (outward * 420), modif * 20, ref collisionPoint))
                 return true;
             return false;
         }
@@ -80,12 +84,12 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
 
             Vector2 scale = new Vector2(0.8f, 0.66f) * Projectile.scale;
 
-            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, baseFrame, Color.Black * 0.15f, Projectile.rotation, origin, scale * 1.1f, SpriteEffects.None, 0);
-            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, baseFrame, dark, Projectile.rotation, origin, scale, SpriteEffects.None, 0);
-            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, baseFrame, light * 0.4f, Projectile.rotation, origin, scale * 0.94f, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture.Value, _modifiedCenter - Main.screenPosition, baseFrame, Color.Black * 0.15f, Projectile.rotation, origin, scale * 1.1f, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture.Value, _modifiedCenter - Main.screenPosition, baseFrame, dark, Projectile.rotation, origin, scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture.Value, _modifiedCenter - Main.screenPosition, baseFrame, light * 0.4f, Projectile.rotation, origin, scale * 0.94f, SpriteEffects.None, 0);
             //overlay
-            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, overlayFrame, night, Projectile.rotation, origin, scale * 0.9f, SpriteEffects.None, 0);
-            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, overlayFrame, MoreColor.NightSky, Projectile.rotation, origin, scale * 0.75f, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture.Value, _modifiedCenter - Main.screenPosition, overlayFrame, night, Projectile.rotation, origin, scale * 0.9f, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture.Value, _modifiedCenter - Main.screenPosition, overlayFrame, MoreColor.NightSky, Projectile.rotation, origin, scale * 0.75f, SpriteEffects.None, 0);
             
             return false;
         }

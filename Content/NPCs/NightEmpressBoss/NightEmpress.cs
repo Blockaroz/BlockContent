@@ -224,7 +224,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
                 const int attackLength = 130;
                 const int beginCharge = 30;
-                const int finalizeDirection = 60;
+                const int finalizeDirection = 55;
                 const int dashCap = 10;
 
                 if (PhaseCounter <= beginCharge)
@@ -400,15 +400,16 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                         new Vector2(0, -550)
                     };
 
-                    if (PhaseCounter % interval == interval - 20)
+                    if (PhaseCounter % interval == interval - 25)
                         _staticPosition = targetPos + Main.rand.Next(triangle);
-                    if (PhaseCounter % interval > interval - 20)
+                    if (PhaseCounter % interval > interval - 25)
                         DashToTarget(_staticPosition);
 
                     if (PhaseCounter % interval == interval - 1)
                     {
                         NPC.velocity *= 0.01f;
-                        float angleTo = NPC.AngleTo(targetPos + (target.Velocity * 3)) + Main.rand.NextFloat(-0.1f, 0.1f);
+                        float angleTo = NPC.AngleTo(targetPos + (target.Velocity * 3)) + Main.rand.NextFloat(-0.2f, 0.2f);
+                        NPC.netUpdate = true;
                         Projectile contact = Projectile.NewProjectileDirect(NPC.GetProjectileSpawnSource(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<LineAttackProj>(), damageValue[6], 20);
                         contact.rotation = angleTo;
                     }
