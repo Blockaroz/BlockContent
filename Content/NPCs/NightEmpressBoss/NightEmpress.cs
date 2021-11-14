@@ -933,6 +933,12 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 float fade = MoreUtils.DualLerp(200, 230, 330, 360, PhaseCounter, true);
                 drawColor = Color.Lerp(Color.White, MoreColor.NightSky, fade);
             }
+            if (Phase == 6)
+            {
+                //darkens
+                float fade = MoreUtils.DualLerp(5, 25, 190, 200, true);
+                drawColor = Color.Lerp(Color.White, MoreColor.NightSky, fade);
+            }
             if (NPC.IsABestiaryIconDummy)
             {
                 drawColor = Color.White;
