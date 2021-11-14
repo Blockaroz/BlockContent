@@ -36,7 +36,7 @@ namespace BlockContent.Content.Graphics
                 MovementVector = proj.velocity * 0.02f
             };
             if (proj.localAI[0] > 30 && proj.localAI[0] < 50)
-                ParticleEffects.CreatePaleSparkles(settings, MoreColor.PaleGray);
+                ParticleEffects.CreatePaleSparkles(settings, Color.Gainsboro);
 
             CreateDust(proj);
         }
@@ -80,7 +80,7 @@ namespace BlockContent.Content.Graphics
             {
                 Color dustColor = Color.Lerp(MoreColor.PaleGray, Color.DimGray, Main.rand.NextFloat(0, 1));
                 dustColor.A = 51;
-                Dust dust = Dust.NewDustPerfect(centerPosition + Main.rand.NextVector2Square(-1, 1), ModContent.DustType<Dusts.GlowballDust>(), null, 100, dustColor, 1f);
+                Dust dust = Dust.NewDustPerfect(centerPosition + Main.rand.NextVector2Square(-1, 1), ModContent.DustType<Dusts.GlowballDust>(), null, 100, dustColor, 1.2f);
                 dust.fadeIn = 1f + Main.rand.NextFloat(-1, 1) * 0.6f;
                 dust.noGravity = true;
                 dust.velocity += Main.rand.NextVector2Circular(2, 2);

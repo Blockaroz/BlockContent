@@ -8,6 +8,7 @@ using ReLogic.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Terraria.Graphics.Renderers;
+using BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectiles;
 
 namespace BlockContent.Content.Items
 {
@@ -29,7 +30,8 @@ namespace BlockContent.Content.Items
             Item.UseSound = SoundID.Item1;
             Item.autoReuse = true;
             Item.rare = ModContent.RarityType<OddRarity>();
-            //Item.shoot = ModContent.ProjectileType<OddProj>();
+            Item.shoot = ModContent.ProjectileType<LineAttackProj>();
+            Item.shootSpeed = 1f;
         }
 
         public override void AddRecipes()

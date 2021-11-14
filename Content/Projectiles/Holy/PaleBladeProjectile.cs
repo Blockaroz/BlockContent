@@ -15,7 +15,7 @@ namespace BlockContent.Content.Projectiles.Holy
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Holy Blade");
-            ProjectileID.Sets.TrailCacheLength[Type] = 36;
+            ProjectileID.Sets.TrailCacheLength[Type] = 32;
             ProjectileID.Sets.TrailingMode[Type] = 4;
         }
 
@@ -108,7 +108,7 @@ namespace BlockContent.Content.Projectiles.Holy
 
             if (Time > 10 && Time < 80)
             {
-                for (int i = 1; i < 27; i++)
+                for (int i = 1; i < 30; i++)
                 {
                     if (Main.rand.Next(6) == 0)
                     {

@@ -71,7 +71,9 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Rectangle baseFrame = texture.Frame(1, 2, 0, 0);
             Rectangle overlayFrame = texture.Frame(1, 2, 0, 1);
             Vector2 origin = baseFrame.Size() * new Vector2(0.04f, 0.5f);
-            Color light = NightEmpress.SpecialColor(0.66f);
+            Color dark = NightEmpress.SpecialColor(1);
+            dark.A = 25;
+            Color light = NightEmpress.SpecialColor(0);
             light.A = 25;
             Color night = NightEmpress.SpecialColor(0, true);
             night.A = 25;
@@ -79,9 +81,10 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Vector2 scale = new Vector2(0.8f, 0.66f) * Projectile.scale;
 
             Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, baseFrame, Color.Black * 0.15f, Projectile.rotation, origin, scale * 1.1f, SpriteEffects.None, 0);
-            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, baseFrame, light, Projectile.rotation, origin, scale * 0.95f, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, baseFrame, dark, Projectile.rotation, origin, scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, baseFrame, light * 0.4f, Projectile.rotation, origin, scale * 0.94f, SpriteEffects.None, 0);
             //overlay
-            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, overlayFrame, night, Projectile.rotation, origin, scale * 0.92f, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, overlayFrame, night, Projectile.rotation, origin, scale * 0.9f, SpriteEffects.None, 0);
             Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, overlayFrame, MoreColor.NightSky, Projectile.rotation, origin, scale * 0.75f, SpriteEffects.None, 0);
             
             return false;

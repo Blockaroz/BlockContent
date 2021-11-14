@@ -10,11 +10,11 @@ using BlockContent.Content.NPCs.NightEmpressBoss;
 
 namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectiles
 {
-    public class RuneCircle : ModProjectile
+    public class DarkSideAOE : ModProjectile
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Rune Circle");
+            DisplayName.SetDefault("Dark Side");
         }
 
         public override void SetDefaults()
@@ -45,8 +45,9 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            bool isSafe = targetHitbox.Distance(Projectile.Center) < _safeRadius && targetHitbox.Distance(Projectile.Center) > 7200f;
-            if (isSafe)
+            if (targetHitbox.Distance(Projectile.Center) <= _safeRadius)
+                return false;
+            if (targetHitbox.Distance(Projectile.Center) > 7200f)
                 return false;
 
             return true;

@@ -14,9 +14,9 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Flowering Night");
-            ProjectileID.Sets.TrailCacheLength[Type] = 110;
+            ProjectileID.Sets.TrailCacheLength[Type] = 100;
             ProjectileID.Sets.TrailingMode[Type] = 3;
-            ProjectileID.Sets.DrawScreenCheckFluff[Type] = 800;
+            ProjectileID.Sets.DrawScreenCheckFluff[Type] = 700;
         }
 
         public override void SetDefaults()
@@ -69,7 +69,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Color darkShade = NightEmpress.SpecialColor(1);
             darkShade.A = 0;
 
-            Vector2 origin = new Vector2(29, 27);
+            Vector2 origin = new Vector2(29);
 
             Rectangle mainFrame = baseTexture.Frame(2, 1, 0, 0);
             Rectangle trailFrame = baseTexture.Frame(2, 1, 1, 0);
@@ -86,8 +86,9 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             }
 
             Main.EntitySpriteDraw(baseTexture.Value, Projectile.Center - Main.screenPosition, mainFrame, darkShade * opacity, Projectile.rotation + MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
-            Main.EntitySpriteDraw(baseTexture.Value, Projectile.Center - Main.screenPosition, mainFrame, nightShade * opacity, Projectile.rotation + MathHelper.PiOver2, origin, Projectile.scale * 0.7f, SpriteEffects.None, 0);
-
+            Main.EntitySpriteDraw(baseTexture.Value, Projectile.Center - Main.screenPosition, mainFrame, darkShade * opacity, Projectile.rotation + MathHelper.PiOver2, origin, Projectile.scale * 0.9f, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(baseTexture.Value, Projectile.Center - Main.screenPosition, mainFrame, nightShade * opacity, Projectile.rotation + MathHelper.PiOver2, origin, Projectile.scale * 0.9f, SpriteEffects.None, 0);
+            
             return false;
         }
     }
