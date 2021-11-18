@@ -13,17 +13,17 @@ using Terraria.ModLoader;
 
 namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectiles
 {
-    public class LineAttackProj : ModProjectile
+    public class RushDispersionShade : ModProjectile
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Line");
+            DisplayName.SetDefault("Rush Dispersion");
             ProjectileID.Sets.DrawScreenCheckFluff[Type] = 700;
         }
         public override void SetDefaults()
         {
-            Projectile.width = 30;
-            Projectile.height = 30;
+            Projectile.width = 80;
+            Projectile.height = 80;
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.tileCollide = false;
@@ -76,8 +76,8 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 //draw black backing
                 float indicator = MoreUtils.DualLerp(40, 35, 20, Projectile.timeLeft, true);
                 float dirRotation = (MathHelper.PiOver2 * direction) - MathHelper.PiOver2;
-                Main.EntitySpriteDraw(TextureAssets.Extra[178].Value, Projectile.Center - Main.screenPosition, null, Color.Black * 0.33f * indicator, Projectile.rotation + dirRotation, new Vector2(0, 1), new Vector2(2, 80), SpriteEffects.None, 0);
-                Main.EntitySpriteDraw(TextureAssets.Extra[178].Value, Projectile.Center - Main.screenPosition, null, Color.Black * 0.33f * indicator, Projectile.rotation + dirRotation, new Vector2(0, 1), new Vector2(2, 110), SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(TextureAssets.Extra[178].Value, Projectile.Center - Main.screenPosition, null, Color.Black * 0.33f * indicator, Projectile.rotation + dirRotation, new Vector2(0, 1), new Vector2(1.5f, 110), SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(TextureAssets.Extra[178].Value, Projectile.Center - Main.screenPosition, null, Color.Black * 0.33f * indicator, Projectile.rotation + dirRotation, new Vector2(0, 1), new Vector2(1.8f, 80), SpriteEffects.None, 0);
 
                 //draw empress shades and flare
                 for (int j = 0; j < 10; j++)

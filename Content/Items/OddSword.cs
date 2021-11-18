@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Terraria.Graphics.Renderers;
 using BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectiles;
+using Terraria.DataStructures;
 
 namespace BlockContent.Content.Items
 {
@@ -30,8 +31,15 @@ namespace BlockContent.Content.Items
             Item.UseSound = SoundID.Item1;
             Item.autoReuse = true;
             Item.rare = ModContent.RarityType<OddRarity>();
-            Item.shoot = ModContent.ProjectileType<LineAttackProj>();
+            Item.shoot = ModContent.ProjectileType<CurseSkull>();
             Item.shootSpeed = 1f;
+        }
+
+        public override bool Shoot(Player player, ProjectileSource_Item_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            Projectile proj = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback);
+            proj.rotation = velocity.ToRotation();
+            return false;
         }
 
         public override void AddRecipes()

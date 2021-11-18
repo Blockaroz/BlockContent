@@ -72,9 +72,11 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
         public override bool PreDraw(ref Color lightColor)
         {
             Asset<Texture2D> texture = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/MoonDancePetal");
+            Asset<Texture2D> glowTexture = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/MoonDancePetal_Glow");
             Rectangle baseFrame = texture.Frame(1, 2, 0, 0);
             Rectangle overlayFrame = texture.Frame(1, 2, 0, 1);
-            Vector2 origin = baseFrame.Size() * new Vector2(0.08f, 0.5f);
+            Vector2 origin = baseFrame.Size() * new Vector2(0.16f, 0.5f);
+            Vector2 glowOrigin = glowTexture.Size() * new Vector2(0.18f, 0.5f);
             Color dark = NightEmpress.SpecialColor(1);
             dark.A = 25;
             Color light = NightEmpress.SpecialColor(0);
@@ -82,9 +84,9 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Color night = NightEmpress.SpecialColor(0, true);
             night.A = 25;
 
-            Vector2 scale = new Vector2(0.9f, 0.7f) * Projectile.scale;
+            Vector2 scale = new Vector2(1, 0.7f) * Projectile.scale;
 
-            Main.EntitySpriteDraw(texture.Value, _modifiedCenter - Main.screenPosition, baseFrame, Color.Black * 0.15f, Projectile.rotation, origin, scale * 1.1f, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(glowTexture.Value, _modifiedCenter - Main.screenPosition, null, dark, Projectile.rotation, glowOrigin, scale * 1.15f, SpriteEffects.None, 0);
             Main.EntitySpriteDraw(texture.Value, _modifiedCenter - Main.screenPosition, baseFrame, dark, Projectile.rotation, origin, scale, SpriteEffects.None, 0);
             Main.EntitySpriteDraw(texture.Value, _modifiedCenter - Main.screenPosition, baseFrame, light * 0.4f, Projectile.rotation, origin, scale * 0.94f, SpriteEffects.None, 0);
             //overlay
