@@ -11,8 +11,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.Drawing;
-using Terraria.Graphics.Effects;
-using Terraria.Graphics.Shaders;
+using Terraria.Graphics.CameraModifiers;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -168,8 +167,11 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 //if (PhaseCounter == 10)
                 //    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/NightEmpress/EmpressSpawn"), NPC.Center);
 
-                float shakeIntensity = Utils.GetLerpValue(80, 5, PhaseCounter, true);
-                CameraUtils.Screenshake(shakeIntensity * 6, 80);
+                if (PhaseCounter <= 30 && PhaseCounter % 2 == 0)
+                {
+                    PunchCameraModifier punch = new PunchCameraModifier(NPC.Center, (Main.rand.NextFloat() * MathHelper.TwoPi).ToRotationVector2(), 10, 10, 40, 7000f, "NightEmpress");
+                    Main.instance.CameraModifiers.Add(punch);
+                }
 
                 float yLerp = Utils.GetLerpValue(0, 140, PhaseCounter, true);
 
@@ -341,10 +343,10 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                     radial.ai[1] = NPC.whoAmI;
                 }
 
-                if (PhaseCounter >= explode)
+                if (PhaseCounter >= explode && PhaseCounter < explode + 120 && PhaseCounter % 3 == 0)
                 {
-                    float scale = Utils.GetLerpValue(380, 240, PhaseCounter, true) * 17;
-                    CameraUtils.Screenshake(scale, 155);
+                    PunchCameraModifier punch = new PunchCameraModifier(NPC.Center, (Main.rand.NextFloat() * MathHelper.TwoPi).ToRotationVector2(), 24, 10, 50, 7000f, "NightEmpress");
+                    Main.instance.CameraModifiers.Add(punch);
                 }
 
                 if (PhaseCounter > attackLength)
@@ -425,13 +427,13 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 }
             }
 
-            if (Phase == 7)
+            if (Phase == 7) //Curse
             {
                 if (State < 4)
                 {
                     PhaseCounter++;
-                    const int attackLength = 200;
-                    const int shoot = 170;
+                    const int attackLength = 270;
+                    const int shoot = 180;
 
                     float speed = Utils.GetLerpValue(150, 0, PhaseCounter) * Utils.GetLerpValue(20, 200, NPC.Distance(targetPos)) * 3;
                     if (PhaseCounter < shoot - 5)

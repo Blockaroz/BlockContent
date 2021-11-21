@@ -35,10 +35,8 @@ namespace BlockContent.Content.Graphics
                 PositionInWorld = proj.Center,
                 MovementVector = proj.velocity * 0.02f
             };
-            if (proj.localAI[0] > 30 && proj.localAI[0] < 50)
-                ParticleEffects.CreatePaleSparkles(settings, Color.Gainsboro);
-
-            CreateDust(proj);
+            if (proj.localAI[0] > 20 && proj.localAI[0] < 60)
+                ParticleEffects.CreatePaleSpeckles(settings);
         }
 
         private static Color EdgeGlowColor(float progressOnStrip) 
@@ -71,22 +69,6 @@ namespace BlockContent.Content.Graphics
             num *= 1f - (1f - lerpValue) * (1f - lerpValue);
             //float num = Utils.GetLerpValue(0, 0.1f, progressOnStrip, true) * Utils.GetLerpValue(1, 0.3f, progressOnStrip);
             return MathHelper.SmoothStep(0f, 21f, num);
-        }
-
-        private void CreateDust(Projectile proj)
-        {
-            Vector2 centerPosition = proj.Center + (proj.rotation - MathHelper.PiOver2).ToRotationVector2() * MathHelper.Lerp(0.5f, 3f, Main.rand.NextFloat());
-            if (proj.localAI[0] < 50 && Main.rand.Next(4) == 0)
-            {
-                Color dustColor = Color.Lerp(MoreColor.PaleGray, Color.DimGray, Main.rand.NextFloat(0, 1));
-                dustColor.A = 51;
-                Dust dust = Dust.NewDustPerfect(centerPosition + Main.rand.NextVector2Square(-1, 1), ModContent.DustType<Dusts.GlowballDust>(), null, 100, dustColor, 1.2f);
-                dust.fadeIn = 1f + Main.rand.NextFloat(-1, 1) * 0.6f;
-                dust.noGravity = true;
-                dust.velocity += Main.rand.NextVector2Circular(2, 2);
-                dust.velocity += new Vector2(2, 0).RotatedBy(proj.rotation);
-                dust.noLightEmittence = true;
-            }
         }
     }
 }

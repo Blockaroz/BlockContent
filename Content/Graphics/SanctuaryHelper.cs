@@ -13,6 +13,11 @@ namespace BlockContent.Content.Graphics
 {
     public struct SanctuaryHelper
     {
+        public Projectile proj;
 
+        public SanctuaryHelper(Projectile projectile)
+        {
+            proj = projectile;
+        }
     }
 }

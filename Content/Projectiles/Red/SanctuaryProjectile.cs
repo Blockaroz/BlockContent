@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.Drawing;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -107,14 +108,16 @@ namespace BlockContent.Content.Projectiles.Red
                         if (bulletDir.HasNaNs())
                             bulletDir = -Vector2.UnitY;
 
-                        Projectile.NewProjectileDirect(projSource, spinPoint, bulletDir, bulletType, bulletDamage, bulletKnockBack, Projectile.owner);
+                        Projectile bullet = Projectile.NewProjectileDirect(projSource, spinPoint, bulletDir, bulletType, bulletDamage, bulletKnockBack, Projectile.owner);
+                        bullet.rotation = bulletDir.ToRotation();
 
                         if (Projectile.ai[0] > 70 && missile != 0)
                         {
                             for (int i = 0; i < Main.rand.Next(0, 3); i++)
                             {
                                 Vector2 offsetVector = new Vector2(20 * Projectile.spriteDirection, 0).RotatedBy(Projectile.rotation) + Main.rand.NextVector2Circular(28, 28);
-                                Projectile.NewProjectileDirect(projSource, spinPoint + offsetVector, bulletDir, bulletType, bulletDamage, bulletKnockBack, Projectile.owner);
+                                bullet = Projectile.NewProjectileDirect(projSource, spinPoint + offsetVector, bulletDir, bulletType, bulletDamage, bulletKnockBack, Projectile.owner);
+                                bullet.rotation = bulletDir.ToRotation();
                             }
                         }
                     }
@@ -163,7 +166,7 @@ namespace BlockContent.Content.Projectiles.Red
             Player player = Main.player[Projectile.owner];
             Color baseColor = Color.White;
             Color glowColor = MoreColor.Sanguine;
-            glowColor.A /= 4;
+            glowColor.A = 50;
             if (player.shroomiteStealth && player.inventory[player.selectedItem].DamageType == DamageClass.Ranged)
             {
                 float stealthValue = player.stealth;
@@ -188,7 +191,8 @@ namespace BlockContent.Content.Projectiles.Red
             for (int i = 0; i < 4; i++)
             {
                 Vector2 offset = new Vector2(2, 0).RotatedBy((MathHelper.TwoPi / 4 * i) + Projectile.rotation + MathHelper.PiOver4);
-                Main.EntitySpriteDraw(baseTexture.Value, drawPos + offset - Main.screenPosition, null, glowColor * 0.8f, Projectile.rotation, baseTexture.Size() / 2, Projectile.scale, GetSpriteEffects(Projectile), 0);
+                Main.EntitySpriteDraw(baseTexture.Value, drawPos + offset - Main.screenPosition, null, glowColor * 0.7f, Projectile.rotation, baseTexture.Size() / 2, Projectile.scale, GetSpriteEffects(Projectile), 0);
+                Main.EntitySpriteDraw(glowTexture.Value, drawPos + offset - Main.screenPosition, glowFrame, glowColor * 0.7f, Projectile.rotation, glowFrame.Size() / 2, Projectile.scale * 1.05f, GetSpriteEffects(Projectile), 0);
             }
 
             Main.EntitySpriteDraw(baseTexture.Value, drawPos - Main.screenPosition, null, baseColor, Projectile.rotation, baseTexture.Size() / 2, Projectile.scale, GetSpriteEffects(Projectile), 0);
@@ -198,10 +202,21 @@ namespace BlockContent.Content.Projectiles.Red
         public void DrawMuzzleFlash()
         {
             Player player = Main.player[Projectile.owner];
-            Asset<Texture2D> flashTexture = TextureAssets.Extra[98];
+            Asset<Texture2D> flashTexture = TextureAssets.Extra[98];//Mod.Assets.Request<Texture2D>("Assets/Textures/Streak_" + (short)1);
             Vector2 drawPos = Projectile.Center + new Vector2(40 * Projectile.spriteDirection, -5 * player.gravDir).RotatedBy(Projectile.rotation);
-            if (Projectile.frame <= 1)
-                MoreUtils.DrawSparkle(flashTexture, GetSpriteEffects(Projectile), drawPos - Main.screenPosition, flashTexture.Size() / 2, Projectile.scale, 0.5f, 0.5f, 0.8f, Projectile.rotation, MoreColor.Sanguine, Color.White);
+            if (Projectile.frame <= 2)
+            {
+                MoreUtils.DrawSparkle(flashTexture, GetSpriteEffects(Projectile), drawPos - Main.screenPosition, flashTexture.Size() / 2, Projectile.scale, 0.7f, 0.3f, 0.4f, Projectile.velocity.ToRotation() - MathHelper.Pi, MoreColor.Sanguine, Color.White, alpha: 50);
+                if (Projectile.frame == 1)
+                {
+                    ParticleOrchestraSettings settings = new ParticleOrchestraSettings
+                    {
+                        PositionInWorld = Projectile.Center + new Vector2(42 * Projectile.spriteDirection, -5 * player.gravDir).RotatedBy(Projectile.rotation),
+                        MovementVector = player.velocity
+                    };
+                    ParticleEffects.CreateSanctuaryRipples(settings);
+                }
+            }
         }
 
         private static SpriteEffects GetSpriteEffects(Projectile proj)

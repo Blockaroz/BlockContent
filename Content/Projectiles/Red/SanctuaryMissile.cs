@@ -1,12 +1,10 @@
-﻿using BlockContent.Content.Graphics;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.Graphics.CameraModifiers;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -31,7 +29,6 @@ namespace BlockContent.Content.Projectiles.Red
             Projectile.ignoreWater = true;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.timeLeft = 360;
-            Projectile.idStaticNPCHitCooldown = 5;
         }
 
         public override void AI()
@@ -96,8 +93,9 @@ namespace BlockContent.Content.Projectiles.Red
             {
                 float scale = MoreUtils.DualLerp(15, 12, 1, Projectile.timeLeft, true);
                 MoreUtils.DrawStreak(ballTexture, SpriteEffects.None, Projectile.Center - Main.screenPosition, ballTexture.Size() / 2, scale, 3, 3, 0, MoreColor.Sanguine, Color.White);
-                MoreUtils.DrawStreak(streakTexture, SpriteEffects.None, Projectile.Center - Main.screenPosition, streakTexture.Size() / 2, scale, 1, 6, Projectile.rotation, MoreColor.Sanguine, Color.White);
-                //CameraUtils.Screenshake(scale * 1.5f, 10);
+                MoreUtils.DrawStreak(streakTexture, SpriteEffects.None, Projectile.Center - Main.screenPosition, streakTexture.Size() / 2, scale, 1, 7, Projectile.rotation, MoreColor.Sanguine, Color.White);
+                PunchCameraModifier punch = new PunchCameraModifier(Projectile.Center, Main.rand.NextVector2CircularEdge(1, 1), 5f, 15f, 20, 2000f, "Sanctuary");
+                Main.instance.CameraModifiers.Add(punch);
             }
 
             if (Main.rand.Next(3) == 0)

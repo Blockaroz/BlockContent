@@ -1,15 +1,9 @@
-﻿using Terraria;
-using Terraria.ModLoader;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
-using BlockContent.Content.Graphics;
-using Terraria.GameContent.Drawing;
-using ReLogic.Content;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using Terraria.Graphics.Renderers;
-using BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectiles;
-using Terraria.DataStructures;
+using Terraria.ModLoader;
 
 namespace BlockContent.Content.Items
 {
@@ -31,7 +25,7 @@ namespace BlockContent.Content.Items
             Item.UseSound = SoundID.Item1;
             Item.autoReuse = true;
             Item.rare = ModContent.RarityType<OddRarity>();
-            Item.shoot = ModContent.ProjectileType<CurseSkull>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Holy.PaleBladeProjectile>();
             Item.shootSpeed = 1f;
         }
 

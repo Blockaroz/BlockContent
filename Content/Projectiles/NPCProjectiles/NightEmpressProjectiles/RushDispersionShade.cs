@@ -8,6 +8,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
+using Terraria.Graphics.CameraModifiers;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -43,15 +44,18 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             if (Projectile.timeLeft == 30)
                 SoundEngine.PlaySound(SoundID.Item164, Projectile.Center);
             if (Projectile.timeLeft == 28)
-                CameraUtils.Screenshake(4, 8);
+            {
+                PunchCameraModifier punch = new PunchCameraModifier(Projectile.Center, (Projectile.rotation + Main.rand.NextFloat()).ToRotationVector2(), 15, 5, 40, 7000f, "NightEmpress");
+                Main.instance.CameraModifiers.Add(punch);
+            }
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float collisionPoint = 0;
-            if (Collision.CheckAABBvLineCollision(targetHitbox.Center(), targetHitbox.Size(), Projectile.Center, Projectile.Center + _lineLength, 100, ref collisionPoint))
+            if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + _lineLength, 100, ref collisionPoint))
                 return true;
-            if (Collision.CheckAABBvLineCollision(targetHitbox.Center(), targetHitbox.Size(), Projectile.Center, Projectile.Center - _lineLength, 100, ref collisionPoint))
+            if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center - _lineLength, 100, ref collisionPoint))
                 return true;
 
             return false;
