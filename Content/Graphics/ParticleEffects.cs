@@ -25,25 +25,30 @@ namespace BlockContent.Content.Graphics
             {
                 FadingParticle particle = new FadingParticle();
                 particle.SetBasicInfo(Mod.Assets.Request<Texture2D>("Assets/Textures/Ring_" + (short)0), null, Vector2.Zero, Vector2.Zero);
-                particle.SetTypeInfo(25);
+                particle.SetTypeInfo(30);
                 particle.ColorTint = MoreColor.Sanguine;
-                particle.ColorTint.A = 50;
-                particle.LocalPosition = settings.PositionInWorld + Main.rand.NextVector2Circular(8, 8);
-                particle.Velocity = settings.MovementVector * 0.5f;
+                particle.ColorTint.A = 25;
+                particle.LocalPosition = settings.PositionInWorld;
+                particle.Velocity = settings.MovementVector * 0.9f;
+                particle.AccelerationPerFrame *= 0.9f;
                 particle.Rotation = Main.rand.NextFloat() * MathHelper.TwoPi;
                 particle.Scale = new Vector2(0.2f);
-                particle.ScaleVelocity = Vector2.One * 0.006f;
+                particle.ScaleVelocity = Vector2.One * 0.007f;
                 particle.ScaleAcceleration = Vector2.One * 0.002f;
                 particle.FadeInNormalizedTime = 0.001f;
                 particle.FadeOutNormalizedTime = 0.001f;
                 Main.ParticleSystem_World_OverPlayers.Add(particle);
 
-                if (Main.rand.Next() == 0)
+                if (Main.rand.Next(2) == 0)
                 {
-                    Dust dust = Dust.NewDustDirect(settings.PositionInWorld - new Vector2(2), 4, 4, 278, 0, 0, 0, MoreColor.Sanguine, 1f);
-                    dust.noGravity = true;
-                    dust.velocity += settings.MovementVector;
-                    dust.scale = (Main.rand.NextFloat() * 0.5f) + 0.5f;
+                    for (int i = 0; i < Main.rand.Next(2, 5); i++)
+                    {
+                        Dust dust = Dust.NewDustDirect(settings.PositionInWorld - new Vector2(2), 4, 4, 278, 0, 0, 50, MoreColor.Sanguine, 1f);
+                        dust.noGravity = true;
+                        dust.color.A = 50;
+                        dust.velocity += settings.MovementVector;
+                        dust.scale = (Main.rand.NextFloat() * 0.5f) + 0.5f;
+                    }
                 }
             }
         }
@@ -52,29 +57,30 @@ namespace BlockContent.Content.Graphics
         {
             if (Main.netMode != NetmodeID.Server && !Main.gamePaused)
             {
-                FadingParticle particle = new FadingParticle();
-                particle.SetBasicInfo(Mod.Assets.Request<Texture2D>("Assets/Textures/Glowball_" + (short)2), null, Vector2.Zero, Vector2.Zero);
-                particle.SetTypeInfo(30);
-                particle.Velocity = (settings.MovementVector * 0.1f) + Main.rand.NextVector2Circular(2, 2);
-                particle.Scale = Vector2.One * Main.rand.NextFloat(0.1f, 0.7f);
-                particle.ColorTint = Color.Gainsboro;
-                particle.ColorTint.A = 0;
-                particle.LocalPosition = settings.PositionInWorld + Main.rand.NextVector2Circular(5, 5);
-                particle.FadeInNormalizedTime = 0.02f;
-                particle.FadeOutNormalizedTime = 0.1f;
-                particle.AccelerationPerFrame *= 0.7f;
-                Main.ParticleSystem_World_OverPlayers.Add(particle);
+                FadingParticle speckle = new FadingParticle();
+                speckle.SetBasicInfo(Mod.Assets.Request<Texture2D>("Assets/Textures/Glowball_" + (short)2), null, Vector2.Zero, Vector2.Zero);
+                speckle.SetTypeInfo(40);
+                speckle.Velocity = (settings.MovementVector * 0.1f) + Main.rand.NextVector2Circular(2, 2);
+                speckle.Scale = Vector2.One * Main.rand.NextFloat(0.1f, 0.7f);
+                speckle.LocalPosition = settings.PositionInWorld + Main.rand.NextVector2Circular(5, 5);
+                speckle.ColorTint = Color.Lerp(MoreColor.PaleGray, Color.Gainsboro, Main.rand.NextFloat());
+                speckle.ColorTint.A = 0;
+                speckle.FadeInNormalizedTime = 0.02f;
+                speckle.FadeOutNormalizedTime = 0.1f;
+                speckle.AccelerationPerFrame *= 0.7f;
+                if (Main.rand.Next(2) == 0)
+                    Main.ParticleSystem_World_OverPlayers.Add(speckle);
 
+                PrettySparkleParticle sparkle = new PrettySparkleParticle();
+                sparkle.Velocity = (settings.MovementVector * 0.1f) + Main.rand.NextVector2Circular(2, 2);
+                sparkle.Scale = Vector2.One * Main.rand.NextFloat(0.1f, 0.7f);
+                sparkle.ColorTint = Color.Lerp(MoreColor.PaleGray, Color.Gainsboro, Main.rand.NextFloat());
+                sparkle.ColorTint.A = 0;
+                sparkle.LocalPosition = settings.PositionInWorld + Main.rand.NextVector2Circular(5, 5);
+                sparkle.AccelerationPerFrame *= 0.7f;
+                sparkle.ScaleVelocity = Vector2.One * -0.01f;
                 if (Main.rand.Next(3) == 0)
-                {
-                    Color dustColor = Color.Lerp(MoreColor.PaleGray, Color.DimGray, Main.rand.NextFloat(0.5f));
-                    dustColor.A = 20;
-                    Dust dust = Dust.NewDustPerfect(settings.PositionInWorld + Main.rand.NextVector2Circular(2, 2), ModContent.DustType<Dusts.GlowballDust>(), null, 100, dustColor, 1.33f);
-                    dust.fadeIn = 1f + (Main.rand.NextFloat() * 0.7f);
-                    dust.noGravity = true;
-                    dust.velocity += Main.rand.NextVector2Circular(2, 2);
-                    dust.noLightEmittence = true;
-                }
+                    Main.ParticleSystem_World_OverPlayers.Add(sparkle);
             }
         }
 

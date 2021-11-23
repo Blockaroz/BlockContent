@@ -33,7 +33,7 @@ namespace BlockContent.Content.Graphics
         {
             GameShaders.Misc["BlockContent:PaleBlade"] = new MiscShaderData(Main.VertexPixelShaderRef, "MagicMissile").UseProjectionMatrix(doUse: true);
 
-            GameShaders.Misc["BlockContent:Test"] = new MiscShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Assets/Effects/Grayscale", AssetRequestMode.ImmediateLoad).Value), "GrayscaleFunction");
+            GameShaders.Misc["BlockContent:Grayscale"] = new MiscShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Assets/Effects/Grayscale").Value), "GrayscalePass");
         
         }
     }

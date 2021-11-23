@@ -25,7 +25,7 @@ namespace BlockContent.Content.Items
             Item.UseSound = SoundID.Item1;
             Item.autoReuse = true;
             Item.rare = ModContent.RarityType<OddRarity>();
-            Item.shoot = ModContent.ProjectileType<Projectiles.Holy.PaleBladeProjectile>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.NPCProjectiles.NightEmpressProjectiles.CurseSkull>();
             Item.shootSpeed = 1f;
         }
 

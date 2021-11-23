@@ -4,7 +4,7 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Microsoft.Xna.Framework;
 using Terraria.DataStructures;
-using BlockContent.Content.Projectiles.Red;
+using BlockContent.Content.Projectiles.Weapons.Red;
 
 namespace BlockContent.Content.Items.Weapons.Red
 {
@@ -13,6 +13,7 @@ namespace BlockContent.Content.Items.Weapons.Red
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sanctuary");
+            Tooltip.SetDefault("Shoots high-heat energy beams that hit twice");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 
@@ -35,7 +36,7 @@ namespace BlockContent.Content.Items.Weapons.Red
             Item.noUseGraphic = true;
             Item.channel = true;
             Item.useAmmo = AmmoID.Bullet;
-            Item.shootSpeed = 20f;
+            Item.shootSpeed = 36f;
             Item.shoot = ModContent.ProjectileType<SanctuaryProjectile>();
         }
 

@@ -4,7 +4,7 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Microsoft.Xna.Framework;
 using Terraria.DataStructures;
-using BlockContent.Content.Projectiles.Holy;
+using BlockContent.Content.Projectiles.Weapons.Holy;
 
 namespace BlockContent.Content.Items.Weapons.Holy
 {
@@ -63,7 +63,7 @@ namespace BlockContent.Content.Items.Weapons.Holy
                     isTwo = true;
 
                 if (isTwo)
-                    distance += Main.rand.NextVector2Circular(16, 16);
+                    distance += Main.rand.NextVector2Circular(12, 12);
             }
 
             velocityVector = distance / 2f;

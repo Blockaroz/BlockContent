@@ -14,11 +14,11 @@ using Terraria.ModLoader;
 
 namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectiles
 {
-    public class RushDispersionShade : ModProjectile
+    public class ShadeDispersionClone : ModProjectile
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Rush Dispersion");
+            DisplayName.SetDefault("Shade Dispersion");
             ProjectileID.Sets.DrawScreenCheckFluff[Type] = 700;
         }
         public override void SetDefaults()

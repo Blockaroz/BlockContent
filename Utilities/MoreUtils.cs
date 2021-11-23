@@ -7,9 +7,6 @@ using Terraria;
 
 public partial class MoreUtils
 {
-    /// <summary>
-    /// Modular sparkle drawer. Works best with symmetrical textures.
-    /// </summary>
     public static void DrawSparkle(Asset<Texture2D> texture, SpriteEffects dir, Vector2 drawCenter, Vector2 origin, float scale, float thickness, float width, float height, float rotation, Color drawColor, Color shineColor, float opacity = 1f, byte alpha = 0)
     {
         Color color1 = drawColor * opacity;
@@ -26,9 +23,6 @@ public partial class MoreUtils
         Main.EntitySpriteDraw(texture.Value, drawCenter, null, color2, rotation + MathHelper.PiOver2, origin, vector2 * 0.56f, dir, 0);
     }
 
-    /// <summary>
-    /// Useful for sparkles that don't use symmetrical textures.
-    /// </summary>
     public static void DrawStreak(Asset<Texture2D> texture, SpriteEffects dir, Vector2 drawCenter, Vector2 origin, float scale, float width, float height, float rotation, Color drawColor, Color shineColor, float opacity = 1f, byte alpha = 0)
     {
         Color color1 = drawColor * opacity;

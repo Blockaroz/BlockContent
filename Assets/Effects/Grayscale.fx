@@ -28,7 +28,7 @@ float4 GrayscaleFunction(float2 coords : TEXCOORD0) : COLOR0
 
 technique Technique1
 {
-    pass GrayscaleFunction
+    pass GrayscalePass
     {
         PixelShader = compile ps_2_0 GrayscaleFunction();
     }

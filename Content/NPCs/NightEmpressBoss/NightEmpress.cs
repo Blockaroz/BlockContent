@@ -182,8 +182,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 if (PhaseCounter >= 240)
                 {
                     NPC.dontTakeDamage = false;
-                    Phase = 7;
-                    //Phase++;
+                    Phase++;
                     PhaseCounter = -1;
                 }
             }
@@ -389,7 +388,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 }
             }
 
-            if (Phase == 6) //Rush Dispersion
+            if (Phase == 6) //Shade Dispersion
             {
                 PhaseCounter++;
                 const int attackLength = 230;
@@ -415,7 +414,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                         NPC.velocity *= 0.01f;
                         float angleTo = NPC.AngleTo(targetPos + (target.Velocity * 3)) + Main.rand.NextFloat(-0.2f, 0.2f);
                         NPC.netUpdate = true;
-                        Projectile contact = Projectile.NewProjectileDirect(NPC.GetProjectileSpawnSource(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<RushDispersionShade>(), damageValue[6], 20);
+                        Projectile contact = Projectile.NewProjectileDirect(NPC.GetProjectileSpawnSource(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShadeDispersionClone>(), damageValue[6], 20);
                         contact.rotation = angleTo;
                     }
                 }
@@ -429,11 +428,11 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
             if (Phase == 7) //Curse
             {
-                if (State < 4)
+                if (State == 1)
                 {
                     PhaseCounter++;
                     const int attackLength = 270;
-                    const int shoot = 180;
+                    const int shoot = 220;
 
                     float speed = Utils.GetLerpValue(150, 0, PhaseCounter) * Utils.GetLerpValue(20, 200, NPC.Distance(targetPos)) * 3;
                     if (PhaseCounter < shoot - 5)
@@ -448,7 +447,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                     }
 
                     if (PhaseCounter == shoot)
-                        NPC.velocity = NPC.DirectionFrom(targetPos).SafeNormalize(Vector2.Zero) * 18;
+                        NPC.velocity = NPC.DirectionFrom(targetPos).SafeNormalize(Vector2.Zero) * 24;
 
                     if (PhaseCounter > attackLength)
                     {

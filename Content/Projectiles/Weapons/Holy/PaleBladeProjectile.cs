@@ -8,7 +8,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace BlockContent.Content.Projectiles.Holy
+namespace BlockContent.Content.Projectiles.Weapons.Holy
 {
     public class PaleBladeProjectile : ModProjectile
     {
@@ -28,8 +28,8 @@ namespace BlockContent.Content.Projectiles.Holy
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.extraUpdates = 1;
-            Projectile.usesLocalNPCImmunity = true;
             Projectile.manualDirectionChange = true;
+            Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 10;
             Projectile.penetrate = -1;
             Projectile.noEnchantmentVisuals = true;

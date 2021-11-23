@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -11,13 +12,14 @@ using Terraria.GameContent.Drawing;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace BlockContent.Content.Projectiles.Red
+namespace BlockContent.Content.Projectiles.Weapons.Red
 {
     public class SanctuaryProjectile : ModProjectile
     {
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sanctuary");
+            Projectile.rotation = Projectile.velocity.ToRotation();
         }
 
         public override void SetDefaults()
@@ -26,59 +28,77 @@ namespace BlockContent.Content.Projectiles.Red
             Projectile.height = 24;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
+            Projectile.damage = -1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.hide = true;
         }
 
-        public override void AI()
-        {
-            DoHoldLogic();
-        }
-
-        public void DoHoldLogic()
+        public override bool PreAI()
         {
             Player player = Main.player[Projectile.owner];
-            float pointAngle = 0;
-            if (Projectile.spriteDirection == -1)
-                pointAngle = MathHelper.Pi;
 
-            Projectile.ai[0] += 1;
+            if (player.channel)
+            {
+                Projectile.ai[0] += 1;
+                coolDown += 1;
+                if (coolDown > 40)
+                    coolDown = 40;
+            }
             int extraFrameSpeed = 0;
             if (Projectile.ai[0] > 40)
                 extraFrameSpeed++;
             if (Projectile.ai[0] > 100)
                 extraFrameSpeed++;
-            int resetAI1 = 15 - 5 * extraFrameSpeed;
+            int resetAI1 = 15 - (5 * extraFrameSpeed);
             Projectile.ai[1] -= 1;
             int missile = -1;
             bool tryShoot = false;
             if (Projectile.ai[1] <= 0)
             {
                 Projectile.ai[1] = resetAI1;
-                SoundEngine.PlaySound(SoundID.Item40.WithPitchVariance(0.1f), Projectile.Center);
                 tryShoot = true;
-                if (Projectile.ai[0] % 7 == 0 && Projectile.ai[0] > 70)
-                    missile = 0;
+                if (player.channel)
+                    SoundEngine.PlaySound(SoundID.Item40.WithPitchVariance(0.1f), Projectile.Center);
             }
+            if (Projectile.ai[0] % 50 <= 10 && Projectile.ai[0] > 90)
+                missile = 0;
+
             Projectile.frameCounter += 1 + extraFrameSpeed;
-            if (Projectile.frameCounter >= 3)
+            if (Projectile.frameCounter > 2)
             {
                 Projectile.frameCounter = 0;
                 Projectile.frame++;
                 if (Projectile.frame >= 6)
                     Projectile.frame = 0;
             }
+
             float randomRotation = MathHelper.ToRadians(Main.rand.NextFloat(-0.66f, 0.66f));
+            Item selection = player.inventory[player.selectedItem];
+            bool canShoot = player.channel && player.HasAmmo(selection, true) && !player.noItems && !player.CCed;
 
+            Vector2 spinPoint = player.RotatedRelativePoint(player.MountedCenter);
+            Vector2 shootDir0 = Main.screenPosition + Main.MouseScreen - spinPoint;
+            if (player.gravDir == -1)
+                shootDir0.Y = -shootDir0.Y;
+            Vector2 shootDir1 = shootDir0.SafeNormalize(Vector2.Zero);
+            shootDir1 = shootDir1.RotatedBy(randomRotation);
+            if (shootDir1.X != Projectile.velocity.X || shootDir1.Y != Projectile.velocity.Y)
+                Projectile.netUpdate = true;
+            Projectile.velocity = shootDir1.SafeNormalize(Vector2.Zero) * 10f;
+            Projectile.Center = player.RotatedRelativePoint(player.MountedCenter, false, false);
+            Projectile.rotation = Projectile.velocity.ToRotation();
+            Projectile.spriteDirection = Projectile.direction;
+            Projectile.timeLeft = 3;
+            player.SetDummyItemTime(3);
+            player.ChangeDir(Projectile.direction);
+            player.heldProj = Projectile.whoAmI;
+            player.itemRotation = MathHelper.WrapAngle((float)Math.Atan2(Projectile.velocity.Y * Projectile.direction, Projectile.velocity.X * Projectile.direction) + randomRotation);
+            Projectile.position.Y += player.gravDir * 2f;
 
-
-            if (tryShoot && Main.myPlayer == Projectile.owner)
+            if (tryShoot && Main.myPlayer == Projectile.owner && player.channel)
             {
-                Item selection = player.inventory[player.selectedItem];
-                bool canShoot = player.channel && player.HasAmmo(selection, true) && !player.noItems && !player.CCed;
-
                 int bulletType = ProjectileID.Bullet;
                 float bulletSpeed = 36f;
                 int bulletDamage = player.GetWeaponDamage(selection);
@@ -87,20 +107,7 @@ namespace BlockContent.Content.Projectiles.Red
                 {
                     player.PickAmmo(selection, ref bulletType, ref bulletSpeed, ref canShoot, ref bulletDamage, ref bulletKnockBack, out int usedAmmoItemID);
                     IProjectileSource projSource = player.GetProjectileSource_Item_WithPotentialAmmo(player.HeldItem, usedAmmoItemID);
-                    float bulletShootSpeed = selection.shootSpeed * Projectile.scale;
-                    Vector2 spinPoint = player.RotatedRelativePoint(player.MountedCenter);
-                    Vector2 shootDir0 = Main.screenPosition + Main.MouseScreen - spinPoint;
-                    if (player.gravDir == -1)
-                        shootDir0.Y = -shootDir0.Y;
-                    Vector2 shootDir1 = Vector2.Normalize(shootDir0);
-                    if (shootDir1.HasNaNs())
-                        shootDir1 = -Vector2.UnitY;
-                    shootDir1 *= bulletShootSpeed;
-                    shootDir1 = shootDir1.RotatedBy(randomRotation);
-                    if (shootDir1.X != Projectile.velocity.X || shootDir1.Y != Projectile.velocity.Y)
-                        Projectile.netUpdate = true;
-                    Projectile.velocity = shootDir1;
-                    
+
                     for (int n = 0; n < 1; n++)
                     {
                         Vector2 bulletDir = Vector2.Normalize(Projectile.velocity) * bulletSpeed;
@@ -108,14 +115,17 @@ namespace BlockContent.Content.Projectiles.Red
                         if (bulletDir.HasNaNs())
                             bulletDir = -Vector2.UnitY;
 
+                        if (bulletType == ProjectileID.Bullet)
+                            bulletType = ModContent.ProjectileType<SanctuaryBeam>();
+
                         Projectile bullet = Projectile.NewProjectileDirect(projSource, spinPoint, bulletDir, bulletType, bulletDamage, bulletKnockBack, Projectile.owner);
                         bullet.rotation = bulletDir.ToRotation();
 
                         if (Projectile.ai[0] > 70 && missile != 0)
                         {
-                            for (int i = 0; i < Main.rand.Next(0, 3); i++)
+                            for (int i = 0; i < Main.rand.Next(0, 5); i++)
                             {
-                                Vector2 offsetVector = new Vector2(20 * Projectile.spriteDirection, 0).RotatedBy(Projectile.rotation) + Main.rand.NextVector2Circular(28, 28);
+                                Vector2 offsetVector = new Vector2(40, 0).RotatedBy(Projectile.rotation) + Main.rand.NextVector2CircularEdge(20, 30).RotatedBy(Projectile.rotation);
                                 bullet = Projectile.NewProjectileDirect(projSource, spinPoint + offsetVector, bulletDir, bulletType, bulletDamage, bulletKnockBack, Projectile.owner);
                                 bullet.rotation = bulletDir.ToRotation();
                             }
@@ -138,32 +148,45 @@ namespace BlockContent.Content.Projectiles.Red
                     }
                 }
             }
-            else if (!player.channel)
+            if (!player.channel)
+            {
+                coolDown -= 1;
+                Projectile.ai[0] = MathHelper.Lerp(Projectile.ai[0], 0, Utils.GetLerpValue(30, 0, coolDown, true));
+                if (coolDown <= 0)
+                    Projectile.Kill();
+            }
+            if (player.dead)
                 Projectile.Kill();
 
-            Projectile.Center = player.RotatedRelativePoint(player.MountedCenter, false, false);
-            Projectile.rotation = Projectile.velocity.ToRotation() + pointAngle;
-            Projectile.spriteDirection = Projectile.direction;
-            Projectile.timeLeft = 2;
-            player.SetDummyItemTime(2);
-            player.ChangeDir(Projectile.direction);
-            player.heldProj = Projectile.whoAmI;
-            player.itemRotation = MathHelper.WrapAngle((float)Math.Atan2(Projectile.velocity.Y * Projectile.direction, Projectile.velocity.X * Projectile.direction) + randomRotation);
-            Projectile.position.Y += player.gravDir * 2f;
+            return true;
         }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(coolDown);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            coolDown = reader.Read();
+        }
+
+        public static int coolDown;
 
         public override bool PreDraw(ref Color lightColor)
         {
-            DrawItem();
-
-            DrawMuzzleFlash();
+            Player player = Main.player[Projectile.owner];
+            Projectile.localAI[0] += MathHelper.SmoothStep(0, 1, Utils.GetLerpValue(10, 100, Projectile.ai[0], true));
+            SanctuaryHelper sanctuaryHelper = new SanctuaryHelper();
+            sanctuaryHelper.Draw(Projectile);
+            DrawItem(player);
+            DrawShootEffects(player);
 
             return false;
         }
 
-        public void DrawItem()
+        public void DrawItem(Player player)
         {
-            Player player = Main.player[Projectile.owner];
             Color baseColor = Color.White;
             Color glowColor = MoreColor.Sanguine;
             glowColor.A = 50;
@@ -185,51 +208,51 @@ namespace BlockContent.Content.Projectiles.Red
             }
             Vector2 drawPos = Projectile.Center + new Vector2(0, Projectile.gfxOffY);
             Asset<Texture2D> baseTexture = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Red/Sanctuary");
-            Asset<Texture2D> glowTexture = Mod.Assets.Request<Texture2D>("Content/Projectiles/Red/SanctuaryProjectile");
+            Asset<Texture2D> glowTexture = Mod.Assets.Request<Texture2D>("Content/Projectiles/Weapons/Red/SanctuaryProjectile");
             Rectangle glowFrame = glowTexture.Frame(1, 6, 0, Projectile.frame);
 
             for (int i = 0; i < 4; i++)
             {
-                Vector2 offset = new Vector2(2, 0).RotatedBy((MathHelper.TwoPi / 4 * i) + Projectile.rotation + MathHelper.PiOver4);
+                Vector2 offset = new Vector2(2.5f, 0).RotatedBy((MathHelper.TwoPi / 4 * i) + Projectile.rotation + MathHelper.PiOver4);
                 Main.EntitySpriteDraw(baseTexture.Value, drawPos + offset - Main.screenPosition, null, glowColor * 0.7f, Projectile.rotation, baseTexture.Size() / 2, Projectile.scale, GetSpriteEffects(Projectile), 0);
-                Main.EntitySpriteDraw(glowTexture.Value, drawPos + offset - Main.screenPosition, glowFrame, glowColor * 0.7f, Projectile.rotation, glowFrame.Size() / 2, Projectile.scale * 1.05f, GetSpriteEffects(Projectile), 0);
+                Main.EntitySpriteDraw(glowTexture.Value, drawPos + offset - Main.screenPosition, glowFrame, glowColor * 0.7f, Projectile.rotation, glowFrame.Size() / 2, Projectile.scale * 1.1f, GetSpriteEffects(Projectile), 0);
             }
 
             Main.EntitySpriteDraw(baseTexture.Value, drawPos - Main.screenPosition, null, baseColor, Projectile.rotation, baseTexture.Size() / 2, Projectile.scale, GetSpriteEffects(Projectile), 0);
             Main.EntitySpriteDraw(glowTexture.Value, drawPos - Main.screenPosition, glowFrame, glowColor, Projectile.rotation, glowFrame.Size() / 2, Projectile.scale, GetSpriteEffects(Projectile), 0);
         }
 
-        public void DrawMuzzleFlash()
+        public void DrawShootEffects(Player player)
         {
-            Player player = Main.player[Projectile.owner];
-            Asset<Texture2D> flashTexture = TextureAssets.Extra[98];//Mod.Assets.Request<Texture2D>("Assets/Textures/Streak_" + (short)1);
-            Vector2 drawPos = Projectile.Center + new Vector2(40 * Projectile.spriteDirection, -5 * player.gravDir).RotatedBy(Projectile.rotation);
-            if (Projectile.frame <= 2)
+            Asset<Texture2D> flashTexture = TextureAssets.Extra[98];
+            Vector2 flashPos = Projectile.Center + new Vector2(40, -5 * Projectile.spriteDirection).RotatedBy(Projectile.rotation);
+
+            if (Projectile.frame <= 1)
+                MoreUtils.DrawSparkle(flashTexture, GetSpriteEffects(Projectile), flashPos - Main.screenPosition, flashTexture.Size() / 2, Projectile.scale, 0.7f, 0.3f, 0.4f, Projectile.velocity.ToRotation() - MathHelper.Pi, MoreColor.Sanguine, Color.White, alpha: 25);
+
+            if (Projectile.frame == 1)
             {
-                MoreUtils.DrawSparkle(flashTexture, GetSpriteEffects(Projectile), drawPos - Main.screenPosition, flashTexture.Size() / 2, Projectile.scale, 0.7f, 0.3f, 0.4f, Projectile.velocity.ToRotation() - MathHelper.Pi, MoreColor.Sanguine, Color.White, alpha: 50);
-                if (Projectile.frame == 1)
+                ParticleOrchestraSettings settings = new ParticleOrchestraSettings
                 {
-                    ParticleOrchestraSettings settings = new ParticleOrchestraSettings
-                    {
-                        PositionInWorld = Projectile.Center + new Vector2(42 * Projectile.spriteDirection, -5 * player.gravDir).RotatedBy(Projectile.rotation),
-                        MovementVector = player.velocity
-                    };
-                    ParticleEffects.CreateSanctuaryRipples(settings);
+                    PositionInWorld = Projectile.Center + new Vector2(44, -5 * Projectile.spriteDirection).RotatedBy(Projectile.rotation) + Main.rand.NextVector2Circular(7, 7),
+                    MovementVector = player.velocity
+                };
+                ParticleEffects.CreateSanctuaryRipples(settings);
+                for (int i = 0; i < Main.rand.Next(2); i++)
+                {
+                    Vector2 s = Main.rand.NextVector2Circular(10, 10);
+                    Dust dust = Dust.NewDustPerfect(flashPos, 278, s, 50, MoreColor.Sanguine, 1f);
+                    dust.noGravity = true;
+                    dust.color.A = 50;
+                    dust.velocity += Main.rand.NextVector2Circular(3, 3);
+                    dust.scale = (Main.rand.NextFloat() * 0.4f) + 0.4f;
                 }
             }
         }
 
         private static SpriteEffects GetSpriteEffects(Projectile proj)
         {
-            Player player = Main.player[proj.owner];
-            SpriteEffects spriteEffects = proj.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            if (player.gravDir == -1f)
-            {
-                if (player.direction == 1)
-                    spriteEffects = SpriteEffects.FlipVertically;
-                if (player.direction == -1)
-                    spriteEffects = SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically;
-            }
+            SpriteEffects spriteEffects = proj.spriteDirection == -1 ? SpriteEffects.FlipVertically : SpriteEffects.None;
             return spriteEffects;
         }
     }
