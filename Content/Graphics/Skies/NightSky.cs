@@ -77,10 +77,6 @@ namespace BlockContent.Content.Skies
 
         public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
         {
-            float glowOpacity = 0.6f;
-            if (!Main.dayTime)
-                glowOpacity = 0.3f;
-
             if (maxDepth >= float.MaxValue && minDepth < float.MaxValue)
             {
                 spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.Black * 0.7f * _opacity);
@@ -88,8 +84,8 @@ namespace BlockContent.Content.Skies
 
             if (maxDepth >= float.MinValue && minDepth < float.MaxValue)
             {
-                spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), MoreColor.NightSky * 0.2f * _opacity);
-                spriteBatch.Draw(sky.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), new Color(128, 128, 128, 50) * glowOpacity * _opacity);
+                spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), MoreColor.NightSky * 0.1f * _opacity);
+                spriteBatch.Draw(sky.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), new Color(128, 128, 128, 25) * 0.4f * _opacity);
             }
 
             Rectangle view = new Rectangle(-1000, -1000, 4000, 4000);
@@ -110,6 +106,11 @@ namespace BlockContent.Content.Skies
                     spriteBatch.Draw(_cloud[j].texture.Value, cloudPos, null, _cloud[j].color * _opacity, 0, _cloud[j].texture.Size() / 2, _cloud[j].scale, SpriteEffects.None, 0);
                 }
             }
+        }
+
+        public override float GetCloudAlpha()
+        {
+            return 1f - _opacity;
         }
 
         public override void Update(GameTime gameTime)
