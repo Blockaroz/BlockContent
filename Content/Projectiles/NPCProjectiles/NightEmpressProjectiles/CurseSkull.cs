@@ -105,9 +105,17 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Vector2 dir = Main.rand.NextVector2CircularEdge(Main.rand.NextFloat(5, 15), Main.rand.NextFloat(5, 15)) * 10;
             if (Projectile.ai[0] <= 100)
             {
-                Dust charge = Dust.NewDustPerfect(Projectile.Center + dir, NightEmpress.GlowDustID, Vector2.Zero, 0, dark, 1f);
-                charge.noGravity = true;
-                charge.velocity = charge.position.DirectionTo(Projectile.Center);
+                ParticleOrchestraSettings settings = new ParticleOrchestraSettings()
+                {
+                    PositionInWorld = Projectile.Center + dir
+                };
+                ParticleEffects.CreateNightMagic(settings, dark);
+                if (Main.rand.Next(3) == 0)
+                {
+                    Dust charge = Dust.NewDustPerfect(Projectile.Center + dir, NightEmpress.GlowDustID, Vector2.Zero, 0, dark, 1f);
+                    charge.noGravity = true;
+                    charge.velocity = charge.position.DirectionTo(Projectile.Center);
+                }
             }
         }
 
@@ -133,8 +141,9 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Vector2 jawOffset = new Vector2(-24 * Projectile.spriteDirection, 64).RotatedBy(Projectile.rotation) * skullScale;
 
             float opacity = Utils.GetLerpValue(0, 100, Projectile.timeLeft, true);
-            Color glowColor = NightEmpress.SpecialColor(1) * opacity;
+            Color glowColor = NightEmpress.SpecialColor(1);
             glowColor.A = 50;
+            glowColor *= opacity;
             Color drawColor = Color.Lerp(Color.Lerp(MoreColor.NightSky, Color.Black, Utils.GetLerpValue(800, 200, Projectile.timeLeft, true)), Color.Transparent, Utils.GetLerpValue(60, 0, Projectile.timeLeft, true)) * opacity;
 
             //draw borders

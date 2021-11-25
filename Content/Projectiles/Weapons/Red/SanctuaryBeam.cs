@@ -31,7 +31,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.timeLeft = 8;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 5;
+            Projectile.localNPCHitCooldown = 4;
         }
 
         public float BeamLength;
@@ -76,7 +76,14 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
             Rectangle bodyFrame = new Rectangle(0, 30, 38, 12);
             Rectangle tailFrame = new Rectangle(0, 44, 38, 34);
 
-            Color glowColor = MoreColor.Sanguine;
+            Color gradient = new GradientColor(new Color[]
+            {
+                MoreColor.Sanguine,
+                Color.Crimson,
+                new Color(233, 50, 0)
+            }, 0.5f, 0.4f).Value;
+
+            Color glowColor = gradient;
             glowColor.A = 70;
             Color glowInnerColor = MoreColor.PaleGray;
             glowInnerColor.A = 0;

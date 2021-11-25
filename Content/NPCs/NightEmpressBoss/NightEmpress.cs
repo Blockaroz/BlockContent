@@ -1,4 +1,5 @@
-﻿using BlockContent.Content.Graphics;
+﻿using BlockContent.Content.Bestiary;
+using BlockContent.Content.Graphics;
 using BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -84,8 +85,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
             {
                 BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Times.DayTime,
-                new MoonLordPortraitBackgroundProviderBestiaryInfoElement(),
-                new FlavorTextBestiaryInfoElement("Unchained from vengeance, now the night presides over all."),
+                new NightEmpressPortraitBackground(),
+                new FlavorTextBestiaryInfoElement("Unchained from vengeance against the unholy, now the night presides over all."),
             });
         }
 
@@ -93,7 +94,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
         public ref float PhaseCounter => ref NPC.ai[1];
         public ref float AttackCounter => ref NPC.ai[2];
         public ref float State => ref NPC.ai[3];
-        public bool Rage { get; set; }
+        public bool Rage { get; set; } = false;
         public bool EnterPhaseTwo { get; set; } = false;
         public bool ShouldDespawn { get; set; } = false;
 
@@ -137,9 +138,9 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             }
         }
 
-        private static int _direction;
+        private static int _direction = 1;
 
-        private static Vector2 _staticPosition;
+        private static Vector2 _staticPosition = Vector2.Zero;
 
         public override void AI()
         {

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -15,7 +16,39 @@ namespace BlockContent.Content.Graphics
             get { return ModContent.GetInstance<BlockContent>(); }
         }
 
-        private static int _idOffset;
+        private struct Gun
+        {
+            public int index;
+
+            public Vector2 position;
+
+            public float rotation;
+
+            public Color color;
+
+            public Color edgeColor;
+
+            public SpriteEffects direction;
+
+            public void DrawGun()
+            {
+                Asset<Texture2D> texture = Main.Assets.Request<Texture2D>("Images/Item_" + index);
+                for (int i = 0; i < 4; i++)
+                {
+                    Vector2 offset = new Vector2(2.5f, 0).RotatedBy((MathHelper.TwoPi / 4 * i) + rotation + MathHelper.PiOver4);
+                    DrawData gunBackData = new DrawData(texture.Value, position + offset - Main.screenPosition, null, edgeColor, rotation, texture.Size() * new Vector2(0.2f, 0.5f), 1f, direction, 0);
+                    GameShaders.Misc["BlockContent:Sanctuary"].Apply(gunBackData);
+                    Main.EntitySpriteDraw(gunBackData);
+                }
+                DrawData gunData = new DrawData(texture.Value, position - Main.screenPosition, null, color, rotation, texture.Size() * new Vector2(0.2f, 0.5f), 1f, direction, 0);
+                GameShaders.Misc["BlockContent:Sanctuary"].Apply(gunData);
+                Main.EntitySpriteDraw(gunData);
+                Main.pixelShader.CurrentTechnique.Passes[0].Apply();
+            }
+        }
+
+        private static int _idOffset = 0;
+
         public void Draw(Projectile proj)
         {
             int[] index = new int[]
@@ -33,47 +66,34 @@ namespace BlockContent.Content.Graphics
                 ItemID.SDMG,
                 ItemID.Celeb2
             };
+
             if (proj.ai[0] == 0)
-                _idOffset = Main.rand.Next(index.Length - 7);
+                _idOffset = Main.rand.Next(5);
+
+            MoreUtils.ResetSpritebatch(true);
 
             for (int i = 0; i < 7; i++)
             {
-                Asset<Texture2D> gunTexture = Main.Assets.Request<Texture2D>("Images/Item_" + index[i + _idOffset]);
+                Gun gun = new Gun();
                 float rotation = proj.localAI[0] * 0.2f * proj.spriteDirection;
                 float progress = Utils.GetLerpValue(20, 70, proj.ai[0], true);
-
-                const int ovalWidth = 60;
-                Vector2 projCenter = proj.Center + new Vector2(32, 0).RotatedBy(proj.rotation);
-                Vector2 oval = new Vector2(ovalWidth * progress, 0).RotatedBy((MathHelper.TwoPi / 7 * i) + rotation);
+                Vector2 projCenter = proj.Center + new Vector2(34, 0).RotatedBy(proj.rotation);
+                Vector2 oval = new Vector2(60f * progress, 0).RotatedBy((MathHelper.TwoPi / 7 * i) + rotation);
                 oval.Y *= 0.7f;
-                Vector2 gunPosition = projCenter + oval.RotatedBy(proj.rotation);
-                Vector2 gunOrigin = gunTexture.Size() * new Vector2(0.2f, 0.5f);
-                SpriteEffects effects = proj.spriteDirection == -1 ? SpriteEffects.FlipVertically : SpriteEffects.None;
+                gun.index = index[i + _idOffset];
+                gun.position = projCenter + oval.RotatedBy(proj.rotation);
+                gun.rotation = proj.rotation;
+                gun.direction = proj.spriteDirection == -1 ? SpriteEffects.FlipVertically : SpriteEffects.None;
 
-                Color gradient = new GradientColor(new Color[]
-                {
-                    MoreColor.Sanguine,
-                    new Color(233, 0, 50),
-                    new Color(233, 50, 0),
-                    new Color(250, 33, 33)
-                },
-                2f, 1.8f).Value;
-                Color glowColor = Color.Lerp(Color.DarkRed, gradient, Utils.GetLerpValue(-25 * progress, 5 * progress, oval.X, true));
-                glowColor.A = 0;
-                Color darkColor = Color.Lerp(Color.Black * 0.5f, Color.DarkRed, Utils.GetLerpValue(-25 * progress, 5 * progress, oval.X, true));
-                darkColor.A /= 2;
-
-                //MoreUtils.ResetSpritebatch(true);
-
-                DrawData gunData = new DrawData(gunTexture.Value, gunPosition - Main.screenPosition, null, glowColor * progress, proj.rotation, gunOrigin, 1f, effects, 0);
-                DrawData gunBackData = new DrawData(gunTexture.Value, gunPosition - Main.screenPosition, null, darkColor * progress, proj.rotation, gunOrigin, 1f, effects, 0);
-                //GameShaders.Misc["BlockContent:Grayscale"].Apply();
-                Main.EntitySpriteDraw(gunBackData);
-                Main.EntitySpriteDraw(gunData);
-                //Main.pixelShader.CurrentTechnique.Passes[0].Apply();
-
-                //MoreUtils.ResetSpritebatch(false);
+                Color drawColor = Color.Lerp(Color.DarkRed, Color.White, Utils.GetLerpValue(-40 * progress, 10 * progress, oval.X, true));
+                drawColor.A = 0;
+                Color edgeColor = Color.Lerp(new Color(20, 0, 0, 0), Color.Black, Utils.GetLerpValue(-40 * progress, progress, oval.X, true));
+                gun.color = drawColor * progress;
+                gun.edgeColor = edgeColor * 0.3f * progress;
+                gun.DrawGun();
             }
+
+            MoreUtils.ResetSpritebatch(false);
         }
     }
 }

@@ -62,12 +62,12 @@ namespace BlockContent.Content.Graphics
                 speckle.SetTypeInfo(40);
                 speckle.Velocity = (settings.MovementVector * 0.1f) + Main.rand.NextVector2Circular(2, 2);
                 speckle.Scale = Vector2.One * Main.rand.NextFloat(0.1f, 0.7f);
+                speckle.ScaleAcceleration = Vector2.One * -0.01f;
                 speckle.LocalPosition = settings.PositionInWorld + Main.rand.NextVector2Circular(5, 5);
                 speckle.ColorTint = Color.Lerp(MoreColor.PaleGray, Color.Gainsboro, Main.rand.NextFloat());
                 speckle.ColorTint.A = 0;
                 speckle.FadeInNormalizedTime = 0.02f;
-                speckle.FadeOutNormalizedTime = 0.1f;
-                speckle.AccelerationPerFrame *= 0.7f;
+                speckle.FadeOutNormalizedTime = 0.01f;
                 if (Main.rand.Next(2) == 0)
                     Main.ParticleSystem_World_OverPlayers.Add(speckle);
 

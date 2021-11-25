@@ -33,9 +33,12 @@ namespace BlockContent.Content.Graphics
         {
             GameShaders.Misc["BlockContent:PaleBlade"] = new MiscShaderData(Main.VertexPixelShaderRef, "MagicMissile").UseProjectionMatrix(doUse: true);
 
-            GameShaders.Misc["BlockContent:Grayscale"] = new MiscShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Assets/Effects/Grayscale").Value), "Grayscale");
-            
-            GameShaders.Misc["BlockContent:NightEmpressWings"] = new MiscShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Assets/Effects/NightEmpressWings").Value), "NightEmpressWings");
+            //Ref<Effect> grayscaleRef = new Ref<Effect>(Mod.Assets.Request<Effect>("Assets/Effects/Grayscale").Value);
+            //GameShaders.Misc["BlockContent:Grayscale"] = new MiscShaderData(grayscaleRef, "Grayscale");
+            GameShaders.Misc["BlockContent:Sanctuary"] = new MiscShaderData(Main.PixelShaderRef, "ArmorWisp").UseColor(MoreColor.Sanguine).UseSecondaryColor(Color.DarkRed);
+
+            Ref<Effect> nightRef = new Ref<Effect>(Mod.Assets.Request<Effect>("Assets/Effects/NightEmpressWings").Value);
+            GameShaders.Misc["BlockContent:NightEmpressWings"] = new MiscShaderData(nightRef, "NightEmpressWings");
             GameShaders.Misc["BlockContent:NightEmpressWings"].UseImage0("Images/Extra_156");
             Asset<Texture2D> wingsTexture = Mod.Assets.Request<Texture2D>("Assets/Textures/NightEmpress/NightEmpress_WingsShader");
             //GameShaders.Misc["BlockContent:NightEmpressWings"].Shader.GraphicsDevice.Textures[0] = wingsTexture.Value;

@@ -87,7 +87,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
             if (shootDir1.X != Projectile.velocity.X || shootDir1.Y != Projectile.velocity.Y)
                 Projectile.netUpdate = true;
             Projectile.velocity = shootDir1.SafeNormalize(Vector2.Zero) * 10f;
-            Projectile.Center = player.RotatedRelativePoint(player.MountedCenter, false, false);
+            Projectile.Center = player.RotatedRelativePoint(player.MountedCenter - new Vector2(0, 2), false, false);
             Projectile.rotation = Projectile.velocity.ToRotation();
             Projectile.spriteDirection = Projectile.direction;
             Projectile.timeLeft = 3;
