@@ -36,6 +36,22 @@ public partial class MoreUtils
         Main.EntitySpriteDraw(texture.Value, drawCenter, null, color2, rotation + MathHelper.PiOver2, origin, vector * 0.56f, dir, 0);
     }
 
+    public static void ResetSpritebatch(bool activeShader)
+    { 
+        if (activeShader)
+        {
+            //shaders
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+        }
+        else
+        {
+            //defaults
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+        }
+    }
+
     public static float DualLerp(float start, float middle, float end, float value, bool clamp = true)
     {
         return Utils.GetLerpValue(start, middle, value, clamp) * Utils.GetLerpValue(end, middle, value, clamp);

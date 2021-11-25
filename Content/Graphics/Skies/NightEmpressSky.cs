@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace BlockContent.Content.Skies
 {
-    public class NightSky : CustomSky
+    public class NightEmpressSky : CustomSky
     {
         private Mod Mod
         {

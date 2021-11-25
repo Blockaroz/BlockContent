@@ -13,11 +13,9 @@ float3 uLightSource;
 float2 uImageSize0;
 float2 uImageSize1;
 
-float4 GrayscaleFunction(float2 coords : TEXCOORD0) : COLOR0
+float4 GrayscaleFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
-    float4 color = tex2D(uImage0, coords);
-    if (!any(color))
-        return color;
+    float4 color = sampleColor;
 
     color.r = (color.r * 0.299) + (color.g * 0.587) + (color.b * 0.114);
     color.g = (color.r * 0.299) + (color.g * 0.587) + (color.b * 0.114);
@@ -28,7 +26,7 @@ float4 GrayscaleFunction(float2 coords : TEXCOORD0) : COLOR0
 
 technique Technique1
 {
-    pass GrayscalePass
+    pass Grayscale
     {
         PixelShader = compile ps_2_0 GrayscaleFunction();
     }

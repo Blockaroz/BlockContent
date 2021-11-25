@@ -12,6 +12,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.Drawing;
 using Terraria.Graphics.CameraModifiers;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -759,16 +760,14 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             spriteBatch.Draw(wings.Value, NPC.Center - offset, frame, baseColor, NPC.rotation, frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
             if (includeOverlay)
             {
-                //spriteBatch.Draw(wingsMask.Value, NPC.Center - offset, frame, baseColor, NPC.rotation, frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
-                if (State == 1)
-                {
-                    for (int i = 0; i < 4; i++)
-                    {
-                        float sine = MathHelper.Max((float)Math.Sin(Main.GlobalTimeWrappedHourly % 3), 0);
-                        Vector2 maskOffset = new Vector2(sine * 4, 0).RotatedBy(MathHelper.TwoPi / 4 * i);
-                        spriteBatch.Draw(wingsMask.Value, NPC.Center + maskOffset - offset, frame, glowColor * ((sine * 0.5f) + 0.3f), NPC.rotation, frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
-                    }
-                }
+                if (!NPC.IsABestiaryIconDummy)
+                    MoreUtils.ResetSpritebatch(true);
+                DrawData mask = new DrawData(wingsMask.Value, NPC.Center - offset, frame, baseColor, NPC.rotation, frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+                GameShaders.Misc["HallowBoss"].Apply(mask);
+                mask.Draw(spriteBatch);
+                Main.pixelShader.CurrentTechnique.Passes[0].Apply();
+                if (!NPC.IsABestiaryIconDummy)
+                    MoreUtils.ResetSpritebatch(false);
             }
         }
 

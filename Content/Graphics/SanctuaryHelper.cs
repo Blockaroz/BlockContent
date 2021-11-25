@@ -1,10 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -65,16 +63,16 @@ namespace BlockContent.Content.Graphics
                 Color darkColor = Color.Lerp(Color.Black * 0.5f, Color.DarkRed, Utils.GetLerpValue(-25 * progress, 5 * progress, oval.X, true));
                 darkColor.A /= 2;
 
-                //Main.spriteBatch.End();
-                //Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+                //MoreUtils.ResetSpritebatch(true);
+
                 DrawData gunData = new DrawData(gunTexture.Value, gunPosition - Main.screenPosition, null, glowColor * progress, proj.rotation, gunOrigin, 1f, effects, 0);
                 DrawData gunBackData = new DrawData(gunTexture.Value, gunPosition - Main.screenPosition, null, darkColor * progress, proj.rotation, gunOrigin, 1f, effects, 0);
-                //GameShaders.Misc["BlockContent:Grayscale"].Apply(gunData);
+                //GameShaders.Misc["BlockContent:Grayscale"].Apply();
                 Main.EntitySpriteDraw(gunBackData);
                 Main.EntitySpriteDraw(gunData);
-                //Main.spriteBatch.End();
-                //Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+                //Main.pixelShader.CurrentTechnique.Passes[0].Apply();
 
+                //MoreUtils.ResetSpritebatch(false);
             }
         }
     }

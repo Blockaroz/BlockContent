@@ -26,15 +26,22 @@ namespace BlockContent.Content.Graphics
 
         public static void LoadSkies()
         {
-            SkyManager.Instance["BlockContent:SubtleDarkSky"] = new NightSky();
+            SkyManager.Instance["BlockContent:NightEmpressSky"] = new NightEmpressSky();
         }
 
         public static void LoadShaders()
         {
             GameShaders.Misc["BlockContent:PaleBlade"] = new MiscShaderData(Main.VertexPixelShaderRef, "MagicMissile").UseProjectionMatrix(doUse: true);
 
-            GameShaders.Misc["BlockContent:Grayscale"] = new MiscShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Assets/Effects/Grayscale").Value), "GrayscalePass");
-        
+            GameShaders.Misc["BlockContent:Grayscale"] = new MiscShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Assets/Effects/Grayscale").Value), "Grayscale");
+            
+            GameShaders.Misc["BlockContent:NightEmpressWings"] = new MiscShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Assets/Effects/NightEmpressWings").Value), "NightEmpressWings");
+            GameShaders.Misc["BlockContent:NightEmpressWings"].UseImage0("Images/Extra_156");
+            Asset<Texture2D> wingsTexture = Mod.Assets.Request<Texture2D>("Assets/Textures/NightEmpress/NightEmpress_WingsShader");
+            //GameShaders.Misc["BlockContent:NightEmpressWings"].Shader.GraphicsDevice.Textures[0] = wingsTexture.Value;
+            //GameShaders.Misc["BlockContent:NightEmpressWings"].Shader.GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+            //GameShaders.Misc["BlockContent:NightEmpressWings"].Shader.Parameters["uImageSize0"].SetValue(wingsTexture.Size());
+
         }
     }
 }

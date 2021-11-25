@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BlockContent.Content.NPCs;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
@@ -25,15 +26,14 @@ namespace BlockContent.Content.Items
             Item.UseSound = SoundID.Item1;
             Item.autoReuse = true;
             Item.rare = ModContent.RarityType<OddRarity>();
-            Item.shoot = ModContent.ProjectileType<Projectiles.NPCProjectiles.NightEmpressProjectiles.CurseSkull>();
+            //Item.shoot = ModContent.ProjectileType<Projectiles.NPCProjectiles.NightEmpressProjectiles.CurseSkull>();
             Item.shootSpeed = 1f;
         }
 
-        public override bool Shoot(Player player, ProjectileSource_Item_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        public override bool? UseItem(Player player)
         {
-            Projectile proj = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback);
-            proj.rotation = velocity.ToRotation();
-            return false;
+            NPC.NewNPC((int)player.MountedCenter.X, (int)player.MountedCenter.Y - 300, ModContent.NPCType<ShaderTest>());
+            return true;
         }
 
         public override void AddRecipes()
