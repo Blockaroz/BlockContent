@@ -35,6 +35,8 @@ namespace BlockContent.Content.Skies
             public float depth;
 
             public Color color;
+
+            public SpriteEffects direction;
         }
 
         public override void OnLoad()
@@ -46,19 +48,24 @@ namespace BlockContent.Content.Skies
         {
             _active = true;
             _opacity = 0;
-            _cloud = new Cloud[5000];
+            _cloud = new Cloud[3000];
             int index = 0;
-            for (int i = 0; i < 500; i++)
+            short[] tex = new short[]
+            {
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
+            };
+            for (int i = 0; i < 300; i++)
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    _cloud[index].position.X = ((float)Main.maxTilesX * 16f) * (i / 500f);
+                    _cloud[index].position.X = ((float)Main.maxTilesX * 16f) * (i / 300f);
                     _cloud[index].position.Y = (((float)(Main.worldSurface * 16f) + 2000f) * (j / 10f)) - 1000f;
-                    _cloud[index].texture = Main.Assets.Request<Texture2D>("Images/Cloud_" + (short)Main.rand.Next(8));//TextureAssets.Cloud[Main.rand.Next(8)];
-                    _cloud[index].depth = 1f + Main.rand.NextFloat(7f);
+                    _cloud[index].texture = Main.Assets.Request<Texture2D>("Images/Cloud_" + Main.rand.Next(tex));//TextureAssets.Cloud[Main.rand.Next(8)];
+                    _cloud[index].depth = 1.5f + Main.rand.NextFloat(7f);
                     _cloud[index].scale = 1f + Main.rand.NextFloat(2f);
-                    _cloud[index].color = Color.Lerp(Color.Black, MoreColor.NightSky, Main.rand.NextFloat(0.8f, 1f)) * Utils.GetLerpValue(8, 0, _cloud[index].depth, true);
+                    _cloud[index].color = MoreColor.NightSky * 0.1f * Utils.GetLerpValue(8, 0, _cloud[index].depth, true);
                     _cloud[index].position += Main.rand.NextVector2Circular(5, 5);
+                    _cloud[index].direction = Main.rand.Next(1) == 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
                     index++;
                 }
             }
@@ -103,7 +110,7 @@ namespace BlockContent.Content.Skies
                 Vector2 cloudPos = (_cloud[j].position - screen) * new Vector2(1f / _cloud[j].depth, 1.1f / _cloud[j].depth) + screen - Main.screenPosition;
                 if (view.Contains(cloudPos.ToPoint()))
                 {
-                    spriteBatch.Draw(_cloud[j].texture.Value, cloudPos, null, _cloud[j].color * _opacity, 0, _cloud[j].texture.Size() / 2, _cloud[j].scale, SpriteEffects.None, 0);
+                    spriteBatch.Draw(_cloud[j].texture.Value, cloudPos, null, _cloud[j].color * _opacity, 0, _cloud[j].texture.Size() / 2, _cloud[j].scale, _cloud[j].direction, 0);
                 }
             }
         }
