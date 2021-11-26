@@ -74,7 +74,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
                     Projectile.frame = 0;
             }
 
-            float randomRotation = MathHelper.ToRadians(Main.rand.NextFloat(-0.66f, 0.66f));
+            float randomRotation = MathHelper.ToRadians(Main.rand.NextFloat(-0.75f, 0.75f));
             Item selection = player.inventory[player.selectedItem];
             bool canShoot = player.channel && player.HasAmmo(selection, true) && !player.noItems && !player.CCed;
 
@@ -86,7 +86,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
             shootDir1 = shootDir1.RotatedBy(randomRotation);
             if (shootDir1.X != Projectile.velocity.X || shootDir1.Y != Projectile.velocity.Y)
                 Projectile.netUpdate = true;
-            Projectile.velocity = shootDir1.SafeNormalize(Vector2.Zero) * 10f;
+            Projectile.velocity = shootDir1.SafeNormalize(Vector2.Zero) * 15f;
             Projectile.Center = player.RotatedRelativePoint(player.MountedCenter - new Vector2(0, 2), false, false);
             Projectile.rotation = Projectile.velocity.ToRotation();
             Projectile.spriteDirection = Projectile.direction;

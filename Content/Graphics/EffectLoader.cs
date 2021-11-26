@@ -37,13 +37,12 @@ namespace BlockContent.Content.Graphics
             //GameShaders.Misc["BlockContent:Grayscale"] = new MiscShaderData(grayscaleRef, "Grayscale");
             GameShaders.Misc["BlockContent:Sanctuary"] = new MiscShaderData(Main.PixelShaderRef, "ArmorWisp").UseColor(MoreColor.Sanguine).UseSecondaryColor(Color.DarkRed);
 
-            Ref<Effect> nightRef = new Ref<Effect>(Mod.Assets.Request<Effect>("Assets/Effects/NightEmpressWings").Value);
-            GameShaders.Misc["BlockContent:NightEmpressWings"] = new MiscShaderData(nightRef, "NightEmpressWings");
-            GameShaders.Misc["BlockContent:NightEmpressWings"].UseImage0("Images/Extra_156");
-            Asset<Texture2D> wingsTexture = Mod.Assets.Request<Texture2D>("Assets/Textures/NightEmpress/NightEmpress_WingsShader");
-            //GameShaders.Misc["BlockContent:NightEmpressWings"].Shader.GraphicsDevice.Textures[0] = wingsTexture.Value;
-            //GameShaders.Misc["BlockContent:NightEmpressWings"].Shader.GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
-            //GameShaders.Misc["BlockContent:NightEmpressWings"].Shader.Parameters["uImageSize0"].SetValue(wingsTexture.Size());
+            //Ref<Effect> nightRef = new Ref<Effect>(Mod.Assets.Request<Effect>("Assets/Effects/NightEmpress").Value);
+            GameShaders.Misc["BlockContent:NightEmpress"] = new MiscShaderData(Main.PixelShaderRef, "HallowBoss").UseImage0("Images/Extra_156");
+            //Asset<Texture2D> wingsTexture = Mod.Assets.Request<Texture2D>("Assets/Textures/NightEmpress/NightEmpress_WingsShader");
+            //GameShaders.Misc["BlockContent:NightEmpress"].Shader.GraphicsDevice.Textures[0] = wingsTexture.Value;
+            //GameShaders.Misc["BlockContent:NightEmpress"].Shader.GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+            //GameShaders.Misc["BlockContent:NightEmpress"].Shader.Parameters["uImageSize0"].SetValue(wingsTexture.Size());
 
         }
     }

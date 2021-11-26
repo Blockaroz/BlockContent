@@ -1,5 +1,4 @@
-﻿using BlockContent.Content.Bestiary;
-using BlockContent.Content.Graphics;
+﻿using BlockContent.Content.Graphics;
 using BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -85,7 +84,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
             {
                 BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Times.DayTime,
-                new NightEmpressPortraitBackground(),
+                new BestiaryElements.NightEmpressPortraitBackground(),
                 new FlavorTextBestiaryInfoElement("Unchained from vengeance against the unholy, now the night presides over all."),
             });
         }
@@ -764,7 +763,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 if (!NPC.IsABestiaryIconDummy)
                     MoreUtils.ResetSpritebatch(true);
                 DrawData mask = new DrawData(wingsMask.Value, NPC.Center - offset, frame, baseColor, NPC.rotation, frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
-                GameShaders.Misc["HallowBoss"].Apply(mask);
+                GameShaders.Misc["BlockContent:NightEmpress"].Apply(mask);
                 mask.Draw(spriteBatch);
                 Main.pixelShader.CurrentTechnique.Passes[0].Apply();
                 if (!NPC.IsABestiaryIconDummy)

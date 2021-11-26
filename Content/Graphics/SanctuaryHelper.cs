@@ -85,9 +85,9 @@ namespace BlockContent.Content.Graphics
                 gun.rotation = proj.rotation;
                 gun.direction = proj.spriteDirection == -1 ? SpriteEffects.FlipVertically : SpriteEffects.None;
 
-                Color drawColor = Color.Lerp(Color.DarkRed, Color.White, Utils.GetLerpValue(-40 * progress, 10 * progress, oval.X, true));
+                Color drawColor = Color.Lerp(Color.DarkRed, Color.White, Utils.GetLerpValue(-40f * progress, 15f * progress, oval.X, true));
                 drawColor.A = 0;
-                Color edgeColor = Color.Lerp(new Color(20, 0, 0, 0), Color.Black, Utils.GetLerpValue(-40 * progress, progress, oval.X, true));
+                Color edgeColor = Color.Lerp(new Color(20, 0, 0, 0), Color.Black, Utils.GetLerpValue(-40f * progress, 15f * progress, oval.X, true));
                 gun.color = drawColor * progress;
                 gun.edgeColor = edgeColor * 0.3f * progress;
                 gun.DrawGun();

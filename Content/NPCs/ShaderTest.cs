@@ -27,12 +27,12 @@ namespace BlockContent.Content.NPCs
         {
             Asset<Texture2D> tex = Mod.Assets.Request<Texture2D>("Assets/Textures/Glowball_" + (short)3);
 
-            //MoreUtils.ResetSpritebatch(true);
+            MoreUtils.ResetSpritebatch(true);
 
             DrawData data = new DrawData(tex.Value, NPC.Center - screenPos, null, Color.White, 0, tex.Size() / 2, 1f, SpriteEffects.None, 0);
-            //GameShaders.Misc["BlockContent:NightEmpressWings"].Apply(data);
+            GameShaders.Misc["BlockContent:NightEmpress"].Apply(data);
             data.Draw(spriteBatch);
-            //Main.pixelShader.CurrentTechnique.Passes[0].Apply();
+            Main.pixelShader.CurrentTechnique.Passes[0].Apply();
 
             MoreUtils.ResetSpritebatch(false);
 

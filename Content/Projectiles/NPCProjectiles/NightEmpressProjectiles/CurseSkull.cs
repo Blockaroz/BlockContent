@@ -83,40 +83,31 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
         public override bool PreDraw(ref Color lightColor)
         {
             if (Projectile.ai[0] <= 180)
-                DrawCurseCharge();
+                DrawCurseBall(Projectile.Center, MathHelper.SmoothStep(0, 2, MoreUtils.DualLerp(0, 60, 120, 180, Projectile.ai[0], true)));
             if (Projectile.ai[0] >= 100)
                 DrawCurseSkull();
+
+            if (Projectile.ai[0] <= 100)
+            {
+                ParticleOrchestraSettings settings = new ParticleOrchestraSettings()
+                {
+                    PositionInWorld = Projectile.Center + (Main.rand.NextVector2CircularEdge(Main.rand.NextFloat(5, 15), Main.rand.NextFloat(5, 15)) * 10)
+                };
+                ParticleEffects.CreateNightMagic(settings, NightEmpress.SpecialColor(0));
+            }
             return false;
         }
 
-        public void DrawCurseCharge()
+        public void DrawCurseBall(Vector2 center, float scale)
         {
             Asset<Texture2D> ball = Mod.Assets.Request<Texture2D>("Assets/Textures/Glowball_" + (short)3);
-
-            float ballScale = MathHelper.SmoothStep(0, 2, MoreUtils.DualLerp(0, 60, 120, 180, Projectile.ai[0], true));
 
             Color night = NightEmpress.SpecialColor(0, true);
             night.A = 50;
             Color dark = NightEmpress.SpecialColor(0);
             dark.A = 50;
-            Main.EntitySpriteDraw(ball.Value, Projectile.Center - Main.screenPosition, null, MoreColor.NightSky * 0.3f, Projectile.rotation, ball.Size() / 2, ballScale * 1.1f, SpriteEffects.None, 0);
-            MoreUtils.DrawStreak(ball, SpriteEffects.None, Projectile.Center - Main.screenPosition, ball.Size() / 2, ballScale, 1, 1, Projectile.rotation, dark, night);
-
-            Vector2 dir = Main.rand.NextVector2CircularEdge(Main.rand.NextFloat(5, 15), Main.rand.NextFloat(5, 15)) * 10;
-            if (Projectile.ai[0] <= 100)
-            {
-                ParticleOrchestraSettings settings = new ParticleOrchestraSettings()
-                {
-                    PositionInWorld = Projectile.Center + dir
-                };
-                ParticleEffects.CreateNightMagic(settings, dark);
-                if (Main.rand.Next(3) == 0)
-                {
-                    Dust charge = Dust.NewDustPerfect(Projectile.Center + dir, NightEmpress.GlowDustID, Vector2.Zero, 0, dark, 1f);
-                    charge.noGravity = true;
-                    charge.velocity = charge.position.DirectionTo(Projectile.Center);
-                }
-            }
+            Main.EntitySpriteDraw(ball.Value, center - Main.screenPosition, null, MoreColor.NightSky * 0.3f, Projectile.rotation, ball.Size() / 2, scale * 1.1f, SpriteEffects.None, 0);
+            MoreUtils.DrawStreak(ball, SpriteEffects.None, center - Main.screenPosition, ball.Size() / 2, scale, 1, 1, Projectile.rotation, dark, night);
         }
 
         public void DrawCurseSkull()
@@ -127,7 +118,6 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 Mod.Assets.Request<Texture2D>("Assets/Textures/NightEmpress/Skull_" + (short)1)
             };
             Asset<Texture2D> flare = Mod.Assets.Request<Texture2D>("Assets/Textures/Streak_" + (short)0);
-            Asset<Texture2D> ball = Mod.Assets.Request<Texture2D>("Assets/Textures/Glowball_" + (short)3);
 
             float skullScale = MathHelper.SmoothStep(0, 1, Utils.GetLerpValue(120, 190, Projectile.ai[0], true));
 

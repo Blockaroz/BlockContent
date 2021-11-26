@@ -5,7 +5,7 @@ using Terraria.GameContent.Bestiary;
 using Terraria.ModLoader;
 using Terraria.UI;
 
-namespace BlockContent.Content.Bestiary
+namespace BlockContent.Content.BestiaryElements
 {
     public class NightEmpressPortraitBackground : IBestiaryInfoElement, IBestiaryBackgroundImagePathAndColorProvider
     {
@@ -16,7 +16,7 @@ namespace BlockContent.Content.Bestiary
 
         public Color? GetBackgroundColor() => null;
 
-        public Asset<Texture2D> GetBackgroundImage() => Mod.Assets.Request<Texture2D>("Assets/Textures/Bestiary/NightEmpress");
+        public Asset<Texture2D> GetBackgroundImage() => Mod.Assets.Request<Texture2D>("Content/BestiaryElements/NightEmpressPortraitBackground");
 
         public UIElement ProvideUIElement(BestiaryUICollectionInfo info) => null;
     }

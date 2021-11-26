@@ -17,6 +17,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
             DisplayName.SetDefault("Sanctuary Missile");
             ProjectileID.Sets.TrailCacheLength[Type] = 18;
             ProjectileID.Sets.TrailingMode[Type] = 3;
+            ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
         }
 
         public override void SetDefaults()

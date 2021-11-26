@@ -62,7 +62,7 @@ namespace BlockContent.Content.Graphics
                 speckle.SetTypeInfo(40);
                 speckle.Velocity = (settings.MovementVector * 0.1f) + Main.rand.NextVector2Circular(2, 2);
                 speckle.Scale = Vector2.One * Main.rand.NextFloat(0.1f, 0.7f);
-                speckle.ScaleAcceleration = Vector2.One * -0.01f;
+                speckle.ScaleVelocity = Vector2.One * -0.01f;
                 speckle.LocalPosition = settings.PositionInWorld + Main.rand.NextVector2Circular(5, 5);
                 speckle.ColorTint = Color.Lerp(MoreColor.PaleGray, Color.Gainsboro, Main.rand.NextFloat());
                 speckle.ColorTint.A = 0;
