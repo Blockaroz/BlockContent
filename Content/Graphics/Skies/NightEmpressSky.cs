@@ -36,7 +36,9 @@ namespace BlockContent.Content.Skies
 
             public Color color;
 
-            public SpriteEffects direction;
+            public int direction;
+
+            public float offsetTime;
         }
 
         public override void OnLoad()
@@ -50,22 +52,19 @@ namespace BlockContent.Content.Skies
             _opacity = 0;
             _cloud = new Cloud[3000];
             int index = 0;
-            short[] tex = new short[]
-            {
-                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
-            };
             for (int i = 0; i < 300; i++)
             {
                 for (int j = 0; j < 10; j++)
                 {
                     _cloud[index].position.X = ((float)Main.maxTilesX * 16f) * (i / 300f);
                     _cloud[index].position.Y = (((float)(Main.worldSurface * 16f) + 2000f) * (j / 10f)) - 1000f;
-                    _cloud[index].texture = Main.Assets.Request<Texture2D>("Images/Cloud_" + Main.rand.Next(tex));//TextureAssets.Cloud[Main.rand.Next(8)];
+                    _cloud[index].texture = Main.Assets.Request<Texture2D>("Images/Cloud_" + Main.rand.Next(0, 21));//TextureAssets.Cloud[Main.rand.Next(8)];
                     _cloud[index].depth = 1.5f + Main.rand.NextFloat(7f);
                     _cloud[index].scale = 1f + Main.rand.NextFloat(2f);
-                    _cloud[index].color = MoreColor.NightSky * 0.1f * Utils.GetLerpValue(8, 0, _cloud[index].depth, true);
+                    _cloud[index].color = MoreColor.NightSky * 0.15f * Utils.GetLerpValue(8, 0, _cloud[index].depth, true);
                     _cloud[index].position += Main.rand.NextVector2Circular(5, 5);
-                    _cloud[index].direction = Main.rand.Next(1) == 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+                    _cloud[index].direction = Main.rand.NextBool().ToDirectionInt();
+                    _cloud[index].offsetTime = Main.rand.NextFloat(0.8f, 1.2f) * 200;
                     index++;
                 }
             }
@@ -89,10 +88,11 @@ namespace BlockContent.Content.Skies
                 spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.Black * 0.7f * _opacity);
             }
 
-            if (maxDepth >= float.MinValue && minDepth < float.MaxValue)
+            if (maxDepth >= 0 && minDepth < 4)
             {
+                float wave = 0.5f + ((float)Math.Cos((Main.GlobalTimeWrappedHourly % 15 / 15) * MathHelper.TwoPi) * 0.2f);
                 spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), MoreColor.NightSky * 0.1f * _opacity);
-                spriteBatch.Draw(sky.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), new Color(128, 128, 128, 25) * 0.4f * _opacity);
+                spriteBatch.Draw(sky.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), new Color(128, 128, 128, 25) * wave * _opacity);
             }
 
             Rectangle view = new Rectangle(-1000, -1000, 4000, 4000);
@@ -100,18 +100,19 @@ namespace BlockContent.Content.Skies
             for (int i = 0; i < _cloud.Length; i++)
             {
                 if (depth == -1 && _cloud[i].depth < maxDepth)
-                {
-
-                }
+                    depth = i;
+                if (depth <= minDepth)
+                    break;
             }
             for (int j = 0; j < _cloud.Length; j++)
             {
                 Vector2 screen = Main.screenPosition + new Vector2(Main.screenWidth >> 1, Main.screenHeight >> 1);
+                _cloud[j].position.X += (float)Math.Sin((Main.GlobalTimeWrappedHourly % 100 / 100 * MathHelper.TwoPi) + _cloud[j].offsetTime) / _cloud[j].scale;
                 Vector2 cloudPos = (_cloud[j].position - screen) * new Vector2(1f / _cloud[j].depth, 1.1f / _cloud[j].depth) + screen - Main.screenPosition;
+                SpriteEffects cloudDirection = _cloud[j].direction == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+                Color cloudColor = _cloud[j].color * _opacity;
                 if (view.Contains(cloudPos.ToPoint()))
-                {
-                    spriteBatch.Draw(_cloud[j].texture.Value, cloudPos, null, _cloud[j].color * _opacity, 0, _cloud[j].texture.Size() / 2, _cloud[j].scale, _cloud[j].direction, 0);
-                }
+                    spriteBatch.Draw(_cloud[j].texture.Value, cloudPos, null, cloudColor, 0, _cloud[j].texture.Size() / 2, _cloud[j].scale, cloudDirection, 0);
             }
         }
 

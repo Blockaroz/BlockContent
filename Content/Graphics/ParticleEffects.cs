@@ -24,7 +24,7 @@ namespace BlockContent.Content.Graphics
             if (Main.netMode != NetmodeID.Server && !Main.gamePaused)
             {
                 FadingParticle particle = new FadingParticle();
-                particle.SetBasicInfo(Mod.Assets.Request<Texture2D>("Assets/Textures/Ring_" + (short)0), null, Vector2.Zero, Vector2.Zero);
+                particle.SetBasicInfo(Mod.Assets.Request<Texture2D>("Assets/Textures/Particles/SanctuaryRing"), null, Vector2.Zero, Vector2.Zero);
                 particle.SetTypeInfo(30);
                 particle.ColorTint = MoreColor.Sanguine;
                 particle.ColorTint.A = 25;
@@ -58,7 +58,7 @@ namespace BlockContent.Content.Graphics
             if (Main.netMode != NetmodeID.Server && !Main.gamePaused)
             {
                 FadingParticle speckle = new FadingParticle();
-                speckle.SetBasicInfo(Mod.Assets.Request<Texture2D>("Assets/Textures/Glowball_" + (short)2), null, Vector2.Zero, Vector2.Zero);
+                speckle.SetBasicInfo(Mod.Assets.Request<Texture2D>("Assets/Textures/Extra/Glowball_" + (short)2), null, Vector2.Zero, Vector2.Zero);
                 speckle.SetTypeInfo(40);
                 speckle.Velocity = (settings.MovementVector * 0.1f) + Main.rand.NextVector2Circular(2, 2);
                 speckle.Scale = Vector2.One * Main.rand.NextFloat(0.1f, 0.7f);
@@ -68,7 +68,7 @@ namespace BlockContent.Content.Graphics
                 speckle.ColorTint.A = 0;
                 speckle.FadeInNormalizedTime = 0.02f;
                 speckle.FadeOutNormalizedTime = 0.01f;
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.Next(1) == 0)
                     Main.ParticleSystem_World_OverPlayers.Add(speckle);
 
                 PrettySparkleParticle sparkle = new PrettySparkleParticle();
@@ -79,22 +79,23 @@ namespace BlockContent.Content.Graphics
                 sparkle.LocalPosition = settings.PositionInWorld + Main.rand.NextVector2Circular(5, 5);
                 sparkle.AccelerationPerFrame *= 0.7f;
                 sparkle.ScaleVelocity = Vector2.One * -0.01f;
-                if (Main.rand.Next(3) == 0)
+                if (Main.rand.Next(2) == 0)
                     Main.ParticleSystem_World_OverPlayers.Add(sparkle);
             }
         }
 
-        public static void CreateNightMagic(ParticleOrchestraSettings settings, Color color)
+        public static void CreateNightMagic(ParticleOrchestraSettings settings)
         {
             if (Main.netMode != NetmodeID.Server && !Main.gamePaused)
             {
                 PrettySparkleParticle particle = new PrettySparkleParticle();
+                particle.SetBasicInfo(Mod.Assets.Request<Texture2D>("Assets/Textures/Particles/NightMagic"), null, Vector2.Zero, Vector2.Zero);
                 particle.Velocity = settings.MovementVector * 0.2f;
-                particle.Scale = new Vector2(Main.rand.NextFloat()) * 0.6f;
-                particle.Rotation = MathHelper.PiOver2 + Main.rand.NextFloat(-0.1f, 0.1f);
-                particle.ColorTint = color;
-                particle.ColorTint.A = 25;
-                particle.Opacity = 1;
+                particle.Scale = new Vector2(1f, 0.6f) * (0.5f + Main.rand.NextFloat());
+                particle.ScaleVelocity = Vector2.One * -0.01f;
+                particle.Rotation = Main.rand.NextFloat(-0.05f, 0.05f);
+                particle.ColorTint = new Color(180, 120, 255);
+                particle.ColorTint.A = 0;
                 particle.LocalPosition = settings.PositionInWorld + Main.rand.NextVector2Circular(0.2f, 0.2f);
                 Main.ParticleSystem_World_OverPlayers.Add(particle);
             }

@@ -92,7 +92,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
 
             Asset<Texture2D> star = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/ShootingStar");
             Asset<Texture2D> starTrail = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/ShootingStar_Trail");
-            Asset<Texture2D> starSparkle = Mod.Assets.Request<Texture2D>("Assets/Textures/Streak_" + (short)0);
+            Asset<Texture2D> starSparkle = Mod.Assets.Request<Texture2D>("Assets/Textures/Extra/Streak_" + (short)0);
             
             Color starColor = NightEmpress.SpecialColor(0, true);
             starColor.A = 25;

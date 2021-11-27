@@ -37,11 +37,11 @@ namespace BlockContent.Content.Graphics
                 {
                     Vector2 offset = new Vector2(2.5f, 0).RotatedBy((MathHelper.TwoPi / 4 * i) + rotation + MathHelper.PiOver4);
                     DrawData gunBackData = new DrawData(texture.Value, position + offset - Main.screenPosition, null, edgeColor, rotation, texture.Size() * new Vector2(0.2f, 0.5f), 1f, direction, 0);
-                    GameShaders.Misc["BlockContent:Sanctuary"].Apply(gunBackData);
+                    GameShaders.Misc["Blockaroz:Sanctuary"].Apply(gunBackData);
                     Main.EntitySpriteDraw(gunBackData);
                 }
                 DrawData gunData = new DrawData(texture.Value, position - Main.screenPosition, null, color, rotation, texture.Size() * new Vector2(0.2f, 0.5f), 1f, direction, 0);
-                GameShaders.Misc["BlockContent:Sanctuary"].Apply(gunData);
+                GameShaders.Misc["Blockaroz:Sanctuary"].Apply(gunData);
                 Main.EntitySpriteDraw(gunData);
                 Main.pixelShader.CurrentTechnique.Passes[0].Apply();
             }

@@ -73,7 +73,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
         {
             Asset<Texture2D> missileTexture = Mod.Assets.Request<Texture2D>("Content/Projectiles/Weapons/Red/SanctuaryMissile");
             Asset<Texture2D> streakTexture = TextureAssets.Extra[98];
-            Asset<Texture2D> ballTexture = Mod.Assets.Request<Texture2D>("Assets/Textures/Glowball_" + (short)0);
+            Asset<Texture2D> ballTexture = Mod.Assets.Request<Texture2D>("Assets/Textures/Extra/Glowball_" + (short)0);
             Rectangle baseFrame = missileTexture.Frame(3, 1, 0, 0);
             Rectangle glowFrame = missileTexture.Frame(3, 1, 1, 0);
             Rectangle haloFrame = missileTexture.Frame(3, 1, 2, 0);

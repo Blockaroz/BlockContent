@@ -9,9 +9,10 @@ namespace BlockContent.Content.Dusts
     {
         public override void OnSpawn(Dust dust)
         {
-            dust.scale *= 1.1f;
+            dust.scale *= 1.4f;
             dust.noGravity = true;
             dust.fadeIn += 0.5f;
+            dust.noLight = true;
         }
 
         public override bool Update(Dust dust)
@@ -24,7 +25,7 @@ namespace BlockContent.Content.Dusts
 
         public override void SetStaticDefaults()
         {
-            UpdateType = 278;
+            UpdateType = DustID.Vortex;
         }
 
         public override Color? GetAlpha(Dust dust, Color lightColor) => dust.color;

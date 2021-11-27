@@ -42,7 +42,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Projectile.velocity = Vector2.Zero;
             _lineLength = new Vector2(MathHelper.SmoothStep(120, 1200, Utils.GetLerpValue(30, 10, Projectile.timeLeft, true)), 0).RotatedBy(Projectile.rotation);
             if (Projectile.timeLeft == 30)
-                SoundEngine.PlaySound(SoundID.Item164, Projectile.Center);
+                SoundEngine.PlaySound(SoundID.Item164.WithPitchVariance(0.2f), Projectile.Center);
             if (Projectile.timeLeft == 28)
             {
                 PunchCameraModifier punch = new PunchCameraModifier(Projectile.Center, (Projectile.rotation + Main.rand.NextFloat()).ToRotationVector2(), 15, 5, 40, 7000f, "NightEmpress");
@@ -68,7 +68,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Asset<Texture2D> streakTexture = Mod.Assets.Request<Texture2D>("Assets/Textures/Streak_" + (short)1);
+            Asset<Texture2D> streakTexture = Mod.Assets.Request<Texture2D>("Assets/Textures/Extra/Streak_" + (short)1);
             Color light = NightEmpress.SpecialColor(0);
             light.A = 25;
             Projectile.localAI[0]++;
@@ -84,7 +84,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 Main.EntitySpriteDraw(TextureAssets.Extra[178].Value, Projectile.Center - Main.screenPosition, null, Color.Black * 0.33f * indicator, Projectile.rotation + dirRotation, new Vector2(0, 1), new Vector2(1.8f, 80), SpriteEffects.None, 0);
 
                 //draw empress shades and flare
-                for (int j = 0; j < 10; j++)
+                for (int j = 0; j < 18; j++)
                 {
                     Color glowColor = Color.Lerp(MoreColor.NightSky * 0.2f, light, Utils.GetLerpValue(20, 15, Projectile.timeLeft + (j * 1.5f), true));
                     float opacity = MoreUtils.DualLerp(32, 30, 15, 5, Projectile.timeLeft + (j * 1.5f), true) * Utils.GetLerpValue(0, 5, Projectile.timeLeft, true);

@@ -443,7 +443,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
 
                     if (PhaseCounter == 10)
                     {
-                        Projectile skull = Projectile.NewProjectileDirect(NPC.GetProjectileSpawnSource(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<CurseSkull>(), damageValue[7], 20);
+                        Projectile skull = Projectile.NewProjectileDirect(NPC.GetProjectileSpawnSource(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<CurseCharge>(), damageValue[7], 20);
                         skull.ai[1] = NPC.whoAmI;
                     }
 
@@ -763,7 +763,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 if (!NPC.IsABestiaryIconDummy)
                     MoreUtils.ResetSpritebatch(true);
                 DrawData mask = new DrawData(wingsMask.Value, NPC.Center - offset, frame, baseColor, NPC.rotation, frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
-                GameShaders.Misc["BlockContent:NightEmpress"].Apply(mask);
+                GameShaders.Misc["Blockaroz:NightEmpress"].Apply(mask);
                 mask.Draw(spriteBatch);
                 Main.pixelShader.CurrentTechnique.Passes[0].Apply();
                 if (!NPC.IsABestiaryIconDummy)
@@ -867,7 +867,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 Mod.Assets.Request<Texture2D>("Assets/Textures/NightEmpress/RuneCircle_" + (short)2)
             };
             Asset<Texture2D> font = Mod.Assets.Request<Texture2D>("Assets/Textures/NightEmpress/Runes");
-            Asset<Texture2D> blackFade = Mod.Assets.Request<Texture2D>("Assets/Textures/Glowball_" + (short)1);
+            Asset<Texture2D> blackFade = Mod.Assets.Request<Texture2D>("Assets/Textures/Extra/Glowball_" + (short)1);
 
             float scaleValue = MathHelper.SmoothStep(0, 1, MoreUtils.DualLerp(0, 70, 360, 400, PhaseCounter, true));
             float opacity = MathHelper.SmoothStep(0, 1, MoreUtils.DualLerp(20, 80, 330, 390, PhaseCounter, true));
@@ -976,14 +976,13 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
         public void CreateMagicParticles()
         {
             ParticleOrchestraSettings settings = new ParticleOrchestraSettings();
-            Color defaultColor = SpecialColor(Main.rand.NextFloat());
             if (Phase <= short.MinValue)
             {
                 for (int i = 0; i < Main.rand.Next(2); i++)
                 {
                     settings.PositionInWorld = NPC.Center + new Vector2(0, -20) + Main.rand.NextVector2Circular(90, 90);
                     settings.MovementVector = new Vector2(Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-7, -4));
-                    ParticleEffects.CreateNightMagic(settings, defaultColor);
+                    ParticleEffects.CreateNightMagic(settings);
                 }
             }
             if (Phase == 2)
@@ -992,16 +991,16 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 {
                     settings.PositionInWorld = NPC.Center + Main.rand.NextVector2Circular(70, 70);
                     settings.MovementVector = Vector2.Zero;
-                    ParticleEffects.CreateNightMagic(settings, defaultColor);
+                    ParticleEffects.CreateNightMagic(settings);
                 }
             }
             if (Phase == 3)
             {
                 if (Main.rand.Next(2) == 0)
                 {
-                    settings.PositionInWorld = NPC.Center + NPC.velocity + new Vector2(80 * _direction, -20) + Main.rand.NextVector2Circular(2, 2);
+                    settings.PositionInWorld = NPC.Center + NPC.velocity + new Vector2(66 * _direction, -30) + Main.rand.NextVector2Circular(2, 2);
                     settings.MovementVector = (NPC.velocity * 0.9f) + Main.rand.NextVector2Circular(3, 3);
-                    ParticleEffects.CreateNightMagic(settings, defaultColor);
+                    ParticleEffects.CreateNightMagic(settings);
                 }
             }
         }

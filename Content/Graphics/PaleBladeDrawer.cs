@@ -19,7 +19,7 @@ namespace BlockContent.Content.Graphics
 
         public void Draw(Projectile proj)
         {
-            MiscShaderData shader = GameShaders.Misc["BlockContent:PaleBlade"];
+            MiscShaderData shader = GameShaders.Misc["Blockaroz:PaleBlade"];
             shader.UseImage0("Images/Extra_195");
             shader.UseImage1("Images/Extra_197");
             shader.UseImage2("Images/Extra_194");

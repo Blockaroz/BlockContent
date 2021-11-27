@@ -15,7 +15,7 @@ using Terraria.ModLoader;
 
 namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectiles
 {
-    public class CurseSkull : ModProjectile
+    public class CurseCharge : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -91,16 +91,16 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             {
                 ParticleOrchestraSettings settings = new ParticleOrchestraSettings()
                 {
-                    PositionInWorld = Projectile.Center + (Main.rand.NextVector2CircularEdge(Main.rand.NextFloat(5, 15), Main.rand.NextFloat(5, 15)) * 10)
+                    PositionInWorld = Projectile.Center + Main.rand.NextVector2CircularEdge(Main.rand.NextFloat(5, 15), Main.rand.NextFloat(5, 15))
                 };
-                ParticleEffects.CreateNightMagic(settings, NightEmpress.SpecialColor(0));
+                ParticleEffects.CreateNightMagic(settings);
             }
             return false;
         }
 
         public void DrawCurseBall(Vector2 center, float scale)
         {
-            Asset<Texture2D> ball = Mod.Assets.Request<Texture2D>("Assets/Textures/Glowball_" + (short)3);
+            Asset<Texture2D> ball = Mod.Assets.Request<Texture2D>("Assets/Textures/Extra/Glowball_" + (short)3);
 
             Color night = NightEmpress.SpecialColor(0, true);
             night.A = 50;
@@ -117,7 +117,6 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 Mod.Assets.Request<Texture2D>("Assets/Textures/NightEmpress/Skull_" + (short)0),
                 Mod.Assets.Request<Texture2D>("Assets/Textures/NightEmpress/Skull_" + (short)1)
             };
-            Asset<Texture2D> flare = Mod.Assets.Request<Texture2D>("Assets/Textures/Streak_" + (short)0);
 
             float skullScale = MathHelper.SmoothStep(0, 1, Utils.GetLerpValue(120, 190, Projectile.ai[0], true));
 
@@ -147,11 +146,6 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             //draw final skull
             Main.EntitySpriteDraw(skull[1].Value, Projectile.Center + jawOffset - Main.screenPosition, null, drawColor, Projectile.rotation + jawRotation, jawOrigin, skullScale, effects, 0);
             Main.EntitySpriteDraw(skull[0].Value, Projectile.Center + skullOffset - Main.screenPosition, null, drawColor, Projectile.rotation + skullRotation, skullOrigin, skullScale, effects, 0);
-
-            //draw eye flare
-            Vector2 flareOffset = new Vector2(74 * Projectile.spriteDirection, -10).RotatedBy(Projectile.rotation);
-            float flareScale = MoreUtils.DualLerp(210, 220, 300, 400, Projectile.ai[0], true);
-            MoreUtils.DrawSparkle(flare, SpriteEffects.None, Projectile.Center + flareOffset - Main.screenPosition, flare.Size() / 2, flareScale, 2f, 4f, 5f, 0, glowColor, Color.White);
         }
     }
 }

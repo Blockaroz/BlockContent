@@ -30,7 +30,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
             Projectile.extraUpdates = 1;
             Projectile.manualDirectionChange = true;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 10;
+            Projectile.localNPCHitCooldown = 7;
             Projectile.penetrate = -1;
             Projectile.noEnchantmentVisuals = true;
         }
@@ -42,7 +42,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
             Player player = Main.player[Projectile.owner];
 
             float slashLength = Utils.GetLerpValue(900, 0, Projectile.velocity.Length() * 2f, true);
-            float timeValue = MathHelper.Lerp(1f, 3.5f, slashLength);
+            float timeValue = MathHelper.Lerp(1.2f, 3.6f, slashLength);
             Time += timeValue;
             if (Time >= 120f)
             {
