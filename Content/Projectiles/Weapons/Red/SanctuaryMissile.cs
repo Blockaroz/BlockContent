@@ -98,8 +98,11 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
                 float scale = MoreUtils.DualLerp(15, 12, 10, 1, Projectile.timeLeft, true);
                 MoreUtils.DrawStreak(ballTexture, SpriteEffects.None, Projectile.Center - Main.screenPosition, ballTexture.Size() / 2, scale, 3, 3, 0, MoreColor.Sanguine, Color.White);
                 MoreUtils.DrawStreak(streakTexture, SpriteEffects.None, Projectile.Center - Main.screenPosition, streakTexture.Size() / 2, scale, 1, 7, Projectile.rotation, MoreColor.Sanguine, Color.White);
-                PunchCameraModifier punch = new PunchCameraModifier(Projectile.Center, Projectile.rotation.ToRotationVector2(), 6f, 12f, 20, 2000f, "Sanctuary");
-                Main.instance.CameraModifiers.Add(punch);
+                if (Projectile.timeLeft == 14)
+                {
+                    PunchCameraModifier punch = new PunchCameraModifier(Projectile.Center, (Projectile.rotation + (Main.rand.NextFloat() * 0.05f)).ToRotationVector2(), 8f, 5f, 30, 2000f, "Sanctuary");
+                    Main.instance.CameraModifiers.Add(punch);
+                }
             }
 
             if (Main.rand.Next(3) == 0)

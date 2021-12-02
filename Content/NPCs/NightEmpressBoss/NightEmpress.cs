@@ -25,10 +25,10 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
         {
             DisplayName.SetDefault("Empress of Night");
 
-            NPCID.Sets.TrailingMode[Type] = 1;
-            NPCID.Sets.TrailCacheLength[Type] = 15;
             NPCID.Sets.ShouldBeCountedAsBoss[Type] = true;
             NPCID.Sets.MPAllowedEnemies[Type] = true;
+            NPCID.Sets.TrailingMode[Type] = 1;
+            NPCID.Sets.TrailCacheLength[Type] = 15;
 
             NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
             {
@@ -54,21 +54,22 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             NPC.width = 118;
             NPC.height = 166;
             NPC.friendly = false;
+            NPC.aiStyle = -1;
+            NPC.boss = true;
+            NPC.npcSlots = 15f;
+            NPC.noTileCollide = true;
+            NPC.dontTakeDamage = true;
+            NPC.noGravity = true;
 
             NPC.lifeMax = 90000;
             NPC.damage = damageValue[0];
             NPC.defense = 90;
             NPC.knockBackResist = 0f;
             NPC.value = Item.buyPrice(gold: 30);
-
-            NPC.boss = true;
             //BossBag = ModContent.ItemType<>();
-            NPC.npcSlots = 15f;
-            NPC.noTileCollide = true;
-            NPC.dontTakeDamage = true;
-            NPC.noGravity = true;
 
             NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCHit1;
 
             if (!Main.dedServ)
                 Music = MusicLoader.GetMusicSlot(Mod, "Assets/Music/Boss_NightEmpress");
@@ -195,7 +196,10 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 const int attackLength = 330;
                 const int interval = 70;
 
-                NPC.velocity.Y *= 0.95f;
+                Vector2 moonDanceTargetPos = targetPos - new Vector2(0, 300);
+
+                if (NPC.Distance(targetPos) < 1000)
+                    NPC.velocity *= 0.96f;
 
                 if (PhaseCounter == 1)
                     SoundEngine.PlaySound(SoundID.Item165, NPC.Center);
@@ -204,15 +208,14 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                     if ((PhaseCounter % interval) - 1 == 0)
                         MoonDanceProjectiles(8, Main.rand.NextFloat() * MathHelper.TwoPi);
 
-                    if (PhaseCounter % interval <= 50 && NPC.Distance(targetPos) > 250)
-                        NPC.velocity += NPC.DirectionTo(targetPos).SafeNormalize(Vector2.Zero) * Utils.GetLerpValue(20, 200, NPC.Distance(targetPos)) * 0.4f;
+                    if (PhaseCounter % interval <= 50 && NPC.Distance(moonDanceTargetPos) > 250)
+                        NPC.velocity += NPC.DirectionTo(moonDanceTargetPos).SafeNormalize(Vector2.Zero) * Utils.GetLerpValue(20, 300, NPC.Distance(moonDanceTargetPos)) * 0.4f;
                     else
                         NPC.velocity = NPC.velocity.RotatedBy(MathHelper.ToRadians(0.1f) * _direction) * 0.98f;
 
-
                 }
                 if (PhaseCounter == 280)
-                    NPC.velocity = NPC.DirectionFrom(targetPos).SafeNormalize(Vector2.Zero) * 10;
+                    NPC.velocity = NPC.DirectionFrom(moonDanceTargetPos).SafeNormalize(Vector2.Zero) * 10;
 
                 if (PhaseCounter > attackLength)
                 {
