@@ -341,9 +341,8 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
                 if (PhaseCounter == explode)
                 {
                     SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/NightEmpress/EmpressRuneExplosion"), NPC.Center);
-                    Projectile radial = Projectile.NewProjectileDirect(NPC.GetProjectileSpawnSource(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<DarkSideAOE>(), damageValue[4], 20);
+                    Projectile radial = Projectile.NewProjectileDirect(NPC.GetProjectileSpawnSource(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<DarkSideAOE>(), damageValue[4], 20, NPC.whoAmI);
                     radial.ai[0] = safeRadius;
-                    radial.ai[1] = NPC.whoAmI;
                 }
 
                 if (PhaseCounter >= explode && PhaseCounter < explode + 120 && PhaseCounter % 3 == 0)
