@@ -86,8 +86,8 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 //draw empress shades and flare
                 for (int j = 0; j < 18; j++)
                 {
-                    Color glowColor = Color.Lerp(MoreColor.NightSky * 0.2f, light, Utils.GetLerpValue(20, 15, Projectile.timeLeft + (j * 1.5f), true));
-                    float opacity = MoreUtils.DualLerp(32, 30, 15, 5, Projectile.timeLeft + (j * 1.5f), true) * Utils.GetLerpValue(0, 5, Projectile.timeLeft, true);
+                    Color glowColor = Color.Lerp(MoreColor.NightSky * 0.2f, light, Utils.GetLerpValue(20, 17, Projectile.timeLeft + (j * 1.5f), true));
+                    float opacity = MoreUtils.DualLerp(32, 30, 10, 5, Projectile.timeLeft + (j * 1.5f), true) * Utils.GetLerpValue(0, 5, Projectile.timeLeft, true);
                     float lerp = Utils.GetLerpValue(35, 5, Projectile.timeLeft + (j * 2));
                     Vector2 pos = Projectile.Center + (Vector2.SmoothStep(Vector2.Zero, _lineLength * 1.2f, lerp) * direction);
 

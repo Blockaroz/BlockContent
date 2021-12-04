@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BlockContent.Content.Graphics.Particles;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -88,15 +89,16 @@ namespace BlockContent.Content.Graphics
         {
             if (Main.netMode != NetmodeID.Server && !Main.gamePaused)
             {
-                PrettySparkleParticle particle = new PrettySparkleParticle();
+                StarParticle particle = new StarParticle();
                 particle.SetBasicInfo(Mod.Assets.Request<Texture2D>("Assets/Textures/Particles/NightMagic"), null, Vector2.Zero, Vector2.Zero);
+                particle.SetTypeInfo(40);
                 particle.Velocity = settings.MovementVector * 0.2f;
-                particle.Scale = new Vector2(1f, 0.6f) * (0.5f + Main.rand.NextFloat());
+                particle.Scale = Vector2.One * (0.5f + Main.rand.NextFloat());
                 particle.ScaleVelocity = Vector2.One * -0.01f;
-                particle.Rotation = Main.rand.NextFloat(-0.05f, 0.05f);
-                particle.ColorTint = new Color(180, 120, 255);
-                particle.ColorTint.A = 0;
-                particle.LocalPosition = settings.PositionInWorld + Main.rand.NextVector2Circular(0.2f, 0.2f);
+                particle.Rotation = Main.rand.NextFloat() * MathHelper.TwoPi;
+                particle.RotationVelocity = 0.1f * (Main.rand.NextBool().ToDirectionInt());
+                particle.ColorTint = new Color(180, 120, 255, 50);
+                particle.LocalPosition = settings.PositionInWorld + Main.rand.NextVector2Circular(0.5f, 0.5f);
                 Main.ParticleSystem_World_OverPlayers.Add(particle);
             }
         }

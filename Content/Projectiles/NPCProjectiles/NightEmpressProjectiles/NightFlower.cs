@@ -28,20 +28,20 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 200;
+            Projectile.timeLeft = 150;
         }
 
         public override void AI()
         {
             const float halfDegree = MathHelper.Pi / 360f;
             if (Projectile.ai[0] < halfDegree)
-                Projectile.ai[0] += halfDegree / 25;
+                Projectile.ai[0] += halfDegree / 24;
 
             float rot = Projectile.ai[0] * Projectile.ai[1];
             Projectile.velocity = Projectile.velocity.RotatedBy(rot) * 1.01f;
-            Projectile.rotation = Projectile.velocity.ToRotation();
-            if (Projectile.timeLeft < 60)
-                Projectile.velocity *= 0.5f;
+            Projectile.rotation = Projectile.velocity.SafeNormalize(Vector2.Zero).ToRotation();
+            if (Projectile.timeLeft < 40)
+                Projectile.velocity *= 0.8f;
 
             if (Main.getGoodWorld)
                 Projectile.extraUpdates = 1;
@@ -60,7 +60,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float opacity = Utils.GetLerpValue(720, 690, Projectile.timeLeft, true) * Utils.GetLerpValue(0, 60, Projectile.timeLeft, true);
+            float opacity = MoreUtils.DualLerp(150, 120, 30, 0, Projectile.timeLeft, true);
 
             Asset<Texture2D> baseTexture = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/NightFlower");
 
