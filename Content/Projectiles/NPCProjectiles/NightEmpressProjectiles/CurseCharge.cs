@@ -41,20 +41,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Projectile.ai[0]++;
             if (Projectile.ai[0] <= 195)
             {
-                if (Main.npc.IndexInRange((int)Projectile.ai[1]))
-                {
-                    NPC owner = Main.npc[(int)Projectile.ai[1]];
-                    NPCAimedTarget target = owner.GetTargetData();
-                    Vector2 targetPos = target.Invalid ? Projectile.Center : target.Center;
-
-                    Vector2 aim = Projectile.DirectionTo(targetPos).SafeNormalize(Vector2.Zero);
-                    aim = Vector2.Normalize(Vector2.Lerp(Projectile.velocity.SafeNormalize(Vector2.Zero), aim, 0.05f));
-                    if (aim.HasNaNs())
-                        aim = -Vector2.UnitY;
-                    Projectile.velocity = aim;
-                    float distance = MathHelper.SmoothStep(10, 220, Utils.GetLerpValue(0, 100, Projectile.ai[0], true));
-                    Projectile.Center = owner.Center + new Vector2(distance, 0).RotatedBy(Projectile.velocity.ToRotation());
-                }
+                Projectile.velocity = Vector2.Lerp(Projectile.velocity, Vector2.Zero, 0.05f);
             }
             else if (Projectile.ai[0] <= 220)
             {
@@ -129,11 +116,11 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             float jawRotation = skullRotation + MathHelper.SmoothStep(0, MathHelper.ToRadians(30), Utils.GetLerpValue(120, 200, Projectile.ai[0], true)) * Projectile.spriteDirection;
             Vector2 jawOffset = new Vector2(-24 * Projectile.spriteDirection, 64).RotatedBy(Projectile.rotation) * skullScale;
 
-            float opacity = Utils.GetLerpValue(0, 100, Projectile.timeLeft, true);
+            float opacity = Utils.GetLerpValue(0, 30, Projectile.timeLeft, true);
             Color glowColor = NightEmpress.SpecialColor(1);
             glowColor.A = 50;
             glowColor *= opacity;
-            Color drawColor = Color.Lerp(Color.Lerp(MoreColor.NightSky, Color.Black, Utils.GetLerpValue(800, 200, Projectile.timeLeft, true)), Color.Transparent, Utils.GetLerpValue(60, 0, Projectile.timeLeft, true)) * opacity;
+            Color drawColor = Color.Lerp(Color.Lerp(MoreColor.NightSky, Color.Black, Utils.GetLerpValue(800, 200, Projectile.timeLeft, true)), new Color(255, 255, 255, 0), Utils.GetLerpValue(80, 20, Projectile.timeLeft, true)) * opacity;
 
             //draw borders
             for (int i = 0; i < 7; i++)
