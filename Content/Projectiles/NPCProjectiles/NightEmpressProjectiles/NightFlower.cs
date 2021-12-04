@@ -28,7 +28,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 400;
+            Projectile.timeLeft = 200;
         }
 
         public override void AI()
@@ -38,10 +38,10 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 Projectile.ai[0] += halfDegree / 25;
 
             float rot = Projectile.ai[0] * Projectile.ai[1];
-            Projectile.velocity = Projectile.velocity.RotatedBy(rot) * 1.001f;
+            Projectile.velocity = Projectile.velocity.RotatedBy(rot) * 1.01f;
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.timeLeft < 60)
-                Projectile.velocity *= 0.1f;
+                Projectile.velocity *= 0.5f;
 
             if (Main.getGoodWorld)
                 Projectile.extraUpdates = 1;

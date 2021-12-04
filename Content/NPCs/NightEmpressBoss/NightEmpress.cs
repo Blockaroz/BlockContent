@@ -72,7 +72,7 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             NPC.DeathSound = SoundID.NPCHit1;
 
             if (!Main.dedServ)
-                Music = MusicLoader.GetMusicSlot(Mod, "Assets/Music/Boss_NightEmpress");
+                Music = MusicID.EmpressOfLight;//MusicLoader.GetMusicSlot(Mod, "Assets/Music/Boss_NightEmpress");
         }
 
         public override void BossLoot(ref string name, ref int potionType)
