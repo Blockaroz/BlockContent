@@ -81,7 +81,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
         {
             if (Projectile.localAI[0] == 1)
             {
-                float timeLerp = MoreUtils.DualLerp(140, 120, 90, Projectile.timeLeft, true);
+                float timeLerp = ExtraUtils.DualLerp(140, 120, 90, Projectile.timeLeft, true);
                 float lineLength = Utils.GetLerpValue(0f, 128f, _distance);
                 Color lineColor = NightEmpress.SpecialColor(0);
                 lineColor.A /= 5;
@@ -133,11 +133,11 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 Vector2 offset = new Vector2(3, 0).RotatedBy((MathHelper.TwoPi / 5) * i).RotatedBy(Projectile.localAI[1]);
                 Main.EntitySpriteDraw(star.Value, Projectile.Center + offset - Main.screenPosition, null, starColor, Projectile.localAI[1] * 4, star.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
             }
-            Main.EntitySpriteDraw(star.Value, Projectile.Center - Main.screenPosition, null, MoreColor.NightSky, Projectile.localAI[1] * 4, star.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(star.Value, Projectile.Center - Main.screenPosition, null, Color2.NightSky, Projectile.localAI[1] * 4, star.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
 
             //flash
-            float flashScale = MoreUtils.DualLerp(145, 144, 120, Projectile.timeLeft, true);
-            MoreUtils.DrawSparkle(starSparkle, SpriteEffects.None, Projectile.Center - Main.screenPosition, starSparkle.Size() / 2, flashScale, 4, 3, 3, Projectile.localAI[1] * -4, starTrailColor, starColor, alpha: 12);
+            float flashScale = ExtraUtils.DualLerp(145, 144, 120, Projectile.timeLeft, true);
+            ExtraUtils.DrawSparkle(starSparkle, SpriteEffects.None, Projectile.Center - Main.screenPosition, starSparkle.Size() / 2, flashScale, 4, 3, 3, Projectile.localAI[1] * -4, starTrailColor, starColor, alpha: 12);
 
             return false;
         }

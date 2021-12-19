@@ -2,13 +2,13 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using BlockContent.Core;
 using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.GameContent.Drawing;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -108,7 +108,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
                     player.PickAmmo(selection, ref bulletType, ref bulletSpeed, ref canShoot, ref bulletDamage, ref bulletKnockBack, out int usedAmmoItemID);
                     IProjectileSource projSource = player.GetProjectileSource_Item_WithPotentialAmmo(player.HeldItem, usedAmmoItemID);
 
-                    for (int n = 0; n < 1; n++)
+                    for (int i = 0; i < 1; i++)
                     {
                         Vector2 bulletDir = Vector2.Normalize(Projectile.velocity) * bulletSpeed;
                         bulletDir = bulletDir.RotatedBy(randomRotation);
@@ -123,7 +123,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
 
                         if (Projectile.ai[0] > 70 && missile != 0)
                         {
-                            for (int i = 0; i < Main.rand.Next(0, 5); i++)
+                            for (int j = 0; j < Main.rand.Next(0, 5); j++)
                             {
                                 Vector2 offsetVector = new Vector2(40, 0).RotatedBy(Projectile.rotation) + Main.rand.NextVector2CircularEdge(20, 30).RotatedBy(Projectile.rotation);
                                 bullet = Projectile.NewProjectileDirect(projSource, spinPoint + offsetVector, bulletDir, bulletType, bulletDamage, bulletKnockBack, Projectile.owner);
@@ -188,7 +188,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
         public void DrawItem(Player player)
         {
             Color baseColor = Color.White;
-            Color glowColor = MoreColor.Sanguine;
+            Color glowColor = Color2.Sanguine;
             glowColor.A = 50;
             if (player.shroomiteStealth && player.inventory[player.selectedItem].DamageType == DamageClass.Ranged)
             {
@@ -228,25 +228,12 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
             Vector2 flashPos = Projectile.Center + new Vector2(40, -5 * Projectile.spriteDirection).RotatedBy(Projectile.rotation);
 
             if (Projectile.frame <= 1)
-                MoreUtils.DrawSparkle(flashTexture, GetSpriteEffects(Projectile), flashPos - Main.screenPosition, flashTexture.Size() / 2, Projectile.scale, 0.7f, 0.3f, 0.4f, Projectile.velocity.ToRotation() - MathHelper.Pi, MoreColor.Sanguine, Color.White, alpha: 25);
+                ExtraUtils.DrawSparkle(flashTexture, GetSpriteEffects(Projectile), flashPos - Main.screenPosition, flashTexture.Size() / 2, Projectile.scale, 0.7f, 0.3f, 0.4f, Projectile.velocity.ToRotation() - MathHelper.Pi, Color2.Sanguine, Color.White, alpha: 25);
 
             if (Projectile.frame == 1)
             {
-                ParticleOrchestraSettings settings = new ParticleOrchestraSettings
-                {
-                    PositionInWorld = Projectile.Center + new Vector2(44, -5 * Projectile.spriteDirection).RotatedBy(Projectile.rotation) + Main.rand.NextVector2Circular(7, 7),
-                    MovementVector = player.velocity
-                };
-                ParticleEffects.CreateSanctuaryRipples(settings);
-                for (int i = 0; i < Main.rand.Next(2); i++)
-                {
-                    Vector2 s = Main.rand.NextVector2Circular(10, 10);
-                    Dust dust = Dust.NewDustPerfect(flashPos, 278, s, 50, MoreColor.Sanguine, 1f);
-                    dust.noGravity = true;
-                    dust.color.A = 50;
-                    dust.velocity += Main.rand.NextVector2Circular(3, 3);
-                    dust.scale = (Main.rand.NextFloat() * 0.4f) + 0.4f;
-                }
+                Particle particle = ParticlePool.NewParticle(new Particles.SanctuaryEmber(), flashPos, Projectile.velocity.SafeNormalize(Vector2.Zero) * Main.rand.NextFloat(2), Color2.Sanguine, Projectile.rotation, 1f);
+                particle.position += player.velocity;
             }
         }
 

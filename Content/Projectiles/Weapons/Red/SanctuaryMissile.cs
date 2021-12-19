@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using BlockContent.Core;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -35,7 +36,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
         public override void AI()
         {
             const float speed = 16f;
-            bool inRange = MoreUtils.NPCInRange(Projectile, Projectile.Center, 500, out int npcIndex) && Projectile.timeLeft <= 345;
+            bool inRange = ExtraUtils.NPCInRange(Projectile, Projectile.Center, 500, out int npcIndex) && Projectile.timeLeft <= 345;
             NPC target = Main.npc[npcIndex];
             if (inRange)
             {
@@ -61,11 +62,8 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
             SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, Projectile.Center);
             for (int i = 0; i < Main.rand.Next(50, 70); i++)
             {
-                Dust dust = Dust.NewDustDirect(Projectile.Center - new Vector2(2), 4, 4, 278, 0, 0, 50, MoreColor.Sanguine, 1f);
-                dust.noGravity = true;
-                dust.color.A = 50;
-                dust.velocity += Main.rand.NextVector2Circular(10, 10);
-                dust.scale = (Main.rand.NextFloat() * 0.4f) + 0.4f;
+                Vector2 dir = Main.rand.NextVector2Circular(30, 30);
+                ParticlePool.NewParticle(new Particles.SanctuaryEmber(), Projectile.Center, dir, Color2.Sanguine, dir.ToRotation(), 0.5f + Main.rand.NextFloat());
             }
         }
 
@@ -78,7 +76,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
             Rectangle glowFrame = missileTexture.Frame(3, 1, 1, 0);
             Rectangle haloFrame = missileTexture.Frame(3, 1, 2, 0);
 
-            Color glowColor = MoreColor.Sanguine;
+            Color glowColor = Color2.Sanguine;
             glowColor.A /= 3;
             if (Projectile.ai[0] == 0)
             {
@@ -90,29 +88,18 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
                 }
                 Main.EntitySpriteDraw(missileTexture.Value, Projectile.Center - Main.screenPosition, haloFrame, glowColor * 0.2f, Projectile.rotation, haloFrame.Size() / 2, Projectile.scale * 1.5f, SpriteEffects.None, 0);
                 Main.EntitySpriteDraw(missileTexture.Value, Projectile.Center - Main.screenPosition, baseFrame, Color.White, Projectile.rotation, baseFrame.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
-                Main.EntitySpriteDraw(missileTexture.Value, Projectile.Center - Main.screenPosition, glowFrame, MoreColor.Sanguine, Projectile.rotation, glowFrame.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(missileTexture.Value, Projectile.Center - Main.screenPosition, glowFrame, Color2.Sanguine, Projectile.rotation, glowFrame.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
 
             }
             else if (Projectile.ai[0] == 1)
             {
-                float scale = MoreUtils.DualLerp(15, 12, 10, 1, Projectile.timeLeft, true);
-                MoreUtils.DrawStreak(ballTexture, SpriteEffects.None, Projectile.Center - Main.screenPosition, ballTexture.Size() / 2, scale, 3, 3, 0, MoreColor.Sanguine, Color.White);
-                MoreUtils.DrawStreak(streakTexture, SpriteEffects.None, Projectile.Center - Main.screenPosition, streakTexture.Size() / 2, scale, 1, 7, Projectile.rotation, MoreColor.Sanguine, Color.White);
+                float scale = ExtraUtils.DualLerp(15, 12, 10, 1, Projectile.timeLeft, true);
+                ExtraUtils.DrawStreak(ballTexture, SpriteEffects.None, Projectile.Center - Main.screenPosition, ballTexture.Size() / 2, scale, 3, 3, 0, Color2.Sanguine, Color.White);
+                ExtraUtils.DrawStreak(streakTexture, SpriteEffects.None, Projectile.Center - Main.screenPosition, streakTexture.Size() / 2, scale, 1, 7, Projectile.rotation, Color2.Sanguine, Color.White);
                 if (Projectile.timeLeft == 14)
                 {
                     PunchCameraModifier punch = new PunchCameraModifier(Projectile.Center, (Projectile.rotation + (Main.rand.NextFloat() * 0.05f)).ToRotationVector2(), 8f, 5f, 30, 2000f, "Sanctuary");
                     Main.instance.CameraModifiers.Add(punch);
-                }
-            }
-
-            if (Main.rand.Next(3) == 0)
-            {
-                for (int i = 0; i < Main.rand.Next(1, 5); i++)
-                {
-                    Dust dust = Dust.NewDustDirect(Projectile.Center - new Vector2(2), 4, 4, 278, 0, 0, 0, MoreColor.Sanguine, 1f);
-                    dust.noGravity = true;
-                    dust.velocity += Projectile.velocity * 0.2f;
-                    dust.scale = (Main.rand.NextFloat() * 0.5f) + 0.5f;
                 }
             }
 

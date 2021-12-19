@@ -12,6 +12,14 @@ public struct BezierCurve
         _segments = segments;
     }
 
+    public BezierCurve(Vector2[] controlPoints, int segments)
+    {
+        _controls = new List<Vector2>();
+        for (int i = 0; i < controlPoints.Length; i++)
+            _controls.Add(controlPoints[i]);
+        _segments = segments;
+    }
+
     private Vector2 CalculatePoint(List<Vector2> points, float progress)
     {
         if (points.Count <= 2)
@@ -29,7 +37,7 @@ public struct BezierCurve
 
     public List<Vector2> Value
     {
-        get 
+        get
         {
             List<Vector2> final = new List<Vector2>();
             for (int i = 0; i < _segments; i++)
@@ -37,7 +45,20 @@ public struct BezierCurve
                 float progress = (float)i / _segments;
                 final.Add(CalculatePoint(_controls, progress));
             }
-            return final; 
+            return final;
+        }
+    }
+
+    public float Length
+    {
+        get
+        {
+            float length = 0;
+            for (int i = 1; i < Value.Count; i++)
+            {
+                length += (Value[i] - Value[i - 1]).Length();
+            }
+            return length;
         }
     }
 }

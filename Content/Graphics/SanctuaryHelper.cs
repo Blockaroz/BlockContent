@@ -70,7 +70,7 @@ namespace BlockContent.Content.Graphics
             if (proj.ai[0] == 0)
                 _idOffset = Main.rand.Next(5);
 
-            MoreUtils.ResetSpritebatch(true);
+            ExtraUtils.ResetSpritebatch(true);
 
             for (int i = 0; i < 7; i++)
             {
@@ -93,7 +93,7 @@ namespace BlockContent.Content.Graphics
                 gun.DrawGun();
             }
 
-            MoreUtils.ResetSpritebatch(false);
+            ExtraUtils.ResetSpritebatch(false);
         }
     }
 }

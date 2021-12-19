@@ -1,4 +1,5 @@
 ﻿using BlockContent.Content.Graphics;
+using BlockContent.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -15,7 +16,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Holy Blade");
-            ProjectileID.Sets.TrailCacheLength[Type] = 32;
+            ProjectileID.Sets.TrailCacheLength[Type] = 20;
             ProjectileID.Sets.TrailingMode[Type] = 4;
         }
 
@@ -29,10 +30,9 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
             Projectile.ignoreWater = true;
             Projectile.extraUpdates = 1;
             Projectile.manualDirectionChange = true;
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 7;
+            Projectile.usesIDStaticNPCImmunity = true;
+            Projectile.idStaticNPCHitCooldown = 2;
             Projectile.penetrate = -1;
-            Projectile.noEnchantmentVisuals = true;
         }
 
         private ref float Time => ref Projectile.localAI[0];
@@ -41,60 +41,25 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
         {
             Player player = Main.player[Projectile.owner];
 
-            float slashLength = Utils.GetLerpValue(900, 0, Projectile.velocity.Length() * 2f, true);
-            float timeValue = MathHelper.Lerp(1.2f, 3.6f, slashLength);
-            Time += timeValue;
-            if (Time >= 120f)
-            {
+            if (Time > 45)
                 Projectile.Kill();
-                return;
-            }
-            float timeLerp = Utils.GetLerpValue(0f, 1f, Time / 60f, true);
-            float velocityAngle = Projectile.velocity.ToRotation();
-            int direction = (Projectile.velocity.X > 0f) ? 1 : (-1);
-            float rotation = MathHelper.Pi + direction * timeLerp * MathHelper.TwoPi;
 
-            float modifiedLength = Projectile.velocity.Length() + Utils.GetLerpValue(0.5f, 1f, timeLerp, true) * 40f;
-            if (modifiedLength < 60f)
-                modifiedLength = 60f;
+            float rotation = (MathHelper.SmoothStep(-Projectile.ai[0], Projectile.ai[0], Utils.GetLerpValue(0f, 25f, Time, true))) * Projectile.direction;
+            float length = MathHelper.SmoothStep(70f, MathHelper.Clamp(Projectile.ai[1], 70f, 700f), ExtraUtils.DualLerp(2f, 12.5f, 23f, Time, true));
+            float thick = MathHelper.SmoothStep(-1, 1, Utils.GetLerpValue(0f, 25f, Time, true)) * (Projectile.direction * 130);
+            Vector2 slash = Vector2.SmoothStep(new Vector2(70f, 0f).RotatedBy(rotation), new Vector2(MathHelper.Max(70f, length), thick), ExtraUtils.DualLerp(0f, 10f, 15f, 25f, Time, true));
+            Vector2 endPoint = player.MountedCenter + slash.RotatedBy(Projectile.velocity.ToRotation());
 
-            Vector2 spinningpoint = new Vector2(1f, 0f).RotatedBy(rotation) * new Vector2(modifiedLength, Projectile.ai[0] * MathHelper.Lerp(2f, 1f, slashLength));
-            Vector2 value2 = (player.MountedCenter) + spinningpoint.RotatedBy(velocityAngle);
-            Vector2 value3 = (1f - Utils.GetLerpValue(0f, 0.5f, timeLerp, clamped: true)) * new Vector2(direction * (0f - modifiedLength) * 0.1f, (0f - Projectile.ai[0]) * 0.3f);
-            Projectile.rotation = rotation + velocityAngle + MathHelper.PiOver2;
-            Projectile.Center = value2 + value3;
-            Projectile.spriteDirection = (direction = ((Projectile.velocity.X > 0f) ? 1 : (-1)));
-            if (Projectile.ai[0] < 0f)
-            {
-                Projectile.rotation = MathHelper.Pi + direction * timeLerp * (-MathHelper.TwoPi) + velocityAngle;
-                Projectile.rotation += MathHelper.PiOver2;
-                Projectile.spriteDirection = (direction = ((!(Projectile.velocity.X > 0f)) ? 1 : (-1)));
-            }
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2 + rotation;
+            Projectile.Center = endPoint;
+
+            Time++;
+
         }
-
-        private Rectangle _hitBox = new Rectangle(0, 0, 300, 300);
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            float collisionPoint = 0f;
-            float scaleFactor = 40f;
-            for (int i = 14; i < Projectile.oldPos.Length; i += 15)
-            {
-                float num2 = Projectile.localAI[0] - i;
-                if (!(num2 < 0f) && !(num2 > 60f))
-                {
-                    Vector2 value2 = Projectile.oldPos[i] + Projectile.Size / 2f;
-                    Vector2 value3 = (Projectile.oldRot[i] + (float)Math.PI / 2f).ToRotationVector2();
-                    _hitBox.X = (int)value2.X - _hitBox.Width / 2;
-                    _hitBox.Y = (int)value2.Y - _hitBox.Height / 2;
-                    if (_hitBox.Intersects(targetHitbox) && Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), value2 - value3 * scaleFactor, value2 + value3 * scaleFactor, 20f, ref collisionPoint))
-                        return true;
-                }
-            }
-            Vector2 value4 = (Projectile.rotation + (float)Math.PI / 2f).ToRotationVector2();
-            _hitBox.X = (int)Projectile.position.X - _hitBox.Width / 2;
-            _hitBox.Y = (int)Projectile.position.Y - _hitBox.Height / 2;
-            if (_hitBox.Intersects(targetHitbox) && Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center - value4 * scaleFactor, Projectile.Center + value4 * scaleFactor, 20f, ref collisionPoint))
+            if (targetHitbox.Distance(Projectile.Center) < 170)
                 return true;
 
             return false;
@@ -102,23 +67,6 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
 
         public override bool PreDraw(ref Color lightColor)
         {
-            default(PaleBladeDrawer).Draw(Projectile);
-            float fadeLerp = Utils.GetLerpValue(70, 50, Time, true) * Utils.GetLerpValue(0, 10, Time, true);
-            lightColor = new Color(255, 255, 255, 51) * fadeLerp;
-
-            if (Time > 10 && Time < 80)
-            {
-                for (int i = 1; i < 30; i++)
-                {
-                    if (Main.rand.Next(6) == 0)
-                    {
-                        float scale = MoreUtils.DualLerp(10, 40, 50, 80, Time, true);
-                        Vector2 oldPos = Projectile.oldPos[i] + (Projectile.Size / 2);
-                        MoreUtils.DrawStreak(TextureAssets.Extra[98], SpriteEffects.None, oldPos - Main.screenPosition, TextureAssets.Extra[98].Size() / 2, scale + 0.4f, 0.5f, 2.5f, Projectile.velocity.ToRotation(), MoreColor.PaleGray, Color.GhostWhite);
-                    }
-                }
-            }
-
             return false;
         }
     }

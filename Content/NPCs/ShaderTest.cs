@@ -27,14 +27,14 @@ namespace BlockContent.Content.NPCs
         {
             Asset<Texture2D> tex = Mod.Assets.Request<Texture2D>("Assets/Textures/Extra/Glowball_" + (short)3);
 
-            MoreUtils.ResetSpritebatch(true);
+            ExtraUtils.ResetSpritebatch(true);
 
             DrawData data = new DrawData(tex.Value, NPC.Center - screenPos, null, Color.White, 0, tex.Size() / 2, 1f, SpriteEffects.None, 0);
             GameShaders.Misc["Blockaroz:NightEmpress"].Apply(data);
             data.Draw(spriteBatch);
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();
 
-            MoreUtils.ResetSpritebatch(false);
+            ExtraUtils.ResetSpritebatch(false);
 
             return false;
         }

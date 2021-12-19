@@ -32,22 +32,26 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 1000;
+            Projectile.timeLeft = 200;
             Projectile.hide = true;
         }
 
         public override void AI()
         {
             Projectile.ai[0]++;
-            if (Projectile.ai[0] <= 195)
-            {
-                Projectile.velocity = Vector2.Lerp(Projectile.velocity, Vector2.Zero, 0.05f);
-            }
-            else if (Projectile.ai[0] <= 220)
+
+            if (Projectile.ai[0] == 220)
             {
                 PunchCameraModifier punch = new PunchCameraModifier(Projectile.Center, (Main.rand.NextFloat() * MathHelper.TwoPi).ToRotationVector2(), 18, 8, 40, 7000f, "NightEmpress");
                 Main.instance.CameraModifiers.Add(punch);
             }
+            if (Projectile.timeLeft > 180)
+                Projectile.velocity *= 1.01f;
+            NPC owner = Main.npc[(int)Projectile.ai[1]];
+            if (owner.active && owner.ModNPC is NightEmpress)
+                Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(owner.GetTargetData().Center).SafeNormalize(Vector2.Zero) * 10f, 0.01f);
+            else
+                Projectile.Kill();
 
             Projectile.spriteDirection = Projectile.direction;
             float flip = Projectile.spriteDirection == -1 ? MathHelper.Pi : 0;
@@ -69,32 +73,9 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (Projectile.ai[0] <= 180)
-                DrawCurseBall(Projectile.Center, MathHelper.SmoothStep(0, 2, MoreUtils.DualLerp(0, 60, 120, 180, Projectile.ai[0], true)));
-            if (Projectile.ai[0] >= 100)
-                DrawCurseSkull();
+            DrawCurseSkull();
 
-            if (Projectile.ai[0] <= 100)
-            {
-                ParticleOrchestraSettings settings = new ParticleOrchestraSettings()
-                {
-                    PositionInWorld = Projectile.Center + Main.rand.NextVector2CircularEdge(Main.rand.NextFloat(5, 15), Main.rand.NextFloat(5, 15))
-                };
-                ParticleEffects.CreateNightMagic(settings);
-            }
             return false;
-        }
-
-        public void DrawCurseBall(Vector2 center, float scale)
-        {
-            Asset<Texture2D> ball = Mod.Assets.Request<Texture2D>("Assets/Textures/Extra/Glowball_" + (short)3);
-
-            Color night = NightEmpress.SpecialColor(0, true);
-            night.A = 50;
-            Color dark = NightEmpress.SpecialColor(0);
-            dark.A = 50;
-            Main.EntitySpriteDraw(ball.Value, center - Main.screenPosition, null, MoreColor.NightSky * 0.3f, Projectile.rotation, ball.Size() / 2, scale * 1.1f, SpriteEffects.None, 0);
-            MoreUtils.DrawStreak(ball, SpriteEffects.None, center - Main.screenPosition, ball.Size() / 2, scale, 1, 1, Projectile.rotation, dark, night);
         }
 
         public void DrawCurseSkull()
@@ -105,7 +86,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 Mod.Assets.Request<Texture2D>("Assets/Textures/NightEmpress/Skull_" + (short)1)
             };
 
-            float skullScale = MathHelper.SmoothStep(0, 1, Utils.GetLerpValue(120, 190, Projectile.ai[0], true));
+            float skullScale = MathHelper.SmoothStep(0.3f, 0.7f, Utils.GetLerpValue(0, 40, Projectile.ai[0], true));
 
             SpriteEffects effects = Projectile.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             Vector2 skullOrigin = (skull[0].Size() / 2) + new Vector2(0, 78);
@@ -113,19 +94,19 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Vector2 skullOffset = new Vector2(0, 78).RotatedBy(Projectile.rotation) * skullScale;
 
             Vector2 jawOrigin = skull[1].Size() / 2 + new Vector2(-64 * Projectile.spriteDirection, -36);
-            float jawRotation = skullRotation + MathHelper.SmoothStep(0, MathHelper.ToRadians(30), Utils.GetLerpValue(120, 200, Projectile.ai[0], true)) * Projectile.spriteDirection;
+            float jawRotation = skullRotation + MathHelper.SmoothStep(0, MathHelper.ToRadians(30), Utils.GetLerpValue(30, 60, Projectile.ai[0], true)) * Projectile.spriteDirection;
             Vector2 jawOffset = new Vector2(-24 * Projectile.spriteDirection, 64).RotatedBy(Projectile.rotation) * skullScale;
 
             float opacity = Utils.GetLerpValue(0, 30, Projectile.timeLeft, true);
             Color glowColor = NightEmpress.SpecialColor(1);
             glowColor.A = 50;
             glowColor *= opacity;
-            Color drawColor = Color.Lerp(Color.Lerp(MoreColor.NightSky, Color.Black, Utils.GetLerpValue(800, 200, Projectile.timeLeft, true)), new Color(255, 255, 255, 0), Utils.GetLerpValue(80, 20, Projectile.timeLeft, true)) * opacity;
+            Color drawColor = Color.Lerp(Color2.NightSky, new Color(255, 255, 255, 0), Utils.GetLerpValue(60, 10, Projectile.timeLeft, true));
 
             //draw borders
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 3; i++)
             {
-                Vector2 offset = new Vector2(10, 0).RotatedBy((MathHelper.TwoPi / 7 * i) + (Projectile.ai[0] / 60 * Projectile.spriteDirection));
+                Vector2 offset = new Vector2(3, 0).RotatedBy((MathHelper.TwoPi / 7 * i) + (Projectile.ai[0] / 60 * Projectile.spriteDirection));
                 Main.EntitySpriteDraw(skull[1].Value, Projectile.Center + offset + jawOffset - Main.screenPosition, null, glowColor, Projectile.rotation + jawRotation, jawOrigin, skullScale, effects, 0);
                 Main.EntitySpriteDraw(skull[0].Value, Projectile.Center + offset + skullOffset - Main.screenPosition, null, glowColor, Projectile.rotation + skullRotation, skullOrigin, skullScale, effects, 0);
             }

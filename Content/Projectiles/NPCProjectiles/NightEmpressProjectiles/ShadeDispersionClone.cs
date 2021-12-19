@@ -78,7 +78,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 int direction = i == 0 ? 1 : -1;
 
                 //draw black backing
-                float indicator = MoreUtils.DualLerp(40, 35, 20, Projectile.timeLeft, true);
+                float indicator = ExtraUtils.DualLerp(40, 35, 20, Projectile.timeLeft, true);
                 float dirRotation = (MathHelper.PiOver2 * direction) - MathHelper.PiOver2;
                 Main.EntitySpriteDraw(TextureAssets.Extra[178].Value, Projectile.Center - Main.screenPosition, null, Color.Black * 0.33f * indicator, Projectile.rotation + dirRotation, new Vector2(0, 1), new Vector2(1.5f, 110), SpriteEffects.None, 0);
                 Main.EntitySpriteDraw(TextureAssets.Extra[178].Value, Projectile.Center - Main.screenPosition, null, Color.Black * 0.33f * indicator, Projectile.rotation + dirRotation, new Vector2(0, 1), new Vector2(1.8f, 80), SpriteEffects.None, 0);
@@ -86,8 +86,8 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 //draw empress shades and flare
                 for (int j = 0; j < 18; j++)
                 {
-                    Color glowColor = Color.Lerp(MoreColor.NightSky * 0.2f, light, Utils.GetLerpValue(20, 17, Projectile.timeLeft + (j * 1.5f), true));
-                    float opacity = MoreUtils.DualLerp(32, 30, 10, 5, Projectile.timeLeft + (j * 1.5f), true) * Utils.GetLerpValue(0, 5, Projectile.timeLeft, true);
+                    Color glowColor = Color.Lerp(Color2.NightSky * 0.2f, light, Utils.GetLerpValue(20, 17, Projectile.timeLeft + (j * 1.5f), true));
+                    float opacity = ExtraUtils.DualLerp(32, 30, 10, 5, Projectile.timeLeft + (j * 1.5f), true) * Utils.GetLerpValue(0, 5, Projectile.timeLeft, true);
                     float lerp = Utils.GetLerpValue(35, 5, Projectile.timeLeft + (j * 2));
                     Vector2 pos = Projectile.Center + (Vector2.SmoothStep(Vector2.Zero, _lineLength * 1.2f, lerp) * direction);
 
@@ -98,8 +98,8 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 }
 
                 Vector2 streakPos = Vector2.SmoothStep(Vector2.Zero, _lineLength * 1.3f, Utils.GetLerpValue(35, 5, Projectile.timeLeft + 5)) * direction;
-                Vector2 streakScale = new Vector2(MoreUtils.DualLerp(25, 15, 5, 0, Projectile.timeLeft, true), Utils.GetLerpValue(2, 12, Projectile.timeLeft, true));
-                MoreUtils.DrawStreak(streakTexture, SpriteEffects.None, Projectile.Center + streakPos - Main.screenPosition, streakTexture.Size() / 2, 1, 7 * streakScale.X, 4 * streakScale.Y, Projectile.rotation + dirRotation, NightEmpress.SpecialColor(1), NightEmpress.SpecialColor(0, true));
+                Vector2 streakScale = new Vector2(ExtraUtils.DualLerp(25, 15, 5, 0, Projectile.timeLeft, true), Utils.GetLerpValue(2, 12, Projectile.timeLeft, true));
+                ExtraUtils.DrawStreak(streakTexture, SpriteEffects.None, Projectile.Center + streakPos - Main.screenPosition, streakTexture.Size() / 2, 1, 7 * streakScale.X, 4 * streakScale.Y, Projectile.rotation + dirRotation, NightEmpress.SpecialColor(1), NightEmpress.SpecialColor(0, true));
 
                 Dust dust = Dust.NewDustPerfect(Projectile.Center + (_lineLength * direction) + Main.rand.NextVector2Circular(80, 80), NightEmpress.GlowDustID, Vector2.Zero, 0, light, 1f);
                 dust.noGravity = true;

@@ -34,12 +34,9 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
 
         public override void AI()
         {
-            if (Main.npc.IndexInRange(Projectile.owner))
-            {
-                NPC owner = Main.npc[Projectile.owner];
-                if (owner.active && owner.type == ModContent.NPCType<NightEmpress>())
-                    Projectile.Center = owner.Center;
-            }
+            NPC owner = Main.npc[Projectile.owner];
+            if (owner.active && owner.ModNPC is NightEmpress boss)
+                Projectile.Center = owner.Center;
             else
                 Projectile.Kill();
         }

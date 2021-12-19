@@ -31,11 +31,9 @@ namespace BlockContent.Content.Graphics
 
         public static void LoadShaders()
         {
-            GameShaders.Misc["Blockaroz:PaleBlade"] = new MiscShaderData(Main.VertexPixelShaderRef, "MagicMissile").UseProjectionMatrix(doUse: true);
-
             //Ref<Effect> grayscaleRef = new Ref<Effect>(Mod.Assets.Request<Effect>("Assets/Effects/Grayscale").Value);
             //GameShaders.Misc["BlockContent:Grayscale"] = new MiscShaderData(grayscaleRef, "Grayscale");
-            GameShaders.Misc["Blockaroz:Sanctuary"] = new MiscShaderData(Main.PixelShaderRef, "ArmorWisp").UseColor(MoreColor.Sanguine).UseSecondaryColor(Color.DarkRed);
+            GameShaders.Misc["Blockaroz:Sanctuary"] = new MiscShaderData(Main.PixelShaderRef, "ArmorWisp").UseColor(Color2.Sanguine).UseSecondaryColor(Color.DarkRed);
 
             //Ref<Effect> nightRef = new Ref<Effect>(Mod.Assets.Request<Effect>("Assets/Effects/NightEmpress").Value);
             GameShaders.Misc["Blockaroz:NightEmpress"] = new MiscShaderData(Main.PixelShaderRef, "HallowBoss").UseImage0("Images/Extra_156");

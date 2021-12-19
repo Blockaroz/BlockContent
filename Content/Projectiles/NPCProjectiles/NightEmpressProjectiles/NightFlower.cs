@@ -28,7 +28,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 150;
+            Projectile.timeLeft = 180;
         }
 
         public override void AI()
@@ -40,7 +40,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
             float rot = Projectile.ai[0] * Projectile.ai[1];
             Projectile.velocity = Projectile.velocity.RotatedBy(rot) * 1.01f;
             Projectile.rotation = Projectile.velocity.SafeNormalize(Vector2.Zero).ToRotation();
-            if (Projectile.timeLeft < 40)
+            if (Projectile.timeLeft < 20)
                 Projectile.velocity *= 0.8f;
 
             if (Main.getGoodWorld)
@@ -60,7 +60,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float opacity = MoreUtils.DualLerp(150, 120, 30, 0, Projectile.timeLeft, true);
+            float opacity = ExtraUtils.DualLerp(180, 170, 40, 10, Projectile.timeLeft, true);
 
             Asset<Texture2D> baseTexture = Mod.Assets.Request<Texture2D>("Content/Projectiles/NPCProjectiles/NightEmpressProjectiles/NightFlower");
 
@@ -81,7 +81,7 @@ namespace BlockContent.Content.Projectiles.NPCProjectiles.NightEmpressProjectile
                 trailColor.A = 0;
                 Vector2 oldposition = Projectile.oldPos[i] + (Projectile.Size / 2);
 
-                Main.EntitySpriteDraw(baseTexture.Value, oldposition - Main.screenPosition, trailFrame, MoreColor.NightSky * 0.05f * opacity, Projectile.oldRot[i] + MathHelper.PiOver2, origin, Projectile.scale * 1.05f * trailLerp, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(baseTexture.Value, oldposition - Main.screenPosition, trailFrame, Color2.NightSky * 0.05f * opacity, Projectile.oldRot[i] + MathHelper.PiOver2, origin, Projectile.scale * 1.05f * trailLerp, SpriteEffects.None, 0);
                 Main.EntitySpriteDraw(baseTexture.Value, oldposition - Main.screenPosition, trailFrame, trailColor * 0.5f * opacity, Projectile.oldRot[i] + MathHelper.PiOver2, origin, Projectile.scale * trailLerp, SpriteEffects.None, 0);
             }
 

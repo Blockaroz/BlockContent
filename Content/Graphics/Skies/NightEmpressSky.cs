@@ -61,7 +61,7 @@ namespace BlockContent.Content.Skies
                     _cloud[index].texture = Main.Assets.Request<Texture2D>("Images/Cloud_" + Main.rand.Next(0, 21));//TextureAssets.Cloud[Main.rand.Next(8)];
                     _cloud[index].depth = 1.5f + Main.rand.NextFloat(7f);
                     _cloud[index].scale = 1f + Main.rand.NextFloat(2f);
-                    _cloud[index].color = MoreColor.NightSky * 0.15f * Utils.GetLerpValue(8, 0, _cloud[index].depth, true);
+                    _cloud[index].color = Color2.NightSky * 0.15f * Utils.GetLerpValue(8, 0, _cloud[index].depth, true);
                     _cloud[index].position += Main.rand.NextVector2Circular(5, 5);
                     _cloud[index].direction = Main.rand.NextBool().ToDirectionInt();
                     _cloud[index].offsetTime = Main.rand.NextFloat(0.8f, 1.2f) * 200;
@@ -91,7 +91,7 @@ namespace BlockContent.Content.Skies
             if (maxDepth >= 0 && minDepth < 4)
             {
                 float wave = 0.5f + ((float)Math.Cos((Main.GlobalTimeWrappedHourly % 15 / 15) * MathHelper.TwoPi) * 0.2f);
-                spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), MoreColor.NightSky * 0.1f * _opacity);
+                spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color2.NightSky * 0.1f * _opacity);
                 spriteBatch.Draw(sky.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), new Color(128, 128, 128, 25) * wave * _opacity);
             }
 
