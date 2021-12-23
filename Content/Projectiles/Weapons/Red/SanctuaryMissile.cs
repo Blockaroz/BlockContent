@@ -60,11 +60,11 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
             Projectile.Resize(64, 64);
             Projectile.ai[0] = 1;
             SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, Projectile.Center);
-            for (int i = 0; i < Main.rand.Next(50, 70); i++)
-            {
-                Vector2 dir = Main.rand.NextVector2Circular(30, 30);
-                ParticlePool.NewParticle(new Particles.SanctuaryEmber(), Projectile.Center, dir, Color2.Sanguine, dir.ToRotation(), 0.5f + Main.rand.NextFloat());
-            }
+            //for (int i = 0; i < Main.rand.Next(50, 70); i++)
+            //{
+            //    Vector2 dir = Main.rand.NextVector2Circular(30, 30);
+            //    ParticlePool.NewParticle(new Particles.SanctuaryEmber(), Projectile.Center, dir, Color2.Sanguine, dir.ToRotation(), 0.5f + Main.rand.NextFloat());
+            //}
         }
 
         public override bool PreDraw(ref Color lightColor)

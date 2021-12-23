@@ -71,7 +71,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
             Rectangle tailFrame = new Rectangle(0, 44, 38, 34);
 
             Color glowColor = Color2.Sanguine;
-            glowColor.A /= 2;
+            glowColor.A /= 3;
             Color glowInnerColor = Color2.PaleGray;
             glowInnerColor.A = 0;
 
@@ -87,8 +87,8 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
             Main.EntitySpriteDraw(beamTexture.Value, Projectile.Center + new Vector2(0, headFrame.Height * 0.5f).RotatedBy(rotation) - Main.screenPosition, bodyFrame, glowInnerColor, rotation, bodyFrame.Size() * new Vector2(0.5f, 0), new Vector2(beamInnerScale, (BeamLength / bodyFrame.Height)), SpriteEffects.None, 0);
             Main.EntitySpriteDraw(beamTexture.Value, Projectile.Center + new Vector2(0, BeamLength).RotatedBy(rotation) - Main.screenPosition, tailFrame, glowInnerColor, rotation, tailFrame.Size() * new Vector2(0.5f, 0), new Vector2(beamInnerScale, 0.4f), SpriteEffects.None, 0);
 
-            Vector2 particlePos = Vector2.Lerp(Projectile.Center, Projectile.Center + new Vector2(BeamLength, 0).RotatedBy(Projectile.rotation), Main.rand.NextFloat()) + Main.rand.NextVector2Circular(4, 4);
-            ParticlePool.NewParticle(new Particles.SanctuaryEmber(), particlePos, Projectile.velocity.SafeNormalize(Vector2.Zero) * Main.rand.Next(4, 10), Color2.Sanguine, Projectile.rotation, 1f + Main.rand.NextFloat());
+            //Vector2 particlePos = Vector2.Lerp(Projectile.Center, Projectile.Center + new Vector2(BeamLength, 0).RotatedBy(Projectile.rotation), Main.rand.NextFloat()) + Main.rand.NextVector2Circular(4, 4);
+            //ParticlePool.NewParticle(new Particles.SanctuaryEmber(), particlePos, Projectile.velocity.SafeNormalize(Vector2.Zero) * Main.rand.Next(4, 10), Color2.Sanguine, Projectile.rotation, 1f + Main.rand.NextFloat());
 
             return false;
         }

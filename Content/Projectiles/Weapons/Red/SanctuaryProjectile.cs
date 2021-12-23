@@ -230,11 +230,11 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
             if (Projectile.frame <= 1)
                 ExtraUtils.DrawSparkle(flashTexture, GetSpriteEffects(Projectile), flashPos - Main.screenPosition, flashTexture.Size() / 2, Projectile.scale, 0.7f, 0.3f, 0.4f, Projectile.velocity.ToRotation() - MathHelper.Pi, Color2.Sanguine, Color.White, alpha: 25);
 
-            if (Projectile.frame == 1)
-            {
-                Particle particle = ParticlePool.NewParticle(new Particles.SanctuaryEmber(), flashPos, Projectile.velocity.SafeNormalize(Vector2.Zero) * Main.rand.NextFloat(2), Color2.Sanguine, Projectile.rotation, 1f);
-                particle.position += player.velocity;
-            }
+            //if (Projectile.frame == 1)
+            //{
+            //    Particle particle = ParticlePool.NewParticle(new Particles.SanctuaryEmber(), flashPos, Projectile.velocity.SafeNormalize(Vector2.Zero) * Main.rand.NextFloat(2), Color2.Sanguine, Projectile.rotation, 1f);
+            //    particle.position += player.velocity;
+            //}
         }
 
         private static SpriteEffects GetSpriteEffects(Projectile proj)

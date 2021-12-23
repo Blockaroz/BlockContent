@@ -17,7 +17,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Holy Blade");
-            ProjectileID.Sets.TrailCacheLength[Type] = 25;
+            ProjectileID.Sets.TrailCacheLength[Type] = 4;
             ProjectileID.Sets.TrailingMode[Type] = 4;
         }
 
@@ -35,7 +35,6 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
             Projectile.localNPCHitCooldown = 5;
             Projectile.penetrate = -1;
             Projectile.hide = true;
-            Projectile.damage = -1;
         }
 
         private ref float Time => ref Projectile.localAI[0];
@@ -45,6 +44,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
 
         public override void AI()
         {
+            //Projectile.damage = -1;
             Player player = Main.player[Projectile.owner];
             player.heldProj = Projectile.whoAmI;
             Projectile.spriteDirection = Projectile.velocity.X < 0 ? -1 : 1;
@@ -56,10 +56,10 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
             player.SetDummyItemTime(3);
             player.ChangeDir(Projectile.spriteDirection);
 
-            if ((!player.channel || player.HeldItem.type != ModContent.ItemType<Items.Weapons.Holy.PaleBlade>() || player.noItems || player.whoAmI != Projectile.owner) && Time % 25 <= 0)
+            if ((!player.channel || player.HeldItem.type != ModContent.ItemType<Items.Weapons.Holy.PaleBlade>() || player.noItems || player.whoAmI != Projectile.owner) && Time % 30 <= 0)
                 Projectile.Kill();
 
-            if (Time > 25)
+            if (Time > 30)
             {
                 Time = 0;
                 Projectile.velocity = GetTargetDistance(player).SafeNormalize(Vector2.Zero);
@@ -68,20 +68,20 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
             if (Time < 1)
             {
                 NewAngle = Angle;
-                Angle = MathHelper.ToRadians(Main.rand.Next(90, 140));
-                Projectile p = Projectile.NewProjectileDirect(Projectile.GetProjectileSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<PaleBladeProjectile>(), player.HeldItem.damage, Projectile.knockBack, Projectile.owner, Angle, GetTargetDistance(player).Length());
-                p.direction = Projectile.direction;
+                Angle = MathHelper.ToRadians(Main.rand.Next(90, 150));
+                //Projectile p = Projectile.NewProjectileDirect(Projectile.GetProjectileSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<PaleBladeProjectile>(), player.HeldItem.damage, Projectile.knockBack, Projectile.owner, Angle, GetTargetDistance(player).Length());
+                //p.direction = Projectile.direction;
             }
 
             Time++;
 
-            float rotation = (MathHelper.SmoothStep(-NewAngle, Angle, Utils.GetLerpValue(-4, 25, Time, true)) * Projectile.direction);
+            float rotation = (MathHelper.SmoothStep(-NewAngle, Angle, Utils.GetLerpValue(-3, 30, Time, true)) * Projectile.direction);
             Projectile.rotation = Projectile.velocity.ToRotation() + rotation;
 
-            float handRot = Projectile.velocity.ToRotation() - MathHelper.PiOver2 + (rotation * 0.8f);
+            float handRot = Projectile.velocity.ToRotation() - MathHelper.PiOver2 + (rotation * 0.33f);
             player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, handRot);
             player.itemLocation = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Quarter, handRot);
-            Projectile.Center = player.itemLocation;
+            Projectile.Center = player.MountedCenter + new Vector2(60, 0).RotatedBy(Projectile.rotation);
         }
 
         public Vector2 GetTargetDistance(Player player)
@@ -128,9 +128,9 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
             Main.EntitySpriteDraw(sword.Value, player.itemLocation - Main.screenPosition, null, Color.White, Projectile.rotation + diagonal, origin, Projectile.scale, direction, 0);
 
             Color glowColor = Color2.HolyMelee;
-            glowColor.A = 10;
+            glowColor.A /= 3;
 
-            //Main.EntitySpriteDraw(TextureAssets.BlackTile.Value, Projectile.position - Main.screenPosition, new Rectangle(0, 0, Projectile.width, Projectile.height), Color.Black, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
+            //Main.EntitySpriteDraw(TextureAssets.BlackTile.Value, Projectile.position - Main.screenPosition, new Rectangle(0, 0, Projectile.width, Projectile.height), Color.Black * 0.5f, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
 
             for (int i = 0; i < 4; i++)
             {
@@ -138,12 +138,12 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
                 Main.EntitySpriteDraw(swordGlow.Value, player.itemLocation + offset - Main.screenPosition, null, glowColor * 0.2f, Projectile.rotation + diagonal, origin, Projectile.scale, direction, 0);
             }
 
-            float sparkleScale = ExtraUtils.DualLerp(8f, 12.5f, 17f, Time, true);
+            float sparkleScale = ExtraUtils.DualLerp(8f, 15f, 22f, Time, true);
             ExtraUtils.DrawSparkle(TextureAssets.Extra[98], SpriteEffects.None,
-                Projectile.Center + new Vector2(70, 0).RotatedBy(Projectile.rotation) - Main.screenPosition,
-                TextureAssets.Extra[98].Size() / 2, 1f, 0.33f * sparkleScale, 1.4f, 3f, 0f,
+                player.itemLocation + new Vector2(75, 0).RotatedBy(Projectile.rotation) - Main.screenPosition,
+                TextureAssets.Extra[98].Size() / 2, 0.3f + sparkleScale, 0.2f, 1.4f, 3f, 0f,
                 Color2.HolyMelee, Color2.PaleGray, sparkleScale);
-
+            
         }
     }
 }

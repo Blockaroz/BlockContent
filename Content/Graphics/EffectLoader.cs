@@ -31,6 +31,8 @@ namespace BlockContent.Content.Graphics
 
         public static void LoadShaders()
         {
+            GameShaders.Misc["Blockaroz:HolyBlade"] = new MiscShaderData(Main.VertexPixelShaderRef, "FinalFractalVertex").UseProjectionMatrix(true); 
+
             //Ref<Effect> grayscaleRef = new Ref<Effect>(Mod.Assets.Request<Effect>("Assets/Effects/Grayscale").Value);
             //GameShaders.Misc["BlockContent:Grayscale"] = new MiscShaderData(grayscaleRef, "Grayscale");
             GameShaders.Misc["Blockaroz:Sanctuary"] = new MiscShaderData(Main.PixelShaderRef, "ArmorWisp").UseColor(Color2.Sanguine).UseSecondaryColor(Color.DarkRed);

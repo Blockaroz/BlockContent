@@ -23,7 +23,7 @@ namespace BlockContent.Content.Particles
                 scale *= 0.96f;
                 velocity.X *= 0.99f;
             }
-            if (scale < 0.01f)
+            if (scale < 0.1f)
                 Active = false;
         }
 
@@ -36,7 +36,7 @@ namespace BlockContent.Content.Particles
             Asset<Texture2D> ember = Mod.Assets.Request<Texture2D>("Content/Particles/Ember");
 
             spriteBatch.Draw(ember.Value, position - Main.screenPosition, null, color * 0.9f, rotation - MathHelper.PiOver2, ember.Size() / 2, scale, SpriteEffects.None, 0);
-            spriteBatch.Draw(ember.Value, position - Main.screenPosition, null, glowColor, rotation - MathHelper.PiOver2, ember.Size() / 2, scale * 0.3f, SpriteEffects.None, 0);
+            spriteBatch.Draw(ember.Value, position - Main.screenPosition, null, glowColor, rotation - MathHelper.PiOver2, ember.Size() / 2, scale * 0.45f, SpriteEffects.None, 0);
         }
     }
 }

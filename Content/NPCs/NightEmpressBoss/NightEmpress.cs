@@ -929,11 +929,11 @@ namespace BlockContent.Content.NPCs.NightEmpressBoss
             Color darkShade = SpecialColor(1) * opacity;
             darkShade.A /= 4;
 
-            for (int i = 0; i < Main.rand.Next(3, 6); i++)
-            {
-                Vector2 dir = Main.rand.NextVector2CircularEdge(1, 1);
-                ParticlePool.NewParticle(new Speedline(), NPC.Center + (dir * 270), dir * -10f, Color.Black * 0.5f, dir.ToRotation(), 3f);
-            }
+            //for (int i = 0; i < Main.rand.Next(3, 6); i++)
+            //{
+            //    Vector2 dir = Main.rand.NextVector2CircularEdge(1, 1);
+            //    ParticlePool.NewParticle(new (), NPC.Center + (dir * 270), dir * -10f, Color.Black * 0.5f, dir.ToRotation(), 3f);
+            //}
 
             //draw back fade
             float explosionScale = 0.5f + (ExtraUtils.DualLerp(230, 240, 350, PhaseCounter, true) * 3);
