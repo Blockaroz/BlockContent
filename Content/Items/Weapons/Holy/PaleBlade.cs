@@ -13,7 +13,7 @@ namespace BlockContent.Content.Items.Weapons.Holy
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Holy Blade");
-            Tooltip.SetDefault("'Control'");
+            Tooltip.SetDefault("'An antique, well-kept blade.'");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 
@@ -24,7 +24,7 @@ namespace BlockContent.Content.Items.Weapons.Holy
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 25;
             Item.useTime = Item.useAnimation;
-            Item.damage = 240;
+            Item.damage = 280;
             Item.DamageType = DamageClass.Melee;
             Item.crit = 12;
             Item.knockBack = 5;
@@ -35,8 +35,8 @@ namespace BlockContent.Content.Items.Weapons.Holy
             Item.noUseGraphic = true;
             Item.useTurn = false;
             Item.noMelee = true;
-            Item.shootSpeed = 16f;
-            Item.shoot = ModContent.ProjectileType<PaleBladeProjectile>();
+            Item.shootSpeed = 2f;
+            Item.shoot = ModContent.ProjectileType<PaleBladeHold>();
             Item.channel = true;
         }
 
