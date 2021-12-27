@@ -13,16 +13,17 @@ namespace BlockContent.Content.Particles
         public override void Update()
         {
             misc++;
-            velocity.Y -= 0.04f;
-            velocity.Y += (float)Math.Cos(misc * 100f) / scale / 100f;
+            velocity.Y -= 0.03f;
+            velocity.Y += (float)Math.Cos(misc * 60f) / scale / 20f;
             if (Main.rand.Next(2) == 0)
-                velocity.X += Main.rand.NextFloat(-0.2f, 0.2f);
+                velocity.X += Main.rand.NextFloat(-0.3f, 0.3f);
             rotation = velocity.ToRotation();
-            if (misc > 20)
+            if (misc > 15)
             {
-                scale *= 0.96f;
-                velocity.X *= 0.99f;
+                scale *= 0.95f;
+                velocity.X *= 0.94f;
             }
+            velocity *= 1.01f;
             if (scale < 0.1f)
                 Active = false;
         }
@@ -32,11 +33,12 @@ namespace BlockContent.Content.Particles
             color.A /= 2;
             Color glowColor = Color.Lerp(Color.White, color, 0.25f);
             glowColor.A = 0;
+            Vector2 stretch = new Vector2(scale, scale + Utils.GetLerpValue(0, 8, velocity.Length()));
 
             Asset<Texture2D> ember = Mod.Assets.Request<Texture2D>("Content/Particles/Ember");
 
-            spriteBatch.Draw(ember.Value, position - Main.screenPosition, null, color * 0.9f, rotation - MathHelper.PiOver2, ember.Size() / 2, scale, SpriteEffects.None, 0);
-            spriteBatch.Draw(ember.Value, position - Main.screenPosition, null, glowColor, rotation - MathHelper.PiOver2, ember.Size() / 2, scale * 0.45f, SpriteEffects.None, 0);
+            spriteBatch.Draw(ember.Value, position - Main.screenPosition, null, color * 0.9f, rotation - MathHelper.PiOver2, ember.Size() / 2, stretch, SpriteEffects.None, 0);
+            spriteBatch.Draw(ember.Value, position - Main.screenPosition, null, glowColor, rotation - MathHelper.PiOver2, ember.Size() / 2, stretch * 0.45f, SpriteEffects.None, 0);
         }
     }
 }

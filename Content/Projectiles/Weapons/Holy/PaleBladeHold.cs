@@ -79,9 +79,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
             {
                 Projectile.velocity = GetTargetDistance(player).SafeNormalize(Vector2.Zero);
                 Projectile.direction *= -1;
-                Angle = MathHelper.ToRadians(Main.rand.Next(90, 150));
-                //Projectile p = Projectile.NewProjectileDirect(Projectile.GetProjectileSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<PaleBladeProjectile>(), player.HeldItem.damage, Projectile.knockBack, Projectile.owner, Angle, GetTargetDistance(player).Length());
-                //p.direction = Projectile.direction;
+                Angle = MathHelper.ToRadians(Main.rand.Next(110, 160));
             }
 
             Time++;
@@ -166,14 +164,14 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
                 float slashOpacity = ExtraUtils.DualLerp(2f, 8f, 22f, 28f, Time, true);
                 float slashScale = (1f + (Utils.GetLerpValue(0, 30, Time, true) * 0.3f)) * 0.7f;
                 Main.EntitySpriteDraw(slash.Value, player.MountedCenter - Main.screenPosition, null, glowColor * slashOpacity, Projectile.oldRot[2] + MathHelper.PiOver2, slash.Size() / 2, Projectile.scale * slashScale, SpriteEffects.None, 0);
-                Main.EntitySpriteDraw(slash.Value, player.MountedCenter - Main.screenPosition, null, glowColor * slashOpacity, Projectile.oldRot[1] + MathHelper.PiOver2, slash.Size() / 2, Projectile.scale * slashScale * 0.85f, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(slash.Value, player.MountedCenter - Main.screenPosition, null, glowColor * slashOpacity, Projectile.oldRot[1] + MathHelper.PiOver2, slash.Size() / 2, Projectile.scale * slashScale * 0.87f, SpriteEffects.None, 0);
 
                 ExtraUtils.DrawSparkle(TextureAssets.Extra[98], SpriteEffects.None,
                     player.MountedCenter + new Vector2(110 * slashScale, 0).RotatedBy(Projectile.velocity.ToRotation()) - Main.screenPosition,
                     TextureAssets.Extra[98].Size() / 2, 0.3f + slashOpacity, 0.2f, 1.4f, 3f, 0f,
                     Color2.HolyMelee, Color2.PaleGray, slashOpacity);
 
-                ParticlePool.NewParticle(new Particles.Ember(), 
+                ParticleSystem.NewParticle(new Particles.Ember(), 
                     player.MountedCenter + new Vector2(100 * slashScale, 0).RotatedBy(Projectile.rotation), (Projectile.rotation - (MathHelper.PiOver2 * Projectile.direction)).ToRotationVector2() * 1.5f,
                     Color2.HolyMelee, 1f + Main.rand.NextFloat());
             }
@@ -186,7 +184,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
                 Color2.HolyMelee, Color2.PaleGray, sparkleScale);
             }
 
-            Particle particle = ParticlePool.NewParticle(new Particles.Ember(),
+            Particle particle = ParticleSystem.NewParticle(new Particles.GlowParticle(),
                     Main.MouseWorld + Main.rand.NextVector2Circular(8, 8), Main.rand.NextVector2Circular(2, 2),
                     Color2.HolyMelee, 1f + Main.rand.NextFloat());
             particle.rotation = Projectile.velocity.ToRotation();

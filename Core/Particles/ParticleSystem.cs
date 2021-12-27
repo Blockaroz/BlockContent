@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace BlockContent.Core
 {
-    public static class ParticlePool
+    public static class ParticleSystem
     {
         public static List<Particle> particles = new List<Particle>();
         public static List<Particle> particlesBehindEntities = new List<Particle>();
@@ -34,9 +34,9 @@ namespace BlockContent.Core
 
         public static void UpdateParticles()
         {
-            for (int i = 0; i < particles.Count; i++)
+            if (!Main.dedServ)
             {
-                if (Main.netMode != NetmodeID.Server)
+                for (int i = 0; i < particles.Count; i++)
                 {
                     particles[i].position += particles[i].velocity;
                     particles[i].Update();
@@ -46,16 +46,13 @@ namespace BlockContent.Core
                         i--;
                     }
                 }
-            }
-            for (int i = 0; i < particles.Count; i++)
-            {
-                if (Main.netMode != NetmodeID.Server)
+                for (int i = 0; i < particlesBehindEntities.Count; i++)
                 {
-                    particles[i].position += particles[i].velocity;
-                    particles[i].Update();
-                    if (!particles[i].Active)
+                    particlesBehindEntities[i].position += particlesBehindEntities[i].velocity;
+                    particlesBehindEntities[i].Update();
+                    if (!particlesBehindEntities[i].Active)
                     {
-                        particles.RemoveAt(i);
+                        particlesBehindEntities.RemoveAt(i);
                         i--;
                     }
                 }
@@ -66,16 +63,16 @@ namespace BlockContent.Core
         {
             foreach (Particle particle in particles)
             {
-                if (Main.netMode != NetmodeID.Server && !Main.GlobalTimerPaused)
+                if (!Main.dedServ && !Main.GlobalTimerPaused)
                     particle.Draw(spriteBatch);
             }
         }
-        
+
         public static void DrawParticlesBehind(SpriteBatch spriteBatch)
         {
             foreach (Particle particle in particlesBehindEntities)
             {
-                if (Main.netMode != NetmodeID.Server && !Main.GlobalTimerPaused)
+                if (!Main.dedServ && !Main.GlobalTimerPaused)
                     particle.Draw(spriteBatch);
             }
         }

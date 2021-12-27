@@ -1,10 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria.ModLoader;
 
 namespace BlockContent.Core
 {
-    public class Particle : IParticle
+    public abstract class Particle 
     {
         public Vector2 position;
 
@@ -16,11 +17,11 @@ namespace BlockContent.Core
 
         public Color color;
 
-        public bool Active { get; set; }
-
         public float misc;
 
-        public Mod Mod
+        public bool Active { get; set; }
+
+        public static Mod Mod
         {
             get => ModContent.GetInstance<BlockContent>();
         }
