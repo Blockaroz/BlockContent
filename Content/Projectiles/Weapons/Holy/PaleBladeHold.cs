@@ -1,4 +1,5 @@
 ﻿using BlockContent.Content.Graphics;
+using BlockContent.Content.Particles;
 using BlockContent.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -171,8 +172,8 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
                     TextureAssets.Extra[98].Size() / 2, 0.3f + slashOpacity, 0.2f, 1.4f, 3f, 0f,
                     Color2.HolyMelee, Color2.PaleGray, slashOpacity);
 
-                ParticleSystem.NewParticle(new Particles.Ember(), 
-                    player.MountedCenter + new Vector2(100 * slashScale, 0).RotatedBy(Projectile.rotation), (Projectile.rotation - (MathHelper.PiOver2 * Projectile.direction)).ToRotationVector2() * 1.5f,
+                Particle.NewParticle(Particle.ParticleType<Ember>(), 
+                    player.MountedCenter + new Vector2(100 * slashScale, 0).RotatedBy(Projectile.rotation), (Projectile.rotation + (MathHelper.PiOver2 * Projectile.direction)).ToRotationVector2() * 1.5f,
                     Color2.HolyMelee, 1f + Main.rand.NextFloat());
             }
             else
@@ -183,11 +184,6 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
                 TextureAssets.Extra[98].Size() / 2, 0.3f + sparkleScale, 0.2f, 1.4f, 3f, 0f,
                 Color2.HolyMelee, Color2.PaleGray, sparkleScale);
             }
-
-            Particle particle = ParticleSystem.NewParticle(new Particles.GlowParticle(),
-                    Main.MouseWorld + Main.rand.NextVector2Circular(8, 8), Main.rand.NextVector2Circular(2, 2),
-                    Color2.HolyMelee, 1f + Main.rand.NextFloat());
-            particle.rotation = Projectile.velocity.ToRotation();
         }
     }
 }

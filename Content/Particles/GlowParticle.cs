@@ -17,7 +17,7 @@ namespace BlockContent.Content.Particles
             rotation += velocity.X * 0.1f;
             misc++;
             if (misc > 50)
-                Active = false;
+                active = false;
             modifScale = ExtraUtils.DualLerp(0, 5, 30, 50, misc, true) * scale;
         }
 

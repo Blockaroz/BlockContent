@@ -14,36 +14,32 @@ namespace BlockContent
             LoadParticles();
         }
 
-        private void DrawParticles(On.Terraria.Main.orig_DrawGore orig, Main self)
+        private void DrawParticles(On.Terraria.Main.orig_DrawDust orig, Main self)
         {
             orig(self);
-            //Main.spriteBatch.Begin(default, default, SamplerState.PointWrap, default, default, null, Main.GameViewMatrix.TransformationMatrix);
-            ParticleSystem.DrawParticles(Main.spriteBatch);
-            //Main.spriteBatch.End();
-        }
-
-        private void DrawParticlesBehind(On.Terraria.Main.orig_DrawGoreBehind orig, Main self)
-        {
-            orig(self);
-            //Main.spriteBatch.Begin(default, default, SamplerState.PointWrap, default, default, null, Main.GameViewMatrix.TransformationMatrix);
-            ParticleSystem.DrawParticlesBehind(Main.spriteBatch);
-            //Main.spriteBatch.End();
+            Main.spriteBatch.Begin(default, default, SamplerState.PointWrap, default, default, null, Main.GameViewMatrix.TransformationMatrix);
+            ParticleLoader.DrawParticles(Main.spriteBatch);
+            Main.spriteBatch.End();
         }
 
         private void UpdateParticles(On.Terraria.Main.orig_UpdateParticleSystems orig, Main self)
         {
             orig(self);
-            ParticleSystem.UpdateParticles();
+            ParticleLoader.UpdateParticles();
         }
 
         public void LoadParticles()
         {
             if (!Main.dedServ)
             {
-                On.Terraria.Main.DrawGoreBehind += DrawParticlesBehind;
-                On.Terraria.Main.DrawGore += DrawParticles;
+                On.Terraria.Main.DrawDust += DrawParticles;
                 On.Terraria.Main.UpdateParticleSystems += UpdateParticles;
             }
+        }
+
+        public override void Unload()
+        {
+            ParticleLoader.Unload();
         }
     }
 }

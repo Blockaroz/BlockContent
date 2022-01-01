@@ -1,5 +1,4 @@
-﻿using BlockContent.Content.Skies;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
@@ -26,7 +25,7 @@ namespace BlockContent.Content.Graphics
 
         public static void LoadSkies()
         {
-            SkyManager.Instance["Blockaroz:NightEmpressSky"] = new NightEmpressSky();
+
         }
 
         public static void LoadShaders()
