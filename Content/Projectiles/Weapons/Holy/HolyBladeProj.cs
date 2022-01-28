@@ -13,7 +13,7 @@ using Terraria.ModLoader;
 
 namespace BlockContent.Content.Projectiles.Weapons.Holy
 {
-    public class PaleBladeHold : ModProjectile
+    public class HolyBladeProj : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -24,8 +24,8 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
 
         public override void SetDefaults()
         {
-            Projectile.width = 64;
-            Projectile.height = 64;
+            Projectile.width = 128;
+            Projectile.height = 128;
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = false;
@@ -36,63 +36,65 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
             Projectile.idStaticNPCHitCooldown = 4;
             Projectile.penetrate = -1;
             Projectile.hide = true;
+            Projectile.noEnchantmentVisuals = true;
         }
 
         private ref float Time => ref Projectile.localAI[0];
-        private ref float SlashCount => ref Projectile.localAI[1];
+        private ref float TimeMax => ref Projectile.localAI[1];
 
-        private ref float Angle => ref Projectile.ai[0];
-        private ref float NewAngle => ref Projectile.ai[1];
+        private float angle = MathHelper.ToRadians(120);
 
         public override void AI()
         {
             //Projectile.damage = -1;
             Player player = Main.player[Projectile.owner];
             player.heldProj = Projectile.whoAmI;
+            TimeMax = player.itemAnimationMax;
             Projectile.spriteDirection = Projectile.velocity.X < 0 ? -1 : 1;
 
-            if (Time == 5)
+            Time++;
+
+            if (Time == 1)
                 SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/Items/PaleSlash").WithPitchVariance(0.33f), player.MountedCenter);
 
             Projectile.timeLeft = 3;
             player.SetDummyItemTime(3);
             player.ChangeDir(Projectile.spriteDirection);
 
-            if ((!player.channel || player.HeldItem.type != ModContent.ItemType<Items.Weapons.Holy.PaleBlade>() || player.noItems || player.whoAmI != Projectile.owner) && Time % 30 <= 0)
+            if ((!player.channel || player.HeldItem.type != ModContent.ItemType<Items.Weapons.Holy.HolyBlade>() || player.noItems || player.whoAmI != Projectile.owner) && Time % TimeMax <= 0)
                 Projectile.Kill();
 
-            if (Time > 30)
+            if (Time > TimeMax)
             {
                 Time = 0;
-                SlashCount++;
-                NewAngle = Angle;
-                if (SlashCount > 3)
-                {
-                    SlashCount = -1;
-                    NewAngle = Angle + MathHelper.TwoPi;
-                    Projectile.idStaticNPCHitCooldown = 1;
-                }
-                else
-                    Projectile.idStaticNPCHitCooldown = 4;
-            }
-
-            if (Time < 1)
-            {
-                Projectile.velocity = GetTargetDistance(player).SafeNormalize(Vector2.Zero);
                 Projectile.direction *= -1;
-                Angle = MathHelper.ToRadians(Main.rand.Next(110, 160));
+                for (int i = 0; i < Projectile.oldPos.Length; i++)
+                {
+                    Projectile.oldPos[i] = Projectile.position;
+                    Projectile.oldRot[i] = Projectile.rotation;
+                }
             }
 
-            Time++;
+            Projectile.velocity = Vector2.Lerp(Projectile.velocity, GetTargetDistance(player).SafeNormalize(Vector2.Zero), 0.08f);
 
-            float rotation = (MathHelper.SmoothStep(-NewAngle, Angle, Utils.GetLerpValue(-3, 30, Time, true)) * Projectile.direction);
+            float rotation = (MathHelper.SmoothStep(-angle, angle, Utils.GetLerpValue(TimeMax * 0.15f, TimeMax * 0.85f, Time, true)) * Projectile.direction);
             Projectile.rotation = Projectile.velocity.ToRotation() + rotation;
 
-            float handRot = Projectile.velocity.ToRotation() - MathHelper.PiOver2 + rotation;
+            float handRot = Projectile.velocity.ToRotation() - MathHelper.PiOver2 + rotation - player.fullRotation;
             player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, handRot);
             player.itemLocation = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Quarter, handRot);
 
-            Projectile.Center = player.MountedCenter + new Vector2(75, 0).RotatedBy(Projectile.rotation);
+            Projectile.Center = player.MountedCenter + new Vector2(Vector2.Distance(player.Center, player.itemLocation), 0).RotatedBy(Projectile.rotation);
+             
+            if (Main.rand.Next(2) == 0)
+                Particle.NewParticle(Particle.ParticleType<Ember>(), player.itemLocation + new Vector2(95, 0).RotatedBy(Projectile.rotation), Projectile.velocity * Main.rand.NextFloat(), Color2.HolyMelee, Main.rand.NextFloat());
+
+            //for (int i = 0; i < 3; i++)
+            //    Particle.NewParticle(Particle.ParticleType<GenericFlame>(), 
+            //        player.itemLocation + new Vector2(48 + (i * 15), 0).RotatedBy(Projectile.rotation), 
+            //        player.velocity + new Vector2(6 - i, 0).RotatedBy(Projectile.rotation), 
+            //        Color2.HolyMelee, 0.7f);
+
         }
 
         public Vector2 GetTargetDistance(Player player)
@@ -123,7 +125,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
         {
             Player player = Main.player[Projectile.owner];
 
-            bool nearMouse = (player.MountedCenter + GetTargetDistance(player)).Distance(targetHitbox.Center.ToVector2()) < 200;
+            bool nearMouse = (player.MountedCenter + GetTargetDistance(player)).Distance(targetHitbox.Center.ToVector2()) < 150;
             bool swordMelee = projHitbox.Intersects(targetHitbox);
 
             return swordMelee || nearMouse;
@@ -131,17 +133,22 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
 
         public override bool PreDraw(ref Color lightColor)
         {
-            DrawSword();
+            Player player = Main.player[Projectile.owner];
+            DrawSword(player);
+
+            float sparkleScale = ExtraUtils.DualLerp(0, TimeMax * 0.3f, TimeMax * 0.8f, TimeMax, Time, true);
+            ExtraUtils.DrawSparkle(TextureAssets.Extra[98], SpriteEffects.None,
+            player.MountedCenter + new Vector2(70 + (sparkleScale * 10), 0).RotatedBy(Projectile.rotation) - Main.screenPosition,
+            TextureAssets.Extra[98].Size() / 2, 0.3f + sparkleScale, 0.2f, 1.4f, 3f, 0f,
+            Color2.HolyMelee, Color2.PaleGray, sparkleScale);
+
             return false;
         }
 
-        public void DrawSword()
+        public void DrawSword(Player player)
         {
-            Player player = Main.player[Projectile.owner];
-
-            Asset<Texture2D> sword = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Holy/PaleBlade");
-            Asset<Texture2D> swordGlow = Mod.Assets.Request<Texture2D>("Content/Projectiles/Weapons/Holy/PaleBladeHold");
-            Asset<Texture2D> slash = Mod.Assets.Request<Texture2D>("Content/Projectiles/Weapons/Holy/HolySlash");
+            Asset<Texture2D> sword = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Holy/HolyBlade");
+            Asset<Texture2D> swordGlow = Mod.Assets.Request<Texture2D>("Content/Projectiles/Weapons/Holy/HolyBladeProj");
 
             SpriteEffects direction = Projectile.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             Vector2 origin = new Vector2(Projectile.spriteDirection < 0 ? sword.Width() - 3 : 3, sword.Height() - 3);
@@ -152,37 +159,13 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
             Color glowColor = Color2.HolyMelee;
             glowColor.A = 40;
 
+            //hitbox
             //Main.EntitySpriteDraw(TextureAssets.BlackTile.Value, Projectile.position - Main.screenPosition, new Rectangle(0, 0, Projectile.width, Projectile.height), Color.Black * 0.5f, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
 
             for (int i = 0; i < 4; i++)
             {
                 Vector2 offset = new Vector2(2, 0).RotatedBy((MathHelper.TwoPi / 4 * i) + Projectile.velocity.ToRotation() + MathHelper.PiOver4);
-                Main.EntitySpriteDraw(swordGlow.Value, player.itemLocation + offset - Main.screenPosition, null, glowColor * 0.2f, Projectile.rotation + diagonal, origin, Projectile.scale, direction, 0);
-            }
-
-            if (SlashCount < 0)
-            {
-                float slashOpacity = ExtraUtils.DualLerp(2f, 8f, 22f, 28f, Time, true);
-                float slashScale = (1f + (Utils.GetLerpValue(0, 30, Time, true) * 0.3f)) * 0.7f;
-                Main.EntitySpriteDraw(slash.Value, player.MountedCenter - Main.screenPosition, null, glowColor * slashOpacity, Projectile.oldRot[2] + MathHelper.PiOver2, slash.Size() / 2, Projectile.scale * slashScale, SpriteEffects.None, 0);
-                Main.EntitySpriteDraw(slash.Value, player.MountedCenter - Main.screenPosition, null, glowColor * slashOpacity, Projectile.oldRot[1] + MathHelper.PiOver2, slash.Size() / 2, Projectile.scale * slashScale * 0.87f, SpriteEffects.None, 0);
-
-                ExtraUtils.DrawSparkle(TextureAssets.Extra[98], SpriteEffects.None,
-                    player.MountedCenter + new Vector2(110 * slashScale, 0).RotatedBy(Projectile.velocity.ToRotation()) - Main.screenPosition,
-                    TextureAssets.Extra[98].Size() / 2, 0.3f + slashOpacity, 0.2f, 1.4f, 3f, 0f,
-                    Color2.HolyMelee, Color2.PaleGray, slashOpacity);
-
-                Particle.NewParticle(Particle.ParticleType<Ember>(), 
-                    player.MountedCenter + new Vector2(100 * slashScale, 0).RotatedBy(Projectile.rotation), (Projectile.rotation + (MathHelper.PiOver2 * Projectile.direction)).ToRotationVector2() * 1.5f,
-                    Color2.HolyMelee, 1f + Main.rand.NextFloat());
-            }
-            else
-            {
-                float sparkleScale = ExtraUtils.DualLerp(8f, 15f, 22f, Time, true);
-                ExtraUtils.DrawSparkle(TextureAssets.Extra[98], SpriteEffects.None,
-                player.itemLocation + new Vector2(75, 0).RotatedBy(Projectile.rotation) - Main.screenPosition,
-                TextureAssets.Extra[98].Size() / 2, 0.3f + sparkleScale, 0.2f, 1.4f, 3f, 0f,
-                Color2.HolyMelee, Color2.PaleGray, sparkleScale);
+                Main.EntitySpriteDraw(swordGlow.Value, player.itemLocation + offset - Main.screenPosition, null, glowColor * 0.3f, Projectile.rotation + diagonal, origin, Projectile.scale, direction, 0);
             }
         }
     }

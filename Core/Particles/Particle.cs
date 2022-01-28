@@ -56,18 +56,18 @@ namespace BlockContent.Core
         {
             if (!Main.gamePaused)
             {
-                Particle particle = ParticleLoader.GetParticle(type).NewInstance();
-                particle.OnSpawn();
-                particle.position = position;
-                particle.velocity = velocity;
-                particle.color = color;
-                particle.scale = scale;
-                particle.rotation = velocity.ToRotation() + (Main.rand.NextFloat(-0.2f, 0.2f) * MathHelper.TwoPi);
-                particle.active = true;
-                particle.Index = ParticleLoader.particlesInGame.Count;
-                particle.Type = type;
-                ParticleLoader.particlesInGame.Add(particle);
-                return particle.Index;
+                Particle p = ParticleLoader.GetParticle(type).NewInstance();
+                p.OnSpawn();
+                p.position = position;
+                p.velocity = velocity;
+                p.color = color;
+                p.scale = scale;
+                p.rotation = velocity.ToRotation() + (Main.rand.NextFloat(-0.2f, 0.2f) * MathHelper.TwoPi);
+                p.active = true;
+                p.Index = ParticleLoader.particle.Count;
+                p.Type = type;
+                ParticleLoader.particle.Add(p);
+                return p.Index;
             }
                
             return -1;

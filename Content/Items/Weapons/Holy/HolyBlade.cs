@@ -8,7 +8,7 @@ using BlockContent.Content.Projectiles.Weapons.Holy;
 
 namespace BlockContent.Content.Items.Weapons.Holy
 {
-    public class PaleBlade : ModItem
+    public class HolyBlade : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -22,9 +22,9 @@ namespace BlockContent.Content.Items.Weapons.Holy
             Item.width = 24;
             Item.height = 24;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 25;
+            Item.useAnimation = 32;
             Item.useTime = Item.useAnimation;
-            Item.damage = 280;
+            Item.damage = 240;
             Item.DamageType = DamageClass.Melee;
             Item.crit = 12;
             Item.knockBack = 5;
@@ -36,7 +36,7 @@ namespace BlockContent.Content.Items.Weapons.Holy
             Item.useTurn = false;
             Item.noMelee = true;
             Item.shootSpeed = 2f;
-            Item.shoot = ModContent.ProjectileType<PaleBladeHold>();
+            Item.shoot = ModContent.ProjectileType<HolyBladeProj>();
             Item.channel = true;
         }
 
@@ -45,7 +45,7 @@ namespace BlockContent.Content.Items.Weapons.Holy
         public override bool Shoot(Player player, ProjectileSource_Item_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             float angle = MathHelper.ToRadians(Main.rand.Next(90, 140));
-            Projectile proj = Projectile.NewProjectileDirect(source, position, velocity.SafeNormalize(Vector2.Zero), ModContent.ProjectileType<PaleBladeHold>(), damage, knockback, player.whoAmI, angle, angle);
+            Projectile proj = Projectile.NewProjectileDirect(source, position, velocity.SafeNormalize(Vector2.Zero), ModContent.ProjectileType<HolyBladeProj>(), damage, knockback, player.whoAmI, angle, angle);
             proj.direction = Main.rand.NextBool().ToDirectionInt();
             return false;
         }

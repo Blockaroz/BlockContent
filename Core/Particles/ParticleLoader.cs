@@ -23,19 +23,19 @@ namespace BlockContent.Core
             nextID = 0;
         }
 
-        public static IList<Particle> particlesInGame = new List<Particle>();
+        public static IList<Particle> particle = new List<Particle>();
 
         public static void UpdateParticles()
         {
             if (Main.netMode != NetmodeID.Server && !Main.gamePaused)
             {
-                for (int i = 0; i < particlesInGame.Count; i++)
+                for (int i = 0; i < particle.Count; i++)
                 {
-                    particlesInGame[i].position += particlesInGame[i].velocity;
-                    particlesInGame[i].Update();
-                    if (!particlesInGame[i].active)
+                    particle[i].position += particle[i].velocity;
+                    particle[i].Update();
+                    if (!particle[i].active)
                     {
-                        particlesInGame.RemoveAt(i);
+                        particle.RemoveAt(i);
                         i--;
                     }
                 }
@@ -44,7 +44,7 @@ namespace BlockContent.Core
 
         public static void DrawParticles(SpriteBatch spriteBatch)
         {
-            foreach (Particle particle in particlesInGame)
+            foreach (Particle particle in particle)
             {
                 if (Main.netMode != NetmodeID.Server)
                     particle.Draw(spriteBatch);
