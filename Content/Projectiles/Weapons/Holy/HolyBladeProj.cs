@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -37,6 +38,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
             Projectile.penetrate = -1;
             Projectile.hide = true;
             Projectile.noEnchantmentVisuals = true;
+            Projectile.aiStyle = -1;
         }
 
         private ref float Time => ref Projectile.localAI[0];
@@ -75,7 +77,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
                 }
             }
 
-            Projectile.velocity = Vector2.Lerp(Projectile.velocity, GetTargetDistance(player).SafeNormalize(Vector2.Zero), 0.08f);
+            Projectile.velocity = Vector2.Lerp(Projectile.velocity, GetTargetDistance(player).SafeNormalize(Vector2.Zero), 0.1f);
 
             float rotation = (MathHelper.SmoothStep(-angle, angle, Utils.GetLerpValue(TimeMax * 0.15f, TimeMax * 0.85f, Time, true)) * Projectile.direction);
             Projectile.rotation = Projectile.velocity.ToRotation() + rotation;
@@ -86,7 +88,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
 
             Projectile.Center = player.MountedCenter + new Vector2(Vector2.Distance(player.Center, player.itemLocation), 0).RotatedBy(Projectile.rotation);
              
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.Next(3) == 0)
                 Particle.NewParticle(Particle.ParticleType<Ember>(), player.itemLocation + new Vector2(95, 0).RotatedBy(Projectile.rotation), Projectile.velocity * Main.rand.NextFloat(), Color2.HolyMelee, Main.rand.NextFloat());
 
             //for (int i = 0; i < 3; i++)
@@ -116,7 +118,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
                     isTwo = true;
 
                 if (isTwo)
-                    distance += Main.rand.NextVector2Circular(20, 20);
+                    distance += Main.rand.NextVector2Circular(120, 120);
             }
             return distance;
         }
@@ -125,10 +127,13 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
         {
             Player player = Main.player[Projectile.owner];
 
-            bool nearMouse = (player.MountedCenter + GetTargetDistance(player)).Distance(targetHitbox.Center.ToVector2()) < 150;
+            float collisionPoint = 0;
+            bool swordSlash = Collision.CheckAABBvLineCollision(targetHitbox.TopRight(), targetHitbox.Size(),
+                player.MountedCenter,
+                player.MountedCenter + new Vector2(800 * Utils.GetLerpValue(0, TimeMax * 0.66f, Time, true), 0).RotatedBy(Projectile.velocity.ToRotation()), 80, ref collisionPoint);
             bool swordMelee = projHitbox.Intersects(targetHitbox);
 
-            return swordMelee || nearMouse;
+            return swordMelee || swordSlash;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -136,11 +141,13 @@ namespace BlockContent.Content.Projectiles.Weapons.Holy
             Player player = Main.player[Projectile.owner];
             DrawSword(player);
 
-            float sparkleScale = ExtraUtils.DualLerp(0, TimeMax * 0.3f, TimeMax * 0.8f, TimeMax, Time, true);
+
+
+            float sparkleScale = ExtraUtils.DualLerp(0, TimeMax * 0.3f, TimeMax * 0.7f, TimeMax, Time, true);
             ExtraUtils.DrawSparkle(TextureAssets.Extra[98], SpriteEffects.None,
-            player.MountedCenter + new Vector2(70 + (sparkleScale * 10), 0).RotatedBy(Projectile.rotation) - Main.screenPosition,
+            Projectile.Center + new Vector2(70 + (sparkleScale * 10), 0).RotatedBy(Projectile.rotation) - Main.screenPosition,
             TextureAssets.Extra[98].Size() / 2, 0.3f + sparkleScale, 0.2f, 1.4f, 3f, 0f,
-            Color2.HolyMelee, Color2.PaleGray, sparkleScale);
+            Color2.HolyMelee, Color2.HolyMelee, sparkleScale);
 
             return false;
         }

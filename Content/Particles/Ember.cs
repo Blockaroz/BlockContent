@@ -30,7 +30,7 @@ namespace BlockContent.Content.Particles
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            color.A /= 2;
+            color.A = 20;
             Color glowColor = Color.Lerp(Color.White, color, 0.25f);
             glowColor.A = 0;
 

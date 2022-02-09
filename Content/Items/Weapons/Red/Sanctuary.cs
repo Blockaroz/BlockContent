@@ -5,6 +5,7 @@ using Terraria.ID;
 using Microsoft.Xna.Framework;
 using Terraria.DataStructures;
 using BlockContent.Content.Projectiles.Weapons.Red;
+using BlockContent.Common;
 
 namespace BlockContent.Content.Items.Weapons.Red
 {
@@ -13,7 +14,6 @@ namespace BlockContent.Content.Items.Weapons.Red
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sanctuary");
-            Tooltip.SetDefault("Shoots high-heat energy beams that hit twice");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 
@@ -22,30 +22,42 @@ namespace BlockContent.Content.Items.Weapons.Red
             Item.width = 24;
             Item.height = 24;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 5;
-            Item.useTime = 5;
+            Item.useAnimation = 10;
+            Item.useTime = Item.useAnimation;
             Item.damage = 170;
             Item.DamageType = DamageClass.Ranged;
             Item.crit = 10;
             Item.knockBack = 2;
-            Item.UseSound = null;
             Item.autoReuse = true;
             Item.rare = ItemRarityID.Red;
             Item.value = Item.sellPrice(gold: 20);
-            Item.noMelee = true;
             Item.noUseGraphic = true;
-            Item.channel = true;
+            Item.noMelee = true;
+            Item.shootSpeed = 2f;
+            Item.shoot = ModContent.ProjectileType<SanctuaryHeld>();
             Item.useAmmo = AmmoID.Bullet;
-            Item.shootSpeed = 36f;
-            Item.shoot = ModContent.ProjectileType<SanctuaryProjectile>();
+            Item.channel = true;
         }
 
         public override bool Shoot(Player player, ProjectileSource_Item_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            int projType = ModContent.ProjectileType<SanctuaryProjectile>();
             Vector2 point = player.RotatedRelativePoint(player.MountedCenter, true);
-            Projectile.NewProjectile(source, point, velocity, projType, damage, knockback, player.whoAmI, 5 * Main.rand.Next(0, 2), 0);
+            int projType = ModContent.ProjectileType<SanctuaryHeld>();
+            Projectile p = Projectile.NewProjectileDirect(source, point, velocity, projType, damage, knockback, player.whoAmI);
+            p.rotation = velocity.ToRotation();
             return false;
+        }
+
+        public override bool AltFunctionUse(Player player)
+        {
+            if (player.altFunctionUse == 2)
+            {
+                if (player.GetModPlayer<SpecialWeaponPlayer>().sanctuaryMode == 1)
+                    player.GetModPlayer<SpecialWeaponPlayer>().sanctuaryMode = 0;
+                else
+                    player.GetModPlayer<SpecialWeaponPlayer>().sanctuaryMode = 1;
+            }
+            return true;
         }
 
         public override Color? GetAlpha(Color lightColor) => new(255, 255, 255, lightColor.A - Item.alpha);

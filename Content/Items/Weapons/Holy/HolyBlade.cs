@@ -13,7 +13,8 @@ namespace BlockContent.Content.Items.Weapons.Holy
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Holy Blade");
-            Tooltip.SetDefault("'An antique, well-kept blade.'");
+            Tooltip.SetDefault("'An antique, well-kept blade." +
+                "\nOne may slash that which they cannot reach.'");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 
@@ -28,9 +29,8 @@ namespace BlockContent.Content.Items.Weapons.Holy
             Item.DamageType = DamageClass.Melee;
             Item.crit = 12;
             Item.knockBack = 5;
-            //Item.UseSound = SoundLoader.GetLegacySoundSlot(Mod, "Assets/Sounds/Items/PaleSlash").WithPitchVariance(0.33f);
             Item.autoReuse = true;
-            Item.rare = ModContent.RarityType<HeavenlyRarity>();
+            Item.rare = ItemRarityID.Purple;
             Item.value = Item.sellPrice(gold: 23);
             Item.noUseGraphic = true;
             Item.useTurn = false;
@@ -44,7 +44,7 @@ namespace BlockContent.Content.Items.Weapons.Holy
 
         public override bool Shoot(Player player, ProjectileSource_Item_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            float angle = MathHelper.ToRadians(Main.rand.Next(90, 140));
+            float angle = MathHelper.ToRadians(120);
             Projectile proj = Projectile.NewProjectileDirect(source, position, velocity.SafeNormalize(Vector2.Zero), ModContent.ProjectileType<HolyBladeProj>(), damage, knockback, player.whoAmI, angle, angle);
             proj.direction = Main.rand.NextBool().ToDirectionInt();
             return false;
