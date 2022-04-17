@@ -1,45 +1,46 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using BlockContent.Core;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System;
 using Terraria;
-using BlockContent.Core;
-using Terraria.ModLoader;
 
 namespace BlockContent.Content.Particles
 {
     public class Ember : Particle
     {
+        public override void OnSpawn()
+        {
+            velocity += Main.rand.NextVector2Circular(1, 1);
+        }
+
         public override void Update()
         {
-            misc++;
-            velocity.Y -= 0.02f;
-            velocity.Y += (float)Math.Cos(misc * 60f) / scale / 20f;
+            velocity *= 0.98f;
+            scale *= 0.98f;
             if (Main.rand.Next(2) == 0)
-                velocity.X += Main.rand.NextFloat(-0.3f, 0.3f);
-            rotation = velocity.ToRotation();
-            if (misc > 15)
-            {
-                scale *= 0.95f;
-                velocity.X *= 0.94f;
-            }
-            velocity *= 1.01f;
+                velocity += Main.rand.NextVector2Circular(0.3f, 0.2f);
+            velocity.Y -= 0.02f;
             if (scale < 0.1f)
-                active = false;
+                Active = false;
+
+            rotation = velocity.ToRotation();
+
+            if (emit)
+                Lighting.AddLight(position, color.ToVector3() * 0.6f);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            color.A = 20;
-            Color glowColor = Color.Lerp(Color.White, color, 0.25f);
-            glowColor.A = 0;
-
-            Asset<Texture2D> ember = Mod.Assets.Request<Texture2D>("Content/Particles/Ember");
-
-            Vector2 stretch = new Vector2(scale, scale + Utils.GetLerpValue(0, 2, velocity.Length()) * Utils.GetLerpValue(0, 0.33f, scale, true));
-
-            spriteBatch.Draw(ember.Value, position - Main.screenPosition, null, color * 0.9f, rotation - MathHelper.PiOver2, ember.Size() / 2, stretch, SpriteEffects.None, 0);
-            spriteBatch.Draw(ember.Value, position - Main.screenPosition, null, glowColor, rotation - MathHelper.PiOver2, ember.Size() / 2, stretch * 0.45f, SpriteEffects.None, 0);
+            Asset<Texture2D> texture = Mod.Assets.Request<Texture2D>("Assets/Textures/Glow");
+            Color drawColor = color;
+            drawColor.A = 0;
+            Color light = Color.Lerp(Color.White, Color.LightGoldenrodYellow, (float)(Math.Sin(Main.GlobalTimeWrappedHourly % MathHelper.TwoPi * scale) * 0.2f) + 0.8f);
+            Color inColor = Color.Lerp(drawColor, light, 0.3f);
+            inColor.A = 0;
+            Vector2 stretch = new Vector2(1f, 0.7f + (velocity.Length() * 0.3f)) * scale * 0.5f;
+            spriteBatch.Draw(texture.Value, position - Main.screenPosition, null, drawColor, rotation, texture.Size() * 0.5f, stretch, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture.Value, position - Main.screenPosition, null, inColor, rotation, texture.Size() * 0.5f, stretch * 0.3f, SpriteEffects.None, 0);
         }
     }
 }

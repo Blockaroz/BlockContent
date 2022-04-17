@@ -11,7 +11,9 @@
     <PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\Mounts\Drifter\" />
+    <Folder Include="Assets\Sounds\" />
+    <Folder Include="Assets\Textures\Negastaff\" />
+    <Folder Include="Common\" />
     <Folder Include="Content\NPCs\" />
   </ItemGroup>
 </Project>

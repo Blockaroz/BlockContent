@@ -1,54 +1,42 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace BlockContent.Core
 {
-    public static class ParticleLoader
+    public class ParticleLoader : ILoadable
     {
-        private static int nextID;
-
-        internal static readonly IList<Particle> particleTypes = new List<Particle>();
-
-        internal static int ReserveParticleID() => nextID++;
-
-        public static Particle GetParticle(int type) => type == -1 ? null : particleTypes[type];
-
-        internal static void Unload()
+        public void Load(Mod mod)
         {
-            particleTypes.Clear();
-            nextID = 0;
-        }
-
-        public static IList<Particle> particle = new List<Particle>();
-
-        public static void UpdateParticles()
-        {
-            if (Main.netMode != NetmodeID.Server && !Main.gamePaused)
+            if (!Main.dedServ)
             {
-                for (int i = 0; i < particle.Count; i++)
-                {
-                    particle[i].position += particle[i].velocity;
-                    particle[i].Update();
-                    if (!particle[i].active)
-                    {
-                        particle.RemoveAt(i);
-                        i--;
-                    }
-                }
+                On.Terraria.Main.DrawDust += DrawParticles;
+                On.Terraria.Main.UpdateParticleSystems += UpdateParticles;
             }
         }
 
-        public static void DrawParticles(SpriteBatch spriteBatch)
+        public void Unload()
         {
-            foreach (Particle particle in particle)
-            {
-                if (Main.netMode != NetmodeID.Server)
-                    particle.Draw(spriteBatch);
-            }
+            ParticleSystem.Unload();
+        }
+
+        private void DrawParticles(On.Terraria.Main.orig_DrawDust orig, Main self)
+        {
+            orig(self);
+            Main.spriteBatch.Begin(default, default, SamplerState.PointWrap, default, default, null, Main.GameViewMatrix.TransformationMatrix);
+            ParticleSystem.DrawParticles(Main.spriteBatch);
+            Main.spriteBatch.End();
+        }
+
+        private void UpdateParticles(On.Terraria.Main.orig_UpdateParticleSystems orig, Main self)
+        {
+            orig(self);
+            ParticleSystem.UpdateParticles();
         }
     }
 }
