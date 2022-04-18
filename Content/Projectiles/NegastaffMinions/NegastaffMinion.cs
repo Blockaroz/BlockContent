@@ -17,7 +17,7 @@ namespace BlockContent.Content.Projectiles.NegastaffMinions
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Negastaff Goon");
+            DisplayName.SetDefault("Negapaint Goon");
             ProjectileID.Sets.MinionTargettingFeature[Type] = true;
             Main.projPet[Projectile.type] = true;
             ProjectileID.Sets.MinionSacrificable[Type] = true;
@@ -35,7 +35,7 @@ namespace BlockContent.Content.Projectiles.NegastaffMinions
             Projectile.friendly = true;
             Projectile.minion = true;
             Projectile.DamageType = DamageClass.Summon; 
-            Projectile.minionSlots = 1f;
+            Projectile.minionSlots = 0.5f;
             Projectile.penetrate = -1;
         }
 
@@ -71,7 +71,8 @@ namespace BlockContent.Content.Projectiles.NegastaffMinions
             if (minionType == (int)MinionType.Nobody || player.dead || !player.active)
                 Projectile.Kill();
 
-            idlePos = player.Center + new Vector2((60 + (Projectile.localAI[1] * 5)) * -player.direction, -20 - (Projectile.localAI[1] * 3)).RotatedBy(MathHelper.TwoPi / 9f * Projectile.localAI[1] * player.direction);
+            //idlePos = player.Center + new Vector2((70 + (Projectile.ai[0] * Projectile.ai[0] * 0.5f)) * -player.direction, -20 - (Projectile.ai[0] * 3)).RotatedBy(MathHelper.TwoPi / 9f * Projectile.ai[0] * player.direction);
+            idlePos = player.Center + new Vector2((70 + (Projectile.ai[0] * 20)) * -player.direction, -20 * player.gravDir);
 
             switch (minionType)
             {

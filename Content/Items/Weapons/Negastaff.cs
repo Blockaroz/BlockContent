@@ -17,6 +17,7 @@ namespace BlockContent.Content.Items.Weapons
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true;
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
+            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
             DisplayName.SetDefault("Negapaint Staffbrush");
         }
 
@@ -48,22 +49,13 @@ namespace BlockContent.Content.Items.Weapons
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            //think of this as a worm
             player.AddBuff(Item.buffType, 2);
             Projectile minion = Projectile.NewProjectileDirect(source, player.Center, velocity, type, damage, knockback, player.whoAmI);
+            minion.ai[0] = -1;
             minion.owner = player.whoAmI;
-            if (player.ownedProjectileCounts[type] > 0 && player.ownedProjectileCounts[type] < player.maxMinions)
-            {
-                minion.localAI[1] = player.ownedProjectileCounts[type];
-                if (minion.ModProjectile is NegastaffMinion nsminion)
-                    nsminion.minionType = (int)NegastaffMinion.MinionType.Seeksery;//player.ownedProjectileCounts[type] + 1;
-            }
-            else
-            {
-                minion.localAI[1] = 0;
-                if (minion.ModProjectile is NegastaffMinion nsminion)
-                    nsminion.minionType = (int)NegastaffMinion.MinionType.Seeksery;//1;
-            }
+            minion.ai[0] = player.ownedProjectileCounts[type];
+            if (minion.ModProjectile is NegastaffMinion nsminion)
+                nsminion.minionType = (int)NegastaffMinion.MinionType.Seeksery;
             minion.originalDamage = Item.damage;
 
             return false;

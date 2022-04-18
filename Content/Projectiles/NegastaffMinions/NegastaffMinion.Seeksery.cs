@@ -30,7 +30,7 @@ namespace BlockContent.Content.Projectiles.NegastaffMinions
             Vector2 floaty = new Vector2((float)Math.Sin(Projectile.localAI[0] / 20f % MathHelper.TwoPi), (float)Math.Cos(Projectile.localAI[0] / 20f % MathHelper.TwoPi) * 0.4f);
             if (Projectile.Distance(idlePos) > 50)
                 floaty /= Projectile.Distance(idlePos) * 0.01f;
-            Projectile.Center = Vector2.Lerp(Projectile.Center, idlePos, 0.1f) + floaty;
+            Projectile.Center = Vector2.Lerp(Projectile.Center, idlePos, 0.2f) + floaty;
         }
 
         public void Draw_Seeksery()
