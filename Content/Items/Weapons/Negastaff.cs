@@ -53,9 +53,18 @@ namespace BlockContent.Content.Items.Weapons
             Projectile minion = Projectile.NewProjectileDirect(source, player.Center, velocity, type, damage, knockback, player.whoAmI);
             minion.ai[0] = -1;
             minion.owner = player.whoAmI;
-            minion.ai[0] = player.ownedProjectileCounts[type];
-            if (minion.ModProjectile is NegastaffMinion nsminion)
-                nsminion.minionType = (int)NegastaffMinion.MinionType.Seeksery;
+            if (player.ownedProjectileCounts[type] > 0 && player.ownedProjectileCounts[type] * 0.5f < player.maxMinions)
+            {
+                minion.ai[0] = player.ownedProjectileCounts[type];
+                if (minion.ModProjectile is NegastaffMinion nsminion)
+                    nsminion.minionType = (int)NegastaffMinion.MinionType.Seeksery;
+            }
+            else
+            {
+                minion.ai[0] = 0;
+                if (minion.ModProjectile is NegastaffMinion nsminion)
+                    nsminion.minionType = (int)NegastaffMinion.MinionType.Seeksery;
+            }
             minion.originalDamage = Item.damage;
 
             return false;
