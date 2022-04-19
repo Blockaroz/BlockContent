@@ -8,19 +8,18 @@ using Microsoft.Xna.Framework;
 using BlockContent.Content.Items.Weapons;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using System.IO;
 
 namespace BlockContent.Content.Projectiles.NegastaffMinions
 {
     public partial class NegastaffMinion : ModProjectile
     {
-        public override string Texture => "BlockContent/Assets/Textures/Empty";
+        public override string Texture => "BlockContent/Content/Projectiles/NegastaffMinions/NegastaffMinionCounter";
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Negapaint Goon");
             ProjectileID.Sets.MinionTargettingFeature[Type] = true;
-            Main.projPet[Projectile.type] = true;
-            ProjectileID.Sets.MinionSacrificable[Type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Type] = true;
             ProjectileID.Sets.TrailingMode[Type] = 1;
             ProjectileID.Sets.TrailCacheLength[Type] = 10;
@@ -32,10 +31,11 @@ namespace BlockContent.Content.Projectiles.NegastaffMinions
             Projectile.width = 32;
             Projectile.height = 32;
             Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
             Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Summon;
             Projectile.minion = true;
-            Projectile.DamageType = DamageClass.Summon; 
-            Projectile.minionSlots = 0.5f;
+            Projectile.minionSlots = 0f;
             Projectile.penetrate = -1;
         }
 
@@ -48,10 +48,23 @@ namespace BlockContent.Content.Projectiles.NegastaffMinions
             Moonburn,
         }
 
-        public static int BuffType = ModContent.BuffType<NegastaffBuff>();
         public int minionType;
         public Vector2 idlePos;
         public Vector2 targetPos;
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.WriteVector2(idlePos);
+            writer.WriteVector2(targetPos);
+            writer.Write(minionType);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            idlePos = reader.ReadVector2();
+            targetPos = reader.ReadVector2();
+            minionType = reader.Read();
+        }
 
         public override void AI()
         {
@@ -63,16 +76,16 @@ namespace BlockContent.Content.Projectiles.NegastaffMinions
             Projectile.localAI[0]++;
 
             if (player.dead || !player.active)
-                player.ClearBuff(BuffType);
+                player.ClearBuff(ModContent.BuffType<NegastaffBuff>());
 
-            if (player.HasBuff(BuffType))
+            if (player.HasBuff(ModContent.BuffType<NegastaffBuff>()))
                 Projectile.timeLeft = 2;
 
             if (minionType == (int)MinionType.Nobody || player.dead || !player.active)
                 Projectile.Kill();
 
-            //idlePos = player.Center + new Vector2((70 + (Projectile.ai[0] * Projectile.ai[0] * 0.5f)) * -player.direction, -20 - (Projectile.ai[0] * 3)).RotatedBy(MathHelper.TwoPi / 9f * Projectile.ai[0] * player.direction);
-            idlePos = player.Center + new Vector2((70 + (Projectile.ai[0] * 20)) * -player.direction, -20 * player.gravDir);
+            idlePos = player.Center + new Vector2((-50 - (Projectile.ai[0] * Projectile.ai[0] * 0.5f)) * player.direction, -20 - (Projectile.ai[0] * 3)).RotatedBy(MathHelper.TwoPi / 9f * Projectile.ai[0] * player.direction);
+            //idlePos = player.Center + new Vector2((70 + (Projectile.ai[0] * 20)) * -player.direction, -20 * player.gravDir);
 
             switch (minionType)
             {
@@ -126,7 +139,7 @@ namespace BlockContent.Content.Projectiles.NegastaffMinions
             return hasTarget;
         }
 
-        public bool FindTarget_Proj(Player owner, out int index, float maxDistance = 500f)
+        public bool FindTarget_ProjReflectable(Player owner, out int index, float maxDistance = 500f)
         {
             index = -1;
             float distance = maxDistance;
@@ -134,7 +147,7 @@ namespace BlockContent.Content.Projectiles.NegastaffMinions
             for (int i = 0; i < Main.projectile.Length; i++)
             {
                 Projectile proj = Main.projectile[i];
-                if (proj.CanBeReflected() && proj.hostile && proj.type != Type)
+                if (proj.CanBeReflected() && proj.hostile && proj.type != Type && proj.owner != owner.whoAmI)
                 {
                     bool inRange = Projectile.Distance(proj.Center) < distance;
                     bool lineOfSight = Collision.CanHitLine(Projectile.position, Projectile.width, Projectile.height, proj.position, proj.width, proj.height);
