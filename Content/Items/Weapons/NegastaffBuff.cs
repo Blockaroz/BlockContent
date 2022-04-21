@@ -37,19 +37,20 @@ namespace BlockContent.Content.Items.Weapons
 			int minionType = ModContent.ProjectileType<NegastaffMinion>();
 			if (player.ownedProjectileCounts[counterType] < player.ownedProjectileCounts[minionType])
             {
+				int lastIndex = -1;
 				int lastMinion = -1;
 				for (int i = 0; i < Main.maxProjectiles; i++)
 				{
 					Projectile proj = Main.projectile[i];
 					if (proj.active && proj.owner == player.whoAmI && proj.type != minionType && proj.ai[0] > lastMinion)
+					{
+						lastIndex = proj.whoAmI;
 						lastMinion = (int)proj.ai[0];
+					}
 				}
-				for (int i = 0; i < Main.maxProjectiles; i++)
-				{
-					Projectile proj = Main.projectile[i];
-					if (proj.active && proj.owner == player.whoAmI && proj.type != minionType && proj.ai[0] == lastMinion)
-						proj.Kill();
-				}
+				Projectile toKill = Main.projectile[lastIndex];
+				if (toKill.active && toKill.owner == player.whoAmI && toKill.type != minionType && toKill.ai[0] == lastMinion)
+					toKill.Kill();
 			}
 
 			else if (player.ownedProjectileCounts[minionType] < player.ownedProjectileCounts[counterType])

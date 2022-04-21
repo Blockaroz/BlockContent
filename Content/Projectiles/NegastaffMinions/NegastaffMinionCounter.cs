@@ -17,6 +17,7 @@ namespace BlockContent.Content.Projectiles.NegastaffMinions
         {
             DisplayName.SetDefault("Negapaint Staffbrush");
             Main.projPet[Projectile.type] = true;
+            ProjectileID.Sets.MinionTargettingFeature[Type] = true;
             ProjectileID.Sets.MinionSacrificable[Type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Type] = true;
         }
@@ -30,7 +31,7 @@ namespace BlockContent.Content.Projectiles.NegastaffMinions
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Summon;
             Projectile.minion = true;
-            Projectile.minionSlots = 0.5f;
+            Projectile.minionSlots = 1f;
             Projectile.penetrate = -1;
             Projectile.hide = true;
         }

@@ -45,7 +45,6 @@ namespace BlockContent.Core
             if (!Main.gamePaused)
             {
                 Particle p = (Particle)ParticleSystem.GetParticle(type).MemberwiseClone();
-                p.OnSpawn();
                 p.position = position;
                 p.velocity = velocity;
                 p.color = color;
@@ -53,6 +52,7 @@ namespace BlockContent.Core
                 p.rotation = velocity.ToRotation() + (Main.rand.NextFloat(-0.2f, 0.2f) * MathHelper.TwoPi);
                 p.Active = true;
                 p.Type = type;
+                p.OnSpawn();
                 ParticleSystem.particle.Add(p);
             }
         }

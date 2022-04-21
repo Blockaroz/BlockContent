@@ -19,13 +19,14 @@ namespace BlockContent.Content.Items.Weapons
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
             ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
             DisplayName.SetDefault("Negapaint Staffbrush");
+            Tooltip.SetDefault("Damage increases with more members");
         }
 
         public override void SetDefaults()
         {
             Item.width = 32;
             Item.height = 32;
-            Item.damage = 6;
+            Item.damage = 15;
             Item.mana = 10;
             Item.DamageType = DamageClass.Summon;
             Item.useTime = 15;
