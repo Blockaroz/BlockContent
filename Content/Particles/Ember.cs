@@ -49,8 +49,8 @@ namespace BlockContent.Content.Particles
             Rectangle rect = ember.Frame(1, 4, 0, frame);
             Color bloomColor = color * 0.33f;
             bloomColor.A = 0;
-            spriteBatch.Draw(ember.Value, position - Main.screenPosition, rect, color, rotation, rect.Size() * 0.5f, scale, SpriteEffects.None, 0);
-            spriteBatch.Draw(bloom.Value, position - Main.screenPosition, rect, bloomColor, rotation, bloom.Size() * 0.5f, scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(ember.Value, position - Main.screenPosition, rect, color, rotation, rect.Size() * new Vector2(0.5f, 0.33f), scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(bloom.Value, position - Main.screenPosition, rect, bloomColor, rotation, bloom.Size() * 0.5f, scale * 0.5f, SpriteEffects.None, 0);
         }
     }
 }
