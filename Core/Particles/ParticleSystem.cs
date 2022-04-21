@@ -1,7 +1,9 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 
 namespace BlockContent.Core
@@ -40,11 +42,33 @@ namespace BlockContent.Core
 
         public static void DrawParticles(SpriteBatch spriteBatch)
         {
-            foreach (Particle particle in particle)
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            Rectangle checkDraw = new Rectangle((int)Main.screenPosition.X - 1000, (int)Main.screenPosition.Y - 1050, Main.screenWidth + 2000, Main.screenHeight + 2100);
+
+            foreach (Particle particle in particle.Where(p => p.shader == null))
             {
+                if (!new Rectangle((int)particle.position.X - 2, (int)particle.position.Y - 2, 4, 4).Intersects(checkDraw))
+                    continue;
                 if (Main.netMode != NetmodeID.Server)
                     particle.Draw(spriteBatch);
             }
+
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            foreach (Particle particle in particle.Where(p => p.shader != null))
+            {
+                if (!new Rectangle((int)particle.position.X - 2, (int)particle.position.Y - 2, 4, 4).Intersects(checkDraw))
+                    continue;
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    particle.emit = false;
+                    particle.shader.Apply(null);
+                    particle.Draw(spriteBatch);
+                }
+            }
+            spriteBatch.End();
+            Main.pixelShader.CurrentTechnique.Passes[0].Apply();
+            //spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
         }
     }
 }

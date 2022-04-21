@@ -28,9 +28,7 @@ namespace BlockContent.Core
         private void DrawParticles(On.Terraria.Main.orig_DrawDust orig, Main self)
         {
             orig(self);
-            Main.spriteBatch.Begin(default, default, SamplerState.PointWrap, default, default, null, Main.GameViewMatrix.TransformationMatrix);
             ParticleSystem.DrawParticles(Main.spriteBatch);
-            Main.spriteBatch.End();
         }
 
         private void UpdateParticles(On.Terraria.Main.orig_UpdateParticleSystems orig, Main self)

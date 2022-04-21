@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
 namespace BlockContent.Core
@@ -18,6 +19,10 @@ namespace BlockContent.Core
         public Color color;
 
         public bool emit;
+
+        public object data;
+
+        public ArmorShaderData shader;
 
         public bool Active { get; set; }
 
@@ -40,7 +45,7 @@ namespace BlockContent.Core
 
         public static int ParticleType<T>() where T : Particle => ModContent.GetInstance<T>()?.Type ?? -1;
 
-        public static void NewParticle(int type, Vector2 position, Vector2 velocity, Color color, float scale = 1f)
+        public static Particle NewParticle(int type, Vector2 position, Vector2 velocity, Color color, float scale = 1f)
         {
             if (!Main.gamePaused)
             {
@@ -54,7 +59,9 @@ namespace BlockContent.Core
                 p.Type = type;
                 p.OnSpawn();
                 ParticleSystem.particle.Add(p);
+                return p;
             }
+            return null;
         }
     }
 }
