@@ -42,7 +42,7 @@ namespace BlockContent.Core
 
         public static void DrawParticles(SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
             Rectangle checkDraw = new Rectangle((int)Main.screenPosition.X - 500, (int)Main.screenPosition.Y - 550, Main.screenWidth + 1000, Main.screenHeight + 1100);
 
             foreach (Particle particle in particle.Where(p => p.shader == null))
@@ -54,10 +54,10 @@ namespace BlockContent.Core
             }
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
             foreach (Particle particle in particle.Where(p => p.shader != null))
             {
-                if (!new Rectangle((int)particle.position.X - 2, (int)particle.position.Y - 2, 4, 4).Intersects(checkDraw))
+                if (!new Rectangle((int)particle.position.X - 3, (int)particle.position.Y - 3, 6, 6).Intersects(checkDraw))
                     continue;
                 if (Main.netMode != NetmodeID.Server)
                 {

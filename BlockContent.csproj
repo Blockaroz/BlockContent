@@ -12,8 +12,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\Sounds\" />
-    <Folder Include="Assets\Textures\Negastaff\" />
     <Folder Include="Common\" />
+    <Folder Include="Content\Items\" />
     <Folder Include="Content\NPCs\" />
+    <Folder Include="Content\Projectiles\" />
   </ItemGroup>
 </Project>
