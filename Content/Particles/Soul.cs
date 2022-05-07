@@ -7,7 +7,7 @@ using Terraria;
 
 namespace BlockContent.Content.Particles
 {
-    public class Ember : Particle
+    public class Soul : Particle
     {
         public override void OnSpawn()
         {
@@ -33,7 +33,7 @@ namespace BlockContent.Content.Particles
 
             //frames
             frameCounter++;
-            if (frameCounter > 8)
+            if (frameCounter > 10)
             {
                 frame++;
                 frameCounter = 0;
@@ -44,13 +44,13 @@ namespace BlockContent.Content.Particles
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            Asset<Texture2D> ember = Mod.Assets.Request<Texture2D>("Content/Particles/Ember");
+            Asset<Texture2D> ember = Mod.Assets.Request<Texture2D>("Content/Particles/Soul");
             Asset<Texture2D> bloom = Mod.Assets.Request<Texture2D>("Assets/Textures/Glow");
             Rectangle rect = ember.Frame(1, 4, 0, frame);
-            Color bloomColor = color * 0.2f;
+            Color bloomColor = color * 0.9f;
             bloomColor.A = 0;
             spriteBatch.Draw(ember.Value, position - Main.screenPosition, rect, color, rotation, rect.Size() * new Vector2(0.5f, 0.33f), scale, SpriteEffects.None, 0);
-            spriteBatch.Draw(bloom.Value, position - Main.screenPosition, rect, bloomColor, rotation, bloom.Size() * 0.5f, scale * 0.5f, SpriteEffects.None, 0);
+            spriteBatch.Draw(bloom.Value, position - Main.screenPosition, null, bloomColor, rotation, bloom.Size() * 0.5f, scale * 0.5f, SpriteEffects.None, 0);
         }
     }
 }
