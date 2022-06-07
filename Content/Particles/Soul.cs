@@ -1,7 +1,7 @@
 ﻿using System;
-using BlockContent.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ParticleEngine;
 using ReLogic.Content;
 using Terraria;
 
