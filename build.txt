@@ -1,3 +1,4 @@
 displayName = Blockaroz Content
 author = Blockaroz
 version = 0.1
+dllReferences = ParticleEngine
