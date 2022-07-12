@@ -81,6 +81,8 @@ namespace BlockContent.Content.Items.Weapons.LightProphecy
             return false;
         }
 
+        public override void PostUpdate() => Lighting.AddLight(Item.Center, Color.SeaGreen.ToVector3() * 0.33f);
+
         public override bool AltFunctionUse(Player player)
         {
             return true;
@@ -90,9 +92,10 @@ namespace BlockContent.Content.Items.Weapons.LightProphecy
         {
             int ai0 = 0;
             if (player.altFunctionUse == 2)
-                ai0 = 2;
+                ai0 = 1;
             Projectile proj = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI, ai0, -5);
             proj.spriteDirection = player.direction;
+            proj.direction = 1;
 
             return false;
         }

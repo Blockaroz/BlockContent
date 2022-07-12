@@ -82,7 +82,7 @@ namespace BlockContent.Content.Projectiles.Weapons.LightProphecy
                     float swordRot = (slashProgress - 0.6f) * MathHelper.ToRadians(270) * Projectile.spriteDirection * Projectile.direction;
                     Projectile.rotation = Projectile.velocity.ToRotation() + swordRot;
 
-                    Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.velocity.ToRotation() + swordRot * 0.9f - MathHelper.PiOver2 - Player.fullRotation);
+                    Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.velocity.ToRotation() + swordRot * Player.gravDir - MathHelper.PiOver2 - Player.fullRotation);
                     Projectile.Center = Player.RotatedRelativePointOld(Player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.PiOver2 - Player.fullRotation), true);
                     if (Projectile.ai[1] > Player.itemAnimationMax)
                         allowKill = true;
@@ -100,7 +100,7 @@ namespace BlockContent.Content.Projectiles.Weapons.LightProphecy
 
                 case 1:
 
-                    Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Player.AngleTo(Projectile.Center + Player.velocity) - MathHelper.PiOver2);
+                    Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Player.AngleTo(Projectile.Center + Player.velocity) * Player.gravDir - MathHelper.PiOver2);
                     Vector2 handPos = Player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.PiOver2);
 
                     if (Projectile.ai[1] == 8)
@@ -183,19 +183,11 @@ namespace BlockContent.Content.Projectiles.Weapons.LightProphecy
             {
                 case 0:
 
-                    float swingBack = 0.6f;
-                    float x = Projectile.direction > 0 ? (float)Math.Sin(slashProgress * MathHelper.PiOver2) : (float)Math.Cos(slashProgress * MathHelper.PiOver2);
-                    float y = Projectile.direction > 0 ? (float)Math.Cos(slashProgress * MathHelper.PiOver2) : (float)Math.Sin(slashProgress * MathHelper.PiOver2);
-
-                    scale = new Vector2((1f - swingBack) + (float)Math.Pow(x, 2f) * swingBack, (1f - swingBack) + (float)Math.Pow(y, 2f) * swingBack) * Projectile.scale;
+                    scale *= 1f + (slashProgress * (1f - slashProgress) * 2f);
 
                     break;
 
                 case 1:
-
-                    break;
-
-                case 2:
 
                     float throwOut = Utils.GetLerpValue(5, 10, Projectile.ai[1], true) * Utils.GetLerpValue(55 * SpeedMod, 40 * SpeedMod, Projectile.ai[1], true);
                     originOff = Vector2.Lerp(new Vector2(0.5f - 0.4f * Projectile.spriteDirection, 0.9f), new Vector2(0.5f), throwOut);

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ParticleEngine;
 using ReLogic.Content;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace BlockContent.Content.Particles
 {
@@ -12,7 +13,6 @@ namespace BlockContent.Content.Particles
         public override void OnSpawn()
         {
             scale *= Main.rand.NextFloat(0.5f, 1.2f);
-            rotation *= 0.1f;
         }
 
         public override void Update()
@@ -31,7 +31,7 @@ namespace BlockContent.Content.Particles
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            Asset<Texture2D> bloom = Mod.Assets.Request<Texture2D>("Assets/Textures/Glow");
+            Asset<Texture2D> bloom = ModContent.Request<Texture2D>($"{nameof(BlockContent)}/Assets/Textures/Glow");
             Color bloomColor = color * 0.9f;
             bloomColor.A = 0;
             Vector2 stretch = new Vector2(0.8f, velocity.Length() * 0.5f + 0.5f);
