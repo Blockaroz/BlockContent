@@ -26,16 +26,18 @@ namespace BlockContent.Content.Projectiles.Weapons.PieceOfHeaven
             Projectile.width = 50;
             Projectile.height = 50;
             Projectile.aiStyle = -1;
-            Projectile.usesIDStaticNPCImmunity = true;
-            Projectile.idStaticNPCHitCooldown = 5;
             Projectile.tileCollide = false;
             Projectile.manualDirectionChange = true;
             Projectile.noEnchantmentVisuals = true;
+            Projectile.hide = true;
+
             Projectile.penetrate = -1;
             Projectile.friendly = true;
             Projectile.hostile = false;
             Projectile.DamageType = DamageClass.Melee;
-            Projectile.hide = true;
+
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 5;
         }
 
         private Player Player { get => Main.player[Projectile.owner]; }
@@ -91,7 +93,7 @@ namespace BlockContent.Content.Projectiles.Weapons.PieceOfHeaven
                     if (Projectile.ai[1] == (int)(5 * SpeedMod))
                     {
                         SoundStyle swingSound = SoundID.DD2_MonkStaffSwing;
-                        swingSound.Pitch = (-SpeedMod + 0.8f) * 0.5f;
+                        swingSound.Pitch = (-SpeedMod + 1.5f) * 0.75f;
                         swingSound.PitchVariance = 0.3f;
                         swingSound.MaxInstances = 0;
                         SoundEngine.PlaySound(swingSound, Projectile.Center);
@@ -99,8 +101,8 @@ namespace BlockContent.Content.Projectiles.Weapons.PieceOfHeaven
 
                     if (Projectile.ai[1] > 8 * SpeedMod)
                     {
-                        Vector2 starPos = Projectile.Center + new Vector2(60 + 5 * dir, 60 - 5 * dir).RotatedBy(Projectile.rotation - MathHelper.PiOver4) * (1.1f + slashProgress * (1f - slashProgress) * 1.5f) * Projectile.scale;
-                        Particle.NewParticle(Particle.ParticleType<Particles.HeavenSpark>(), starPos, Projectile.rotation.ToRotationVector2().RotatedBy(MathHelper.PiOver4 * dir) * 3f, HeavenColors.Melee, 0.7f);
+                        Vector2 starPos = Projectile.Center + new Vector2(70, 0).RotatedBy(Projectile.rotation) * (1.1f + slashProgress * (1f - slashProgress) * 1.5f) * Projectile.scale;
+                        Particle.NewParticle(Particle.ParticleType<Particles.HeavenSpark>(), starPos, Projectile.rotation.ToRotationVector2().RotatedBy(MathHelper.PiOver4 * dir) * 4f, HeavenColors.Melee, 0.66f);
 
                     }
 
@@ -108,29 +110,26 @@ namespace BlockContent.Content.Projectiles.Weapons.PieceOfHeaven
             }
 
             Projectile.ai[1]++;
-            Projectile.rotation = MathHelper.WrapAngle(Projectile.rotation); 
-            
+            Projectile.rotation = MathHelper.WrapAngle(Projectile.rotation);
+
             Lighting.AddLight(Projectile.Center + Projectile.velocity, HeavenColors.Melee.ToVector3() * 0.3f);
         }
 
-        private Rectangle hitbox = new Rectangle(0, 0, 100, 100);
+        private Rectangle hitbox = new Rectangle(0, 0, 150, 150);
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             Vector2 bladeEnd = Projectile.Center + new Vector2(80, 0).RotatedBy(Projectile.rotation);
             hitbox.X = (int)bladeEnd.X - hitbox.Width / 2;
             hitbox.Y = (int)bladeEnd.Y - hitbox.Height / 2;
-            if (Projectile.ai[0] == 0 && slashProgress > 0.15f)
+            if (Projectile.ai[0] == 0 && slashProgress > 0.1f)
                 return hitbox.Intersects(targetHitbox);
             return false;
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            SoundStyle hitNoise = SoundID.DD2_MonkStaffGroundMiss;
-            hitNoise.MaxInstances = 0;
-            hitNoise.PitchVariance = 0.5f;
-            SoundEngine.PlaySound(hitNoise.WithVolumeScale(1.33f), Projectile.Center);
+            //target.AddBuff(BuffID.Slow, 20);
         }
 
         public override bool? CanCutTiles() => Projectile.ai[0] == 0 ? slashProgress > 0.18f : true;

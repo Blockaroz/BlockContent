@@ -39,7 +39,7 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
             Item.attackSpeedOnlyAffectsWeaponAnimation = false;
 
             Item.DamageType = DamageClass.Melee;
-            Item.damage = 110;
+            Item.damage = 200;
             Item.knockBack = 0.5f;
             Item.rare = ModContent.RarityType<RoseRarity>();
             Item.value = Item.buyPrice(0, 50);
@@ -80,7 +80,7 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
             spriteBatch.Draw(texture.Value, Item.Center - Main.screenPosition, null, alphaColor, rotation - MathHelper.PiOver4, Item.Size * 0.5f, scale, 0, 0);
             spriteBatch.Draw(bloom.Value, Item.Center - Main.screenPosition, null, bloomColor, rotation - MathHelper.PiOver4, Item.Size * 0.5f + new Vector2(14), scale, 0, 0);
 
-            DrawStar(spriteBatch, Item.Center - new Vector2(3, 40).RotatedBy(rotation));
+            DrawStar(spriteBatch, Item.Center - new Vector2(-2, -19).RotatedBy(rotation));
 
             return false;
         }
@@ -92,9 +92,9 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
 
             float shineStrength = 0.3f + (float)Math.Sin(Item.timeSinceItemSpawned / 40f) * 0.2f;
 
-            Color shineColor = Color.White * 0.7f;
+            Color shineColor = Color.White * 0.5f;
             shineColor.A = 0;            
-            Color bloomColor = HeavenColors.Melee * (0.2f + shineStrength * 0.8f);
+            Color bloomColor = HeavenColors.Melee * (0.2f + shineStrength * 0.5f);
             bloomColor.A = 0;
 
             spriteBatch.Draw(star.Value, position - Main.screenPosition, null, bloomColor, 0, star.Size() * 0.5f, 1f, 0, 0);
