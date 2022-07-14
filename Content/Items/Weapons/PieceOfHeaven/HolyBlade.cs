@@ -1,6 +1,7 @@
 ﻿using BlockContent.Content.Projectiles.Weapons.PieceOfHeaven;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ParticleEngine;
 using ReLogic.Content;
 using System;
 using Terraria;
@@ -39,18 +40,24 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
             Item.attackSpeedOnlyAffectsWeaponAnimation = false;
 
             Item.DamageType = DamageClass.Melee;
-            Item.damage = 200;
+            Item.damage = 230;
+            Item.crit = 50;
             Item.knockBack = 0.5f;
-            Item.rare = ModContent.RarityType<RoseRarity>();
+            Item.rare = ModContent.RarityType<DeepBlueRarity>();
             Item.value = Item.buyPrice(0, 50);
         }
 
         public override void PostUpdate()
         {
             Item.position.Y -= (float)Math.Sin(Item.timeSinceItemSpawned / 60f) * 0.12f;
+            if (Main.rand.NextBool() && Item.timeSinceItemSpawned % 5 == 0)
+            {
+                Vector2 pos = Item.Center + Main.rand.NextVector2CircularEdge(10, 20) + Main.rand.NextVector2Circular(30, 50);
+                Particle.NewParticle(Particle.ParticleType<Particles.HeavenSpark>(), pos, -Vector2.UnitY * Main.rand.NextFloat(), HeavenColors.Melee, Main.rand.NextFloat(0.2f, 0.6f));
+            }
         }
 
-        public override void HoldItem(Player player) => Lighting.AddLight(Item.Center, Color.SlateGray.ToVector3() * 0.4f);
+        public override void HoldItem(Player player) => Lighting.AddLight(player.Center, Color.SlateGray.ToVector3() * 0.7f);
 
         public override Color? GetAlpha(Color lightColor) => Color.Lerp(lightColor, Color.White, 0.7f);
 
@@ -60,9 +67,9 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
             Asset<Texture2D> shadow = ModContent.Request<Texture2D>(Texture + "Shadow");
             Asset<Texture2D> bloom = ModContent.Request<Texture2D>(Texture + "Bloom");
 
-            Color bloomColor = Color.Lerp(Color.GhostWhite, HeavenColors.Melee, 0.3f) * 0.33f;
+            Color bloomColor = Color.Lerp(Color.GhostWhite, HeavenColors.Melee, 0.3f) * 0.4f;
             bloomColor.A = 0;
-            spriteBatch.Draw(shadow.Value, position, null, Color.Black * 0.2f, 0, origin + new Vector2(14), scale, 0, 0);
+            spriteBatch.Draw(shadow.Value, position, null, Color.Black * 0.1f, 0, origin + new Vector2(14), scale, 0, 0);
             spriteBatch.Draw(texture.Value, position, null, drawColor, 0, origin, scale, 0, 0);
             spriteBatch.Draw(bloom.Value, position, null, bloomColor, 0, origin + new Vector2(14), scale, 0, 0);
             return false;
@@ -74,13 +81,13 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
             Asset<Texture2D> shadow = ModContent.Request<Texture2D>(Texture + "Shadow");
             Asset<Texture2D> bloom = ModContent.Request<Texture2D>(Texture + "Bloom");
 
-            Color bloomColor = Color.Lerp(Color.GhostWhite, HeavenColors.Melee, 0.3f) * 0.33f;
+            Color bloomColor = Color.Lerp(Color.GhostWhite, HeavenColors.Melee, 0.3f) * 0.4f;
             bloomColor.A = 0;
-            spriteBatch.Draw(shadow.Value, Item.Center - Main.screenPosition, null, Color.Black * 0.2f, rotation - MathHelper.PiOver4, Item.Size * 0.5f + new Vector2(14), scale, 0, 0);
+            spriteBatch.Draw(shadow.Value, Item.Center - Main.screenPosition, null, Color.Black * 0.1f, rotation - MathHelper.PiOver4, Item.Size * 0.5f + new Vector2(14), scale, 0, 0);
             spriteBatch.Draw(texture.Value, Item.Center - Main.screenPosition, null, alphaColor, rotation - MathHelper.PiOver4, Item.Size * 0.5f, scale, 0, 0);
             spriteBatch.Draw(bloom.Value, Item.Center - Main.screenPosition, null, bloomColor, rotation - MathHelper.PiOver4, Item.Size * 0.5f + new Vector2(14), scale, 0, 0);
 
-            DrawStar(spriteBatch, Item.Center - new Vector2(-2, -19).RotatedBy(rotation));
+            //DrawStar(spriteBatch, Item.Center - new Vector2(-2, -19).RotatedBy(rotation));
 
             return false;
         }
@@ -104,9 +111,10 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            Projectile proj = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI, 0, -4);
+            Projectile proj = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI, 0, -1);
             proj.spriteDirection = player.direction;
             proj.direction = -1;
+            proj.scale = player.GetAdjustedItemScale(Item) * 1.3f;
 
             return false;
         }

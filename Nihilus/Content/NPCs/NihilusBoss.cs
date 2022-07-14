@@ -24,7 +24,7 @@ namespace BlockContent.Nihilus.Content.NPCs
             NPC.width = 120;
             NPC.height = 100;
             NPC.boss = true;
-            NPC.lifeMax = 10000;
+            NPC.lifeMax = 60000;
             NPC.defense = 20;
             NPC.HitSound = SoundID.DD2_CrystalCartImpact;
             NPC.DeathSound = SoundID.DD2_EtherianPortalOpen;

@@ -6,23 +6,22 @@ using Terraria.ModLoader;
 
 namespace BlockContent.Content.Items.Weapons
 {
-    public class RoseRarity : ModRarity
+    public class DeepBlueRarity : ModRarity
     {
-        public override string Name => "Rose";
+        public override string Name => "Deep Blue";
 
         public override Color RarityColor
         {
             get
             {
-                Color color = new GradientColor(new Color[] 
-                { 
-                    new Color(255, 26, 183),
-                    new Color(255, 120, 43),
-                    new Color(255, 26, 183),
-                    new Color(190, 89, 255)
-                }, 0.66f, 0.65f).Value;
-                color.A /= 2;
-                return color;
+                Color[] colorArray = new Color[]
+                {
+                    new Color(15, 100, 255),
+                    new Color(50, 50, 255),
+                };
+                Color result = new GradientColor(colorArray, 2f, 1.8f).Value;
+                result.A = 220;
+                return result;
             }
         }
 
