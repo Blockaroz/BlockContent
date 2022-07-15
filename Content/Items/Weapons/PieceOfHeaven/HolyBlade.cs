@@ -114,7 +114,7 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
             Projectile proj = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI, 0, -1);
             proj.spriteDirection = player.direction;
             proj.direction = -1;
-            proj.scale = player.GetAdjustedItemScale(Item) * 1.3f;
+            proj.scale = player.GetAdjustedItemScale(Item) * 1.33f;
 
             return false;
         }

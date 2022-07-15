@@ -18,7 +18,7 @@ namespace BlockContent.Content.Projectiles.Weapons.PieceOfHeaven
         {
             DisplayName.SetDefault("Holy Blade");
             ProjectileID.Sets.TrailingMode[Type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Type] = 6;
+            ProjectileID.Sets.TrailCacheLength[Type] = 7;
             ProjectileID.Sets.CanDistortWater[Type] = true;
             ProjectileID.Sets.MinionTargettingFeature[Type] = true;
         }
@@ -48,9 +48,19 @@ namespace BlockContent.Content.Projectiles.Weapons.PieceOfHeaven
 
         private float SpeedMod { get => Player.itemAnimationMax / 18f; }
 
-        private float slashEase(float x) => x < 0.3f ? (1f - (float)Math.Sqrt(1f - Math.Pow(3.2f * x, 2f))) / 2f : 1f - (float)Math.Pow(1.25f, -23 * x + 8) / 2f;
-        //private float slashEase(float x) => x < 0.5f ? (1f - (float)Math.Sqrt(1f - Math.Pow(2 * x, 3.3f))) / 2f : 1f - (float)Math.Pow(1.3f, -20 * x + 10) / 2f;
+        private float slashEase(float x) //basically ark sword curve
+        {
+            if (x <= 0f)
+                return 0f;
+            if (x < 0.15f)
+                return 0.15f * (1f - (float)Math.Pow(4f, -5.3f * x));
+            else if (x < 0.55f)
+                return 4f * (float)Math.Pow(x - 0.15f, 2.95f) + 0.1f;
+            else if (x < 0.85f)
+                return 0.95f - ((float)Math.Pow(-1.85f * x + 2f, 4f) / 2f);
 
+            return 0.3f * x + 0.68f;
+        }
         public override void AI()
         {
             Projectile.timeLeft = 3;
@@ -66,12 +76,12 @@ namespace BlockContent.Content.Projectiles.Weapons.PieceOfHeaven
                     Projectile.Kill();
                 else
                 {
-                    Projectile.ai[1] = -1;
+                    Projectile.ai[1] = 0;
                     allowKill = false;
                 }
             }
 
-            if (Projectile.ai[1] == -1)
+            if (Projectile.ai[1] == 0)
             {
                 Projectile.direction *= -1;
                 Projectile.velocity = Projectile.DirectionTo(Main.MouseWorld).RotatedByRandom(0.3f) * 5;
@@ -84,7 +94,7 @@ namespace BlockContent.Content.Projectiles.Weapons.PieceOfHeaven
                 case 0:
 
                     slashProgress = slashEase(Utils.GetLerpValue(0, Player.itemAnimationMax * 1.07f, Projectile.ai[1], true));
-                    float swordRot = (slashProgress - (Projectile.direction > 0 ? 0.7f : 0.5f)) * MathHelper.ToRadians(250) * dir;
+                    float swordRot = (slashProgress - (Projectile.direction > 0 ? 0.75f : 0.55f)) * MathHelper.ToRadians(220) * dir;
                     Projectile.rotation = Projectile.velocity.ToRotation() + swordRot;
                     Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.velocity.ToRotation() + swordRot * Player.gravDir * 0.9f - MathHelper.PiOver2 - Player.fullRotation);
                     Projectile.Center = Player.RotatedRelativePointOld(Player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.PiOver2 - Player.fullRotation), true);
@@ -164,10 +174,10 @@ namespace BlockContent.Content.Projectiles.Weapons.PieceOfHeaven
             {
                 case 0:
 
-                    if (Projectile.ai[1] <= 0)
+                    if (Projectile.ai[1] <= 1)
                         return false;
 
-                    scale = new Vector2(1.1f + slashProgress * (1f - slashProgress) * 1.8f) * Projectile.scale;
+                    scale = new Vector2(1f + slashProgress * (1f - slashProgress) * 3f) * Projectile.scale;
                     
                     if (Projectile.ai[0] == 0)
                     {
@@ -178,7 +188,7 @@ namespace BlockContent.Content.Projectiles.Weapons.PieceOfHeaven
                             Color fade = Color.Lerp(Color.DarkSlateGray, Color.Black, (float)i / trailLength) * Utils.GetLerpValue(0.1f, 0.5f, slashProgress, true);
                             fade.A = 0;
                             Rectangle trailFrame = trail.Frame(1, 4, 0, (int)((float)i / trailLength * 4f));
-                            Main.EntitySpriteDraw(trail.Value, Projectile.Center - Main.screenPosition, trailFrame, fade, oldRot, origin, Projectile.scale * 1.2f, spriteDir, 0);
+                            Main.EntitySpriteDraw(trail.Value, Projectile.Center - Main.screenPosition, trailFrame, fade, oldRot, origin, scale, spriteDir, 0);
                         }
                     }
 
@@ -219,17 +229,18 @@ namespace BlockContent.Content.Projectiles.Weapons.PieceOfHeaven
             Asset<Texture2D> swipe = ModContent.Request<Texture2D>($"{nameof(BlockContent)}/Assets/Textures/SwordSlash0");
 
             Color swipeColor = Color.DarkSlateGray;
-            swipeColor.A = 40;
+            swipeColor.A = 30;
             switch (Projectile.ai[0])
             {
                 case 0:
 
-                    swipeColor *= Utils.GetLerpValue(0.5f, 0.8f, slashProgress, true) * Utils.GetLerpValue(1.02f, 0.8f, slashProgress, true) * 0.6f;
+                    swipeColor *= Utils.GetLerpValue(0.5f, 0.8f, slashProgress, true) * Utils.GetLerpValue(1.02f, 0.8f, slashProgress, true);
                     SpriteEffects swipeDir = Projectile.direction > 0 ? SpriteEffects.FlipHorizontally : 0;
-                    float swipeRot = Projectile.velocity.ToRotation() + MathHelper.PiOver2 - (slashProgress - (Projectile.direction > 0 ? 1.3f : 0.7f)) * -MathHelper.ToRadians(120) * Projectile.direction * Projectile.spriteDirection;
+                    float swipeRot = Projectile.velocity.ToRotation() + MathHelper.PiOver2 - (Projectile.direction * Projectile.spriteDirection > 0 ? MathHelper.ToRadians(40) : -MathHelper.ToRadians(20));
                     Vector2 swipePos = Projectile.Center + new Vector2(0, -10).RotatedBy(swipeRot);
-                    
-                    Main.EntitySpriteDraw(swipe.Value, swipePos - Main.screenPosition, null, swipeColor, swipeRot, swipe.Size() * 0.5f, Projectile.scale * 0.8f, swipeDir, 0);
+                    float swipeScale = (1f + slashProgress * (1f - slashProgress) * 3f) * Projectile.scale;
+
+                    Main.EntitySpriteDraw(swipe.Value, swipePos - Main.screenPosition, null, swipeColor, swipeRot, swipe.Size() * 0.5f, swipeScale * 0.6f, swipeDir, 0);
 
                     break;
             }
