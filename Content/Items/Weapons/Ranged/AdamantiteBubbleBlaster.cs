@@ -23,9 +23,10 @@ namespace BlockContent.Content.Items.Weapons.Ranged
             Item.width = 26;
             Item.height = 24;
             Item.useTime = 8;
-            Item.useAnimation = 24;
-            SoundStyle bubbleNoise = SoundID.Item21;
+            Item.useAnimation = 16;
+            SoundStyle bubbleNoise = SoundID.Item111;
             bubbleNoise.MaxInstances = 0;
+            bubbleNoise.Volume = 0.7f;
             bubbleNoise.PitchVariance = 0.4f;
             Item.UseSound = bubbleNoise;
             Item.autoReuse = true;
@@ -35,12 +36,13 @@ namespace BlockContent.Content.Items.Weapons.Ranged
             Item.crit = 10;
 
             Item.shoot = ModContent.ProjectileType<Projectiles.Weapons.Ranged.HarmfulBubble>();
-            Item.shootSpeed = 10f;
+            Item.shootSpeed = 13f;
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            Projectile.NewProjectileDirect(source, position, velocity.RotatedByRandom(0.1f) * Main.rand.NextFloat(0.7f, 1.2f), type, damage, knockback, player.whoAmI);
+            Projectile bubble = Projectile.NewProjectileDirect(source, position, velocity.RotatedByRandom(0.4f) * Main.rand.NextFloat(0.7f, 1.2f), type, damage, knockback, player.whoAmI);
+            bubble.scale = Main.rand.NextFloat(0.7f, 1.2f);
             return false;
         }
 

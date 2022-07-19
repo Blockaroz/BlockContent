@@ -5,10 +5,11 @@ using ReLogic.Content;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace BlockContent.Nihilus.Content.NPCs
+namespace BlockContent.Nihilus.Content.Particles
 {
-    public class NihilusFlameParticle : Particle
+    public class AbyssalFlame : Particle
     {
+        //THIS SHOULD NOT DRAW
         public override void OnSpawn()
         {
             life = 0;
@@ -21,15 +22,15 @@ namespace BlockContent.Nihilus.Content.NPCs
 
         public override void Update()
         {
-            velocity *= 0.95f;
             scale *= 0.95f;
             if (life > 25)
-                velocity *= 0.9f;
+            {
+                scale *= 0.92f;
+                velocity *= 0.92f;
+            }
             if (scale < 0.05f)
                 Active = false;
-            velocity.X *= 1.02f;
-            velocity.Y *= 1.01f;
-            velocity.Y -= 0.002f;
+            velocity.Y -= 0.003f;
             rotation *= 1.02f;
 
             life++;

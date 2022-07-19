@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using ParticleEngine;
+using ReLogic.Content;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -23,18 +25,26 @@ namespace BlockContent.Content.Projectiles.Weapons.Ranged
             Projectile.hostile = false;
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Ranged;
-            Projectile.timeLeft = 300;
+            Projectile.timeLeft = 240;
             Projectile.tileCollide = true;
         }
 
         public override void AI()
         {
-            int search = Projectile.FindTargetWithLineOfSight(600);
-            if (search >= 0)
-                Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(Main.npc[search].Center).RotatedByRandom(1f) * 20, 0.03f);
-            else if (Projectile.ai[0] > 10)
-                Projectile.velocity *= 0.95f;
+            //the worst homing you will ever know
+            if (Projectile.ai[0] > 12)
+            {
+                int search = Projectile.FindTargetWithLineOfSight(600);
+                if (search >= 0)
+                    Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(Main.npc[search].Center).RotatedByRandom(1f) * 3, 0.01f);
 
+                Projectile.velocity *= 0.94f;
+            }
+
+            if (Main.rand.NextBool())
+                Projectile.velocity += Main.rand.NextVector2Circular(1, 1) * 0.12f;
+
+            //coalesce
             int follow = -1;
             foreach (Projectile other in Main.projectile)
             {
@@ -47,15 +57,15 @@ namespace BlockContent.Content.Projectiles.Weapons.Ranged
             if (follow >= 0)
             {
                 if (Main.projectile[follow].Center.Distance(Projectile.Center) > 54)
-                    Projectile.velocity += Projectile.DirectionTo(Main.projectile[follow].Center).RotatedByRandom(0.5f) * 0.1f;
+                    Projectile.velocity += Projectile.DirectionTo(Main.projectile[follow].Center).RotatedByRandom(0.5f) * 0.03f;
             }
 
-            float bubbleScale = (1.5f + Main.rand.NextFloat()) * Projectile.scale;
-            Vector2 bubblePos = Projectile.Center + Projectile.velocity;
-            Particle bubble = Particle.NewParticle(Particle.ParticleType<Particles.HarmfulBubbleParticle>(), bubblePos, Main.rand.NextVector2Circular(2, 2) + Projectile.velocity * 0.5f, Color.White, bubbleScale);
-            bubble.data = Projectile.whoAmI;
+            Vector2 pos = Main.rand.NextVector2CircularEdge(14, 14) * Projectile.scale;
+            Vector2 outwardVel = pos.DirectionFrom(Vector2.Zero) * Main.rand.NextFloat();
+            Color lightColor = Lighting.GetColor((int)(Projectile.Center.X / 16f), (int)(Projectile.Center.Y / 16)) * 0.4f;
+            Dust.NewDustPerfect(Projectile.Center + pos, DustID.BubbleBlock, outwardVel, 180, lightColor, 0.5f + Main.rand.NextFloat()).noGravity = true;
 
-            Projectile.scale = Utils.GetLerpValue(-10, 10, Projectile.ai[0], true);
+            Projectile.ai[1] = Utils.GetLerpValue(-1, 11, Projectile.ai[0], true);
             Projectile.ai[0]++;
         }
 
@@ -76,10 +86,27 @@ namespace BlockContent.Content.Projectiles.Weapons.Ranged
         {
             SoundStyle bubbleNoise = SoundID.Item54;
             bubbleNoise.MaxInstances = 0;
+            bubbleNoise.Volume = 2f;
             bubbleNoise.PitchVariance = 0.4f;
             SoundEngine.PlaySound(bubbleNoise, Projectile.Center);
+
+            for (int i = 0; i < 25; i++)
+            {
+                Vector2 pos = Main.rand.NextVector2CircularEdge(14, 14) * Projectile.scale;
+                Vector2 outwardVel = pos.DirectionFrom(Vector2.Zero) * Main.rand.NextFloat(4f);
+                Color lightColor = Lighting.GetColor((int)(Projectile.Center.X / 16f), (int)(Projectile.Center.Y / 16)) * 0.4f;
+                Dust.NewDustPerfect(Projectile.Center + pos, DustID.BubbleBlock, outwardVel, 80, lightColor, 0.5f + Main.rand.NextFloat()).noGravity = true;
+
+            }
         }
 
-        public override bool PreDraw(ref Color lightColor) => false;
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Asset<Texture2D> texture = ModContent.Request<Texture2D>(Texture);
+            lightColor.A = 150;
+            Vector2 stretch = new Vector2(0.92f + (float)Math.Sin(Projectile.ai[0] * 0.08f) * 0.08f, 0.92f + (float)Math.Cos(Projectile.ai[0] * 0.08f) * 0.08f) * Projectile.ai[1] * Projectile.scale;
+            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, null, lightColor, Projectile.rotation, texture.Size() * 0.5f, stretch, 0, 0);
+            return false;
+        }
     }
 }
