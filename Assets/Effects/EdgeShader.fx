@@ -29,7 +29,7 @@ float4 PixelShaderFunction(float2 input : TEXCOORD0) : COLOR0
 
     }
     
-    return 0;
+    return color * 0.33;
 
 }
 

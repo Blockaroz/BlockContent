@@ -51,7 +51,7 @@ namespace BlockContent.Content.Projectiles.Weapons.PieceOfHeaven
                     Particle star = Particle.NewParticle(Particle.ParticleType<Particles.HeavenSpark>(), Projectile.Center + Main.rand.NextVector2Circular(8, 8), Projectile.rotation.ToRotationVector2().RotatedByRandom(0.4f) * Main.rand.NextFloat(i), HeavenColors.Melee, 0.8f * i / 20f * Projectile.scale);
                     star.data = Main.npc[(int)Projectile.ai[0]];
                 }
-                SoundStyle hitSound = new SoundStyle($"{nameof(BlockContent)}/Assets/Sounds/Items/BlindJusticeSwipe");
+                SoundStyle hitSound = SoundID.DD2_BetsyFireballImpact;// new SoundStyle($"{nameof(BlockContent)}/Assets/Sounds/Items/HolyBladeHit");
                 hitSound.MaxInstances = 0;
                 hitSound.Pitch = 0.5f;
                 hitSound.PitchVariance = 0.3f;

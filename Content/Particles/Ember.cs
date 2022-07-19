@@ -13,6 +13,7 @@ namespace BlockContent.Content.Particles
         public override void OnSpawn()
         {
             scale *= Main.rand.NextFloat(0.5f, 1.2f);
+            rotation = velocity.ToRotation() + MathHelper.PiOver2;
         }
 
         public override void Update()

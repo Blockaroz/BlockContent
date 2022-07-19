@@ -27,7 +27,7 @@ namespace BlockContent.Content.Particles
                 velocity += Main.rand.NextVector2Circular(0.3f, 0.2f);
 
             if (data is Entity offset)
-                position += (offset.position - offset.oldPosition) * Utils.GetLerpValue(0.3f, 0.9f, internalScale, true);
+                position += (offset.position - offset.oldPosition) * Utils.GetLerpValue(0.6f, 0.9f, internalScale, true);
 
             if (internalScale < 0.66f)
                 internalScale *= 0.88f;

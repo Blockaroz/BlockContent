@@ -211,8 +211,9 @@ namespace BlockContent.Content.Projectiles.Weapons.PieceOfHeaven
         {
             Asset<Texture2D> star = TextureAssets.Extra[98];
 
-            Color starColor = HeavenColors.Melee * 0.4f;         
-            Color starGlowColor = Color.GhostWhite * 0.5f;
+            Color starColor = HeavenColors.Melee * 0.4f;
+            starColor.A = 0;
+            Color starGlowColor = Color.GhostWhite * 0.33f;
             starGlowColor.A = 0;
             int dir = Projectile.direction * Projectile.spriteDirection;
             Vector2 starPos = Projectile.Center + new Vector2(60 + 5 * dir, 60 - 5 * dir).RotatedBy(Projectile.rotation - MathHelper.PiOver4) * (1.1f + slashProgress * (1f - slashProgress) * 1.5f) * Projectile.scale;
@@ -226,7 +227,7 @@ namespace BlockContent.Content.Projectiles.Weapons.PieceOfHeaven
 
         private void DrawSwipe()
         {
-            Asset<Texture2D> swipe = ModContent.Request<Texture2D>($"{nameof(BlockContent)}/Assets/Textures/SwordSlash0");
+            Asset<Texture2D> swipe = ModContent.Request<Texture2D>($"{nameof(BlockContent)}/Assets/Textures/SwordSlash1");
 
             Color swipeColor = Color.DarkSlateGray;
             swipeColor.A = 30;
