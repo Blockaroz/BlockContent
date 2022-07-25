@@ -185,7 +185,7 @@ namespace BlockContent.Content.Projectiles.Weapons.PieceOfHeaven
                         for (int i = 1; i < trailLength; i++)
                         {
                             float oldRot = Projectile.oldRot[i] - MathHelper.PiOver4 * Projectile.spriteDirection * Projectile.direction + MathHelper.PiOver2;
-                            Color fade = Color.Lerp(Color.DarkSlateGray, Color.Black, (float)i / trailLength) * Utils.GetLerpValue(0.1f, 0.5f, slashProgress, true);
+                            Color fade = Color.Lerp(Color.SlateGray * 0.77f, Color.Black, (float)i / trailLength) * Utils.GetLerpValue(0.1f, 0.5f, slashProgress, true);
                             fade.A = 0;
                             Rectangle trailFrame = trail.Frame(1, 4, 0, (int)((float)i / trailLength * 4f));
                             Main.EntitySpriteDraw(trail.Value, Projectile.Center - Main.screenPosition, trailFrame, fade, oldRot, origin, scale, spriteDir, 0);
@@ -227,10 +227,10 @@ namespace BlockContent.Content.Projectiles.Weapons.PieceOfHeaven
 
         private void DrawSwipe()
         {
-            Asset<Texture2D> swipe = ModContent.Request<Texture2D>($"{nameof(BlockContent)}/Assets/Textures/SwordSlash1");
+            Asset<Texture2D> swipe = ModContent.Request<Texture2D>($"{nameof(BlockContent)}/Content/Projectiles/Weapons/PieceOfHeaven/HolyBladeSlash");
 
-            Color swipeColor = Color.DarkSlateGray;
-            swipeColor.A = 30;
+            Color swipeColor = Color.SlateGray;
+            swipeColor.A = 10;
             switch (Projectile.ai[0])
             {
                 case 0:

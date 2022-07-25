@@ -36,29 +36,29 @@ namespace BlockContent.Content.Projectiles.Weapons.Ranged
             {
                 int search = Projectile.FindTargetWithLineOfSight(600);
                 if (search >= 0)
-                    Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(Main.npc[search].Center).RotatedByRandom(1f) * 3, 0.01f);
+                    Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(Main.npc[search].Center).RotatedByRandom(1f), 0.01f);
 
                 Projectile.velocity *= 0.94f;
             }
 
             if (Main.rand.NextBool())
-                Projectile.velocity += Main.rand.NextVector2Circular(1, 1) * 0.12f;
+                Projectile.velocity += Main.rand.NextVector2Circular(1, 1) * 0.1f;
 
             //coalesce
-            int follow = -1;
-            foreach (Projectile other in Main.projectile)
-            {
-                if (other.type == Type && other.active && other.owner == Projectile.owner && other.whoAmI != Projectile.whoAmI && Projectile.Distance(other.Center) < 700)
-                {
-                    follow = other.whoAmI;
-                    break;
-                }
-            }
-            if (follow >= 0)
-            {
-                if (Main.projectile[follow].Center.Distance(Projectile.Center) > 54)
-                    Projectile.velocity += Projectile.DirectionTo(Main.projectile[follow].Center).RotatedByRandom(0.5f) * 0.03f;
-            }
+            //int follow = -1;
+            //foreach (Projectile other in Main.projectile)
+            //{
+            //    if (other.type == Type && other.active && other.owner == Projectile.owner && other.whoAmI != Projectile.whoAmI && Projectile.Distance(other.Center) < 700)
+            //    {
+            //        follow = other.whoAmI;
+            //        break;
+            //    }
+            //}
+            //if (follow >= 0)
+            //{
+            //    if (Main.projectile[follow].Center.Distance(Projectile.Center) > 54)
+            //        Projectile.velocity += Projectile.DirectionTo(Main.projectile[follow].Center).RotatedByRandom(0.5f) * 0.01f;
+            //}
 
             Vector2 pos = Main.rand.NextVector2CircularEdge(14, 14) * Projectile.scale;
             Vector2 outwardVel = pos.DirectionFrom(Vector2.Zero) * Main.rand.NextFloat();
@@ -104,7 +104,9 @@ namespace BlockContent.Content.Projectiles.Weapons.Ranged
         {
             Asset<Texture2D> texture = ModContent.Request<Texture2D>(Texture);
             lightColor.A = 150;
-            Vector2 stretch = new Vector2(0.92f + (float)Math.Sin(Projectile.ai[0] * 0.08f) * 0.08f, 0.92f + (float)Math.Cos(Projectile.ai[0] * 0.08f) * 0.08f) * Projectile.ai[1] * Projectile.scale;
+            lightColor *= Utils.GetLerpValue(0.2f, 1f, Projectile.ai[1], true);
+            float fadeIn = Projectile.ai[1] * 0.7f + 0.3f;
+            Vector2 stretch = new Vector2(0.92f + (float)Math.Sin(Projectile.ai[0] * 0.08f) * 0.08f, 0.92f + (float)Math.Cos(Projectile.ai[0] * 0.08f) * 0.08f) * Projectile.scale * fadeIn;
             Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, null, lightColor, Projectile.rotation, texture.Size() * 0.5f, stretch, 0, 0);
             return false;
         }

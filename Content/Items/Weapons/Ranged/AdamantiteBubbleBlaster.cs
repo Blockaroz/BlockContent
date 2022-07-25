@@ -14,7 +14,8 @@ namespace BlockContent.Content.Items.Weapons.Ranged
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Adamantite Bubble Blaster");
-            Tooltip.SetDefault("Throws harmful bubbles");
+            Tooltip.SetDefault("33% chance to not consume ammo" +
+                "\nThrows harmful bubbles");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 
@@ -23,25 +24,30 @@ namespace BlockContent.Content.Items.Weapons.Ranged
             Item.width = 26;
             Item.height = 24;
             Item.useTime = 8;
-            Item.useAnimation = 16;
-            SoundStyle bubbleNoise = SoundID.Item111;
-            bubbleNoise.MaxInstances = 0;
-            bubbleNoise.Volume = 0.7f;
-            bubbleNoise.PitchVariance = 0.4f;
-            Item.UseSound = bubbleNoise;
+            Item.useAnimation = 8;
+            SoundStyle shootNoise = SoundID.Item87;
+            shootNoise.MaxInstances = 0;
+            shootNoise.Volume = 0.7f;
+            shootNoise.PitchVariance = 0.4f;
+            Item.UseSound = shootNoise;
             Item.autoReuse = true;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.DamageType = DamageClass.Ranged;
-            Item.damage = 30;
+            Item.useAmmo = AmmoID.Gel;
+            Item.damage = 35;
             Item.crit = 10;
+            Item.rare = ItemRarityID.Red;
+            Item.value = Item.buyPrice(0, 11);
 
             Item.shoot = ModContent.ProjectileType<Projectiles.Weapons.Ranged.HarmfulBubble>();
-            Item.shootSpeed = 13f;
+            Item.shootSpeed = 12f;
         }
+
+        public override bool CanConsumeAmmo(Item ammo, Player player) => !Main.rand.NextBool(3);
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            Projectile bubble = Projectile.NewProjectileDirect(source, position, velocity.RotatedByRandom(0.4f) * Main.rand.NextFloat(0.7f, 1.2f), type, damage, knockback, player.whoAmI);
+            Projectile bubble = Projectile.NewProjectileDirect(source, position - new Vector2(0, 10), velocity.RotatedByRandom(0.2f), type, damage, knockback, player.whoAmI);
             bubble.scale = Main.rand.NextFloat(0.7f, 1.2f);
             return false;
         }

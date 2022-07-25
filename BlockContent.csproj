@@ -8,11 +8,6 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Nihilus\Content\Dusts\**" />
-    <EmbeddedResource Remove="Nihilus\Content\Dusts\**" />
-    <None Remove="Nihilus\Content\Dusts\**" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
   </ItemGroup>
   <ItemGroup>
