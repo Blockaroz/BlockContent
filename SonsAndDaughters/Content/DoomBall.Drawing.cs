@@ -1,10 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ParticleEngine;
 using ReLogic.Content;
 using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
+using BlockContent.Content.Particles;
 
 namespace BlockContent.SonsAndDaughters.Content
 {
@@ -72,12 +74,12 @@ namespace BlockContent.SonsAndDaughters.Content
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, ring, Main.Transform);
 
             float mainScale = 1f + (float)Math.Sin(Projectile.localAI[0] * 0.07f % MathHelper.TwoPi) * 0.01f;
-            Main.EntitySpriteDraw(shape.Value, Projectile.Center - Main.screenPosition, null, Color.White, 0, shape.Size() * 0.5f, mainScale * Projectile.scale, 0, 0);
+            Main.EntitySpriteDraw(shape.Value, Projectile.Center - Main.screenPosition, null, Color.White, 0, shape.Size() * 0.5f, mainScale * 1.05f * Projectile.scale, 0, 0);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
 
-            Main.EntitySpriteDraw(glow.Value, Projectile.Center - Main.screenPosition, null, new Color(111, 0, 138, 0) * 0.33f, 0, glow.Size() * 0.5f, mainScale * 1.05f * Projectile.scale, 0, 0);
+            Main.EntitySpriteDraw(glow.Value, Projectile.Center - Main.screenPosition, null, new Color(111, 0, 138, 0) * 0.33f, 0, glow.Size() * 0.5f, mainScale * Projectile.scale, 0, 0);
         }
 
         private void DrawSoulLayers()
@@ -117,7 +119,26 @@ namespace BlockContent.SonsAndDaughters.Content
 
         public void DoParticles()
         {
+            if (Main.rand.NextBool(3))
+            {
+                Vector2 outerRingOff = Main.rand.NextVector2CircularEdge(240, 240) * Projectile.scale + Main.rand.NextVector2Circular(20, 20);
+                Particle outerRingDust = Particle.NewParticle(Particle.ParticleType<GlowDot>(), Projectile.Center + outerRingOff, Main.rand.NextVector2Circular(5, 5), new Color(165, 37, 219), Main.rand.NextFloat(2f));
+                outerRingDust.data = Projectile;
+            }
 
+            if (Main.rand.NextBool(18))
+            {
+                for (int i = 0; i < Main.rand.Next(3); i++)
+                {
+                    Particle bolt = Particle.NewParticle(Particle.ParticleType<DoomBolt>(), Projectile.Center, Main.rand.NextVector2Circular(5, 5), Color.Red, Main.rand.NextFloat(1f, 3f));
+
+                    Vector2 boltStart = Main.rand.NextVector2CircularEdge(260, 260) * Projectile.scale + Main.rand.NextVector2Circular(30, 30) * Main.rand.NextFloat(0.8f, 1.2f);
+                    Vector2 boltEnd = boltStart.RotatedBy(Main.rand.NextFloat(1f, 1.5f) * Main.rand.NextFloatDirection()) * Main.rand.NextFloat(0.9f, 1.1f);
+                    int pointCount = (int)(boltStart.Distance(boltEnd) / 170f) + 2;
+                    bolt.data = new LightningData(Projectile.Center + boltStart, Projectile.Center + Vector2.SmoothStep(boltStart, boltEnd, Main.rand.NextFloat(0.2f, 0.7f)) * Main.rand.NextFloat(0.8f, 2f), Projectile.Center + boltEnd, Main.rand.NextFloat(4f), pointCount).Value;
+
+                }
+            }
         }
     }
 }

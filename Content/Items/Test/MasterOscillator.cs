@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using ParticleEngine;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -18,54 +19,49 @@ namespace BlockContent.Content.Items.Test
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
 
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            int number = Main.LocalPlayer.GetModPlayer<MasterOscillatorActions>().actionNumber;
-            string actionName = Main.LocalPlayer.GetModPlayer<MasterOscillatorActions>().actions[number].Name;
-            TooltipLine actionLine = new TooltipLine(Mod, "Blockaroz:MasterOscillator", "[glyph:5] # " + number + " : " + actionName);
-            tooltips.Add(actionLine);
-        }
-
         public override void SetDefaults()
         {
             Item.width = 26;
             Item.height = 24;
-            Item.useTime = 15;
-            Item.useAnimation = 15;
-            SoundStyle shootNoise = SoundID.Item115;
+            Item.useTime = 25;
+            Item.useAnimation = 25;
+            SoundStyle shootNoise = SoundID.Item84;
             shootNoise.MaxInstances = 0;
             shootNoise.Volume = 0.8f;
             shootNoise.PitchVariance = 0.4f;
             Item.UseSound = shootNoise;
             Item.autoReuse = true;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.rare = ModContent.RarityType<Weapons.DeepBlueRarity>();
+            Item.rare = ItemRarityID.Red;
             Item.shootSpeed = 2f;
+            Item.shoot = ModContent.ProjectileType<SonsAndDaughters.Content.DoomBall>();
+        }
+
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            if (player.altFunctionUse == 2)
+                SonsAndDaughters.RedFilter.Active = !SonsAndDaughters.RedFilter.Active;
+            else
+            {
+                Projectile.NewProjectileDirect(source, Main.MouseWorld, velocity, type, 20, knockback, Main.myPlayer);
+
+                Particle bolt = Particle.NewParticle(Particle.ParticleType<SonsAndDaughters.Content.DoomBolt>(), position, Main.rand.NextVector2Circular(5, 5), Color.Red, Main.rand.NextFloat(1f, 2f));
+                Vector2 boltStart = position;
+                Vector2 boltEnd = Main.MouseWorld;
+                float strength = boltStart.Distance(boltEnd) / 100f;
+                bolt.data = new LightningData(boltStart, Vector2.SmoothStep(boltStart, boltEnd, 0.5f) + Main.rand.NextVector2Circular(100, 80).RotatedBy(boltStart.AngleTo(boltEnd)), boltEnd, strength * 0.8f, (int)(strength * 1.5f)).Value;
+
+            }
+
+            return false;
         }
 
         public override bool AltFunctionUse(Player player) => true;
 
-        public override bool? UseItem(Player player)
+        public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
-            int number = player.GetModPlayer<MasterOscillatorActions>().actionNumber;
-            if (player.itemAnimation == player.itemAnimationMax - 1)
-            {
-                if (player.altFunctionUse == 2)
-                    player.GetModPlayer<MasterOscillatorActions>().actionNumber++;
-
-                else
-                    player.GetModPlayer<MasterOscillatorActions>().actions[number].Invoke();
-            }
-            if (player.itemAnimation == player.itemAnimationMax - 2)
-            {
-                if (player.altFunctionUse == 2)
-                {
-                    string actionName = player.GetModPlayer<MasterOscillatorActions>().actions[number].Name;
-                    CombatText.NewText(new Rectangle((int)(player.Center.X - 12), (int)(player.Bottom.Y - 4), 24, 8), Color.DimGray, actionName, false, true);
-                }
-            }
-
-            return false;
+            player.itemRotation = player.AngleTo(Main.MouseWorld) - MathHelper.Pi * (player.direction > 0 ? 0 : 1);
+            player.ChangeDir(player.DirectionTo(Main.MouseWorld).X > 0 ? 1 : -1);
         }
 
         public override Vector2? HoldoutOffset() => new Vector2(1, 0);
@@ -76,47 +72,6 @@ namespace BlockContent.Content.Items.Test
         {
             CreateRecipe()
                 .Register();
-        }
-    }
-
-    public class MasterOscillatorActions : ModPlayer
-    {
-        public int actionNumber;
-
-        public List<OscillatorAction> actions;
-
-        public override void PreUpdate()
-        {
-            actions = new List<OscillatorAction>();
-            actions.Add(new OscillatorAction(() =>
-            {
-                Projectile.NewProjectileDirect(new EntitySource_ItemUse(Player, Player.HeldItem), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<SonsAndDaughters.Content.DoomBall>(), 20, 0, Main.myPlayer);
-            }, "Sons n' Daughters"));
-            actions.Add(new OscillatorAction(() =>
-            {
-                SonsAndDaughters.RedFilter.Active = !SonsAndDaughters.RedFilter.Active;
-            }, "Doom Filter"));
-
-            if (actionNumber > actions.Count - 1)
-                actionNumber = 0;
-            if (actionNumber < 0)
-                actionNumber = actions.Count - 1;
-        }
-
-        public struct OscillatorAction
-        {
-            public OscillatorAction(Action action, string name)
-            {
-                this.name = name;
-                this.action = action;
-            }
-
-            private string name;
-            private Action action;
-
-            public string Name { get => name; }
-
-            public void Invoke() => action.Invoke();
         }
     }
 }

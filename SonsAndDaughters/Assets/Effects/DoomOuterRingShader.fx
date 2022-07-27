@@ -27,7 +27,7 @@ float uSize;
 
 float Donut(float2 coords, float4 distortion)
 {
-    float ring = length(coords) > 0.95 - (distortion / uSize * 0.55) && length(coords) < 1.0 - (distortion * uSize * 0.55) ? 1 : 0;
+    float ring = length(coords) > 0.85 - (distortion / uSize) && length(coords) < 1.0 - (distortion * uSize * 2) ? 1 : 0;
     return mul(ring, 1.0 - distortion * 2);
 }
 

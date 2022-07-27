@@ -35,7 +35,7 @@ namespace BlockContent.Content.Particles
             Asset<Texture2D> bloom = ModContent.Request<Texture2D>($"{nameof(BlockContent)}/Assets/Textures/Glow");
             Color bloomColor = color * 0.9f;
             bloomColor.A = 0;
-            Vector2 stretch = new Vector2(0.8f, velocity.Length() * 0.5f + 0.5f);
+            Vector2 stretch = new Vector2(0.8f, velocity.Length() * 0.1f + 0.9f);
             spriteBatch.Draw(bloom.Value, position - Main.screenPosition, null, color, rotation, bloom.Size() * new Vector2(0.5f, 0.5f), scale * stretch, SpriteEffects.None, 0);
             spriteBatch.Draw(bloom.Value, position - Main.screenPosition, null, bloomColor, rotation, bloom.Size() * 0.5f, scale * 0.5f * stretch, SpriteEffects.None, 0);
         }
