@@ -122,7 +122,7 @@ namespace BlockContent.SonsAndDaughters.Content
             if (Main.rand.NextBool(3))
             {
                 Vector2 outerRingOff = Main.rand.NextVector2CircularEdge(240, 240) * Projectile.scale + Main.rand.NextVector2Circular(20, 20);
-                Particle outerRingDust = Particle.NewParticle(Particle.ParticleType<GlowDot>(), Projectile.Center + outerRingOff, Main.rand.NextVector2Circular(5, 5), new Color(165, 37, 219), Main.rand.NextFloat(2f));
+                Particle outerRingDust = Particle.NewParticle(Particle.ParticleType<GlowDot>(), Projectile.Center + outerRingOff, Main.rand.NextVector2Circular(5, 5), new Color(165, 37, 219), Main.rand.NextFloat(1.5f));
                 outerRingDust.data = Projectile;
             }
 

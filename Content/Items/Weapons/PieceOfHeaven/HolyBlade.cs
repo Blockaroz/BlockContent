@@ -26,7 +26,7 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
         {
             Item.width = 64;
             Item.height = 70;
-            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 18;
             Item.useAnimation = 18;
             Item.reuseDelay = 10;
@@ -52,12 +52,13 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
             Item.position.Y -= (float)Math.Sin(Item.timeSinceItemSpawned / 60f) * 0.12f;
             if (Main.rand.NextBool() && Item.timeSinceItemSpawned % 5 == 0)
             {
+                Color randColor = Color.Lerp(HeavenColors.Melee, HeavenColors.MeleeDark, Main.rand.Next(2));
                 Vector2 pos = Item.Center + Main.rand.NextVector2CircularEdge(10, 20) + Main.rand.NextVector2Circular(30, 50);
-                Particle.NewParticle(Particle.ParticleType<Particles.HeavenSpark>(), pos, -Vector2.UnitY * Main.rand.NextFloat(), HeavenColors.Melee, Main.rand.NextFloat(0.2f, 0.6f));
+                Particle.NewParticle(Particle.ParticleType<Particles.HeavenSpark>(), pos, -Vector2.UnitY * Main.rand.NextFloat(), randColor, Main.rand.NextFloat(0.2f, 0.6f));
             }
         }
 
-        public override void HoldItem(Player player) => Lighting.AddLight(player.Center, Color.SlateGray.ToVector3() * 0.7f);
+        public override void HoldItem(Player player) => Lighting.AddLight(player.Center, HeavenColors.MeleeDark.ToVector3() * 0.7f);
 
         public override Color? GetAlpha(Color lightColor) => Color.Lerp(lightColor, Color.White, 0.7f);
 
@@ -69,7 +70,7 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
 
             Color bloomColor = Color.Lerp(Color.GhostWhite, HeavenColors.Melee, 0.3f) * 0.4f;
             bloomColor.A = 0;
-            spriteBatch.Draw(shadow.Value, position, null, Color.Black * 0.1f, 0, origin + new Vector2(14), scale, 0, 0);
+            spriteBatch.Draw(shadow.Value, position, null, Color.Black * 0.3f, 0, origin + new Vector2(14), scale, 0, 0);
             spriteBatch.Draw(texture.Value, position, null, drawColor, 0, origin, scale, 0, 0);
             spriteBatch.Draw(bloom.Value, position, null, bloomColor, 0, origin + new Vector2(14), scale, 0, 0);
             return false;
@@ -83,7 +84,7 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
 
             Color bloomColor = Color.Lerp(Color.GhostWhite, HeavenColors.Melee, 0.3f) * 0.4f;
             bloomColor.A = 0;
-            spriteBatch.Draw(shadow.Value, Item.Center - Main.screenPosition, null, Color.Black * 0.1f, rotation - MathHelper.PiOver4, Item.Size * 0.5f + new Vector2(14), scale, 0, 0);
+            spriteBatch.Draw(shadow.Value, Item.Center - Main.screenPosition, null, Color.Black * 0.3f, rotation - MathHelper.PiOver4, Item.Size * 0.5f + new Vector2(14), scale, 0, 0);
             spriteBatch.Draw(texture.Value, Item.Center - Main.screenPosition, null, alphaColor, rotation - MathHelper.PiOver4, Item.Size * 0.5f, scale, 0, 0);
             spriteBatch.Draw(bloom.Value, Item.Center - Main.screenPosition, null, bloomColor, rotation - MathHelper.PiOver4, Item.Size * 0.5f + new Vector2(14), scale, 0, 0);
 

@@ -35,21 +35,21 @@ namespace BlockContent.Content.Particles
                 internalScale *= 0.92f;
                 velocity *= 0.9f;
             }
-            if (internalScale * scale < 0.2f)
+            if (internalScale * scale < 0.1f)
                 Active = false;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             Asset<Texture2D> dot = ModContent.Request<Texture2D>(Texture);
-            Color bloomColor = color * 0.77f * Utils.GetLerpValue(0.3f, 0.8f, internalScale);
+            Color bloomColor = color * 0.5f * Utils.GetLerpValue(0.3f, 0.8f, internalScale);
             bloomColor.A = 0;
-            Color shineColor = Color.Lerp(Color.White, color, 0.2f) * Utils.GetLerpValue(0.1f, 0.5f, scale, true);
+            Color shineColor = Color.Lerp(color, Color.White, color.ToVector3().Length() * internalScale * scale) * Utils.GetLerpValue(0.1f, 0.5f, scale, true);
             shineColor.A = 0;
-            float realScale = scale * internalScale * Utils.GetLerpValue(1f, 0.99f, internalScale, true) * 0.4f;
+            float realScale = scale * internalScale * Utils.GetLerpValue(1f, 0.99f, internalScale, true) * 0.7f;
 
             spriteBatch.Draw(dot.Value, position - Main.screenPosition, null, bloomColor, rotation, dot.Size() * 0.5f, realScale, SpriteEffects.None, 0);
-            spriteBatch.Draw(dot.Value, position - Main.screenPosition, null, shineColor, rotation, dot.Size() * 0.5f, realScale * 0.66f, SpriteEffects.None, 0);
+            spriteBatch.Draw(dot.Value, position - Main.screenPosition, null, shineColor, rotation, dot.Size() * 0.5f, realScale * 0.5f, SpriteEffects.None, 0);
         }
     }
 }

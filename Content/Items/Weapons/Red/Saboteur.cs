@@ -28,7 +28,7 @@ namespace BlockContent.Content.Items.Weapons.Red
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useTime = 5;
             Item.useAnimation = 5;
-            Item.reuseDelay = 5;
+            Item.reuseDelay = 8;
             Item.autoReuse = true;
             Item.channel = true;
             Item.shoot = ModContent.ProjectileType<SaboteurHeld>();
@@ -39,17 +39,20 @@ namespace BlockContent.Content.Items.Weapons.Red
 
             Item.DamageType = DamageClass.Ranged;
             Item.damage = 150;
+            Item.useAmmo = AmmoID.Bullet;
             Item.crit = 66;
-            Item.knockBack = 0.2f;
+            Item.knockBack = 0.5f;
             Item.rare = ItemRarityID.Red;
             Item.value = Item.buyPrice(0, 20, 50);
         }
+
+        public override bool CanConsumeAmmo(Item ammo, Player player) => Main.rand.NextBool();
 
         public override Color? GetAlpha(Color lightColor) => Color.White;
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            Projectile gun = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI, Item.useAnimation);
+            Projectile gun = Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<SaboteurHeld>(), damage, knockback, player.whoAmI, 3);
             gun.direction = player.direction;
             return false;
         }
@@ -60,6 +63,7 @@ namespace BlockContent.Content.Items.Weapons.Red
                 .AddIngredient(ItemID.FlintlockPistol)
                 .AddIngredient(ItemID.QuadBarrelShotgun)
                 .AddIngredient(ItemID.PhoenixBlaster)
+                .AddIngredient(ItemID.OnyxBlaster)
                 .AddIngredient(ItemID.Megashark)
                 .AddIngredient(ItemID.SuperStarCannon)
                 .AddIngredient(ItemID.SniperRifle)

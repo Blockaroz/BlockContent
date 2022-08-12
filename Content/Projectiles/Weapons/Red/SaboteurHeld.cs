@@ -2,8 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -30,13 +33,18 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
             Projectile.friendly = true;
             Projectile.hostile = false;
             Projectile.DamageType = DamageClass.Ranged;
+            Projectile.netImportant = true;
         }
 
         private Player Player => Main.player[Projectile.owner];
 
-        public ref float Time => ref Projectile.ai[0];
+        public ref float ShootTime => ref Projectile.ai[0];
+        public float ChargeTime;
+        public int ShotCount;
+        public ref float Special => ref Projectile.ai[1];
 
         public ref float BounceTime => ref Projectile.localAI[0];
+        public ref float SpecialFX => ref Projectile.localAI[1];
 
         public override void AI()
         {
@@ -45,71 +53,95 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
             Player.heldProj = Projectile.whoAmI;
             Player.ChangeDir(Projectile.direction);
 
-            Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.velocity.ToRotation() - MathHelper.PiOver2 - Player.fullRotation);
-            Player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, Projectile.velocity.ToRotation() - MathHelper.PiOver2 - Player.fullRotation);
+            float armRot = Projectile.velocity.ToRotation() * Player.gravDir - MathHelper.PiOver2 - Player.fullRotation;
+            Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.None, armRot);
+            Player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, armRot);
 
-            Projectile.Center = Player.RotatedRelativePointOld(Player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, Projectile.velocity.ToRotation() - MathHelper.PiOver2 - Player.fullRotation));
+            Projectile.Center = Player.RotatedRelativePointOld(Player.GetFrontHandPosition(Player.CompositeArmStretchAmount.None, Projectile.velocity.ToRotation() - MathHelper.PiOver2 - Player.fullRotation));
             Projectile.direction = Math.Sign(Projectile.velocity.X);
 
             bool shoot = false;
 
             float speed;
 
-            if (Projectile.ai[1] < 10)
-                speed = Player.itemAnimationMax * 3.5f;
-            else if (Projectile.ai[1] < 30)
-                speed = Player.itemAnimationMax * 2.78f;            
-            else if (Projectile.ai[1] < 60)
-                speed = Player.itemAnimationMax * 1.5f;
+            if (ChargeTime < 20)
+                speed = Player.itemAnimationMax * 3f;
+            else if (ChargeTime < 50)
+                speed = Player.itemAnimationMax * 2.33f;            
+            else if (ChargeTime < 80)
+                speed = Player.itemAnimationMax * 1.66f;
             else
                 speed = Player.itemAnimationMax;
 
-            if (Time <= 0)
+            if (ShootTime <= 0)
             {
-                Projectile.velocity = Projectile.DirectionTo(Main.MouseWorld).RotatedByRandom(0.07f) * 5f;
-                Time = speed;
+                Projectile.velocity = Projectile.DirectionTo(Main.MouseWorld).RotatedByRandom(0.01f) * 5f;
                 shoot = true;
+                ShootTime = (int)speed;
             }
-            if (!Player.channel || Player.dead || Player.stoned || Player.webbed || Player.noItems)
-                Projectile.ai[1] *= 0.5f;
 
-            if (Projectile.ai[1] < 0 && Time <= 1)
-                Projectile.Kill();
-
-            if (shoot)
+            if (shoot && Player.HasAmmo(Player.HeldItem) && !Player.CCed && !Player.noItems)
             {
                 BounceTime++;
 
-                Vector2 muzzlePos = new Vector2(41, -11 * Projectile.direction).RotatedBy(Projectile.rotation);
+                if (ChargeTime > 80)
+                {
+                    ShotCount++;
+                    if (ShotCount >= 7)
+                    {
+                        Special++;
+                        SpecialFX++;
+                        ShotCount = 0;
+                        Main.NewText(Special, new Color(255, 33, 33));
+                    }
+                }
 
-                //bullet logic
+                Vector2 muzzlePos = new Vector2(35, -7 * Projectile.direction).RotatedBy(Projectile.rotation);
 
-                Dust dust = Dust.NewDustPerfect(Projectile.Center + muzzlePos, 267, Vector2.UnitX.RotatedBy(Projectile.rotation) * Main.rand.NextFloat(1.5f, 3f), 0, Sanguine, 1f);
-                dust.noLightEmittence = true;
-                dust.noGravity = true;
+                Player.PickAmmo(Player.HeldItem, out int projType, out float projSpeed, out int damage, out float knockBack, out int ammoType, Main.rand.NextBool());
+                IEntitySource source = Player.GetSource_ItemUse_WithPotentialAmmo(Player.HeldItem, ammoType);
+                Vector2 bulletVelocity = Vector2.Lerp(Projectile.rotation.ToRotationVector2(), Projectile.velocity, 0.4f).SafeNormalize(Vector2.Zero);
+                Projectile.NewProjectileDirect(source, Projectile.Center + muzzlePos, bulletVelocity * projSpeed * 15f, projType, damage, knockBack, Projectile.owner);
 
-                SoundStyle shootSound = SoundID.Item40;//new SoundStyle($"{nameof(BlockContent)}/Assets/Sounds/Items/SaboteurShoot");
+                SoundStyle shootSound = new SoundStyle($"{nameof(BlockContent)}/Assets/Sounds/Items/SaboteurShoot");
                 shootSound.MaxInstances = 0;
                 shootSound.PitchVariance = 0.1f;
-                shootSound.Pitch = 0.1f;
-                shootSound.Volume = 0.8f;
+                shootSound.Pitch = 0.2f - speed * 0.01f;
+                shootSound.Volume = 0.6f;
                 SoundEngine.PlaySound(shootSound, Projectile.Center);
-
-                shoot = false;
             }
 
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.ToRadians(10) * Projectile.direction * BounceTime;
+            if (!Player.channel || Player.dead || Player.CCed || Player.noItems || Player.whoAmI != Projectile.owner)
+                ChargeTime = (int)(ChargeTime * 0.75f);
 
-            BounceTime = MathHelper.Lerp(BounceTime, 0, 0.3f);
-            if (BounceTime < 0.001f)
+            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.ToRadians(4) * Projectile.direction * BounceTime;
+
+            BounceTime = MathHelper.Lerp(BounceTime, 0, 0.4f);
+            if (BounceTime < 0.01f)
                 BounceTime = 0;
 
-            if (Player.channel && Projectile.ai[0] <= 60)
-                Projectile.ai[1]++;
-            else if (Projectile.ai[1] >= 0)
-                Projectile.ai[1]--;
+            SpecialFX = MathHelper.Lerp(BounceTime, 0, 0.1f);
+            if (SpecialFX < 0.01f)
+                SpecialFX = 0;
 
-            Time--;
+            if (Player.channel && ChargeTime < 120)
+                ChargeTime++;
+            if (ChargeTime <= 0 && ShootTime < 5 && ShootTime > 2)
+                Projectile.Kill();
+
+            ShootTime--;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(ShotCount);
+            writer.Write(ChargeTime);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            ShotCount = reader.Read();
+            ChargeTime = reader.ReadSingle();
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => false;
@@ -118,14 +150,26 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
         {
             Asset<Texture2D> texture = ModContent.Request<Texture2D>(Texture);
             Asset<Texture2D> glow = ModContent.Request<Texture2D>(Texture + "Glow");
-            int spriteDir = Projectile.direction;
-            Vector2 origin = texture.Size() * new Vector2(0.2f, 0.5f + 0.16f * spriteDir);
+            Asset<Texture2D> flash = ModContent.Request<Texture2D>($"{nameof(BlockContent)}/Assets/Textures/Item/MuzzleFlash");
+            int spriteDir = Projectile.direction * (int)Player.gravDir;
+            Vector2 origin = texture.Size() * new Vector2(0.22f, 0.5f + 0.15f * spriteDir);
             SpriteEffects dir = spriteDir > 0 ? SpriteEffects.None : SpriteEffects.FlipVertically;
             Color drawColor = Color.White;
 
-            Vector2 handleOffset = new Vector2(-14, 0).RotatedBy(Projectile.rotation);
+            Vector2 handleOffset = new Vector2(-15, 0).RotatedBy(Projectile.velocity.ToRotation());
             Main.EntitySpriteDraw(texture.Value, Projectile.Center + handleOffset - Main.screenPosition, null, lightColor.MultiplyRGBA(drawColor), Projectile.rotation, origin, Projectile.scale, dir, 0);
-            Main.EntitySpriteDraw(glow.Value, Projectile.Center + handleOffset - Main.screenPosition, null, new Color(255, 33, 33, 128).MultiplyRGBA(drawColor), Projectile.rotation, origin, Projectile.scale, dir, 0);
+            Main.EntitySpriteDraw(glow.Value, Projectile.Center + handleOffset - Main.screenPosition, null, Color.White.MultiplyRGB(drawColor), Projectile.rotation, origin, Projectile.scale, dir, 0);
+
+            if (ShootTime < 2)
+            {
+                Vector2 flashOffset = new Vector2(40, -7 * spriteDir).RotatedBy(Projectile.rotation);
+                Main.EntitySpriteDraw(flash.Value, Projectile.Center + flashOffset - Main.screenPosition, null, new Color(255, 33, 33, 128).MultiplyRGBA(drawColor), Projectile.rotation, flash.Size() * new Vector2(0.2f, 0.5f), Projectile.scale, 0, 0);
+                Main.EntitySpriteDraw(TextureAssets.Extra[98].Value, Projectile.Center + flashOffset - Main.screenPosition, null, new Color(255, 33, 33, 50), Projectile.rotation + MathHelper.PiOver2, TextureAssets.Extra[98].Size() * new Vector2(0.5f, 0.6f), Projectile.scale * 0.6f, 0, 0);
+                Main.EntitySpriteDraw(flash.Value, Projectile.Center + flashOffset - Main.screenPosition, null, new Color(255, 255, 255, 0), Projectile.rotation, flash.Size() * new Vector2(0.2f, 0.5f), Projectile.scale * 0.5f, 0, 0);
+            }
+
+            SaboteurEffects effects = default(SaboteurEffects);
+
             return false;
         }
 

@@ -41,8 +41,8 @@ namespace BlockContent.SonsAndDaughters.Content
                 for (int i = 1; i < points.Count - 1; i++)
                     points[i] += offsets[i] * points.Count * 0.03f;
             }
-            life *= 0.99f;
-            scale *= 0.98f;
+            life *= 0.97f;
+            scale *= 0.97f;
 
             if (life < 0.8f)
                 life *= 0.8f;
