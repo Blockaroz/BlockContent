@@ -16,22 +16,6 @@ namespace BlockContent.Nihilus.Content.NPCs
         private static RenderTarget2D flameTarget2;
         private Vector2 oldScreenSize;
 
-        private void RefreshTarget(On.Terraria.Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
-        {
-            orig(width, height, fullscreen);
-
-            if (oldScreenSize != new Vector2(width, height))
-            {
-                if (!Main.dedServ)
-                {
-                    //fullTarget = new RenderTarget2D(Main.graphics.GraphicsDevice, width, height);
-                    flameTarget = new RenderTarget2D(Main.graphics.GraphicsDevice, width, height);
-                    flameTarget2 = new RenderTarget2D(Main.graphics.GraphicsDevice, width, height);
-                }
-            }
-            oldScreenSize = new Vector2(width, height);
-        }
-
         private void DrawToFlames()
         {
             Main.graphics.GraphicsDevice.SetRenderTarget(flameTarget);
@@ -71,6 +55,9 @@ namespace BlockContent.Nihilus.Content.NPCs
             Main.spriteBatch.Draw(flameTarget2, Vector2.Zero, Color.White);
 
             Main.spriteBatch.End();
+
+            Main.graphics.GraphicsDevice.SetRenderTarget(null);
+
         }
 
         private void DrawToTargets(On.Terraria.Main.orig_CheckMonoliths orig)
@@ -81,14 +68,22 @@ namespace BlockContent.Nihilus.Content.NPCs
                 return;
             }
 
-            DrawToFlames();
+            if (Main.graphics.GraphicsDevice != null)
+            {
+                if (oldScreenSize != new Vector2(Main.screenWidth, Main.screenHeight))
+                {
+                    if (!Main.dedServ)
+                    {
+                        //fullTarget = new RenderTarget2D(Main.graphics.GraphicsDevice, width, height);
+                        flameTarget = new RenderTarget2D(Main.graphics.GraphicsDevice, Main.screenWidth, Main.screenHeight);
+                        flameTarget2 = new RenderTarget2D(Main.graphics.GraphicsDevice, Main.screenWidth, Main.screenHeight);
+                    }
+                }
 
-            //Main.graphics.GraphicsDevice.SetRenderTarget(fullTarget);
-            //Main.graphics.GraphicsDevice.Clear(Color.Transparent);
+                DrawToFlames();
+            }
 
-            //DrawFlames();
-
-            //Main.graphics.GraphicsDevice.SetRenderTarget(null);
+            oldScreenSize = new Vector2(Main.screenWidth, Main.screenHeight);
 
             orig();
         }
@@ -130,7 +125,6 @@ namespace BlockContent.Nihilus.Content.NPCs
                     flameTarget = new RenderTarget2D(Main.graphics.GraphicsDevice, Main.screenWidth, Main.screenHeight);
                     flameTarget2 = new RenderTarget2D(Main.graphics.GraphicsDevice, Main.screenWidth, Main.screenHeight);
                 });
-            On.Terraria.Main.SetDisplayMode += RefreshTarget;
             On.Terraria.Main.DrawNPCs += DrawFlamesParticles;
             On.Terraria.Main.CheckMonoliths += DrawToTargets;
         }
@@ -186,13 +180,7 @@ namespace BlockContent.Nihilus.Content.NPCs
 
         public void DrawFlames()
         {
-            for (int i = 0; i < 4; i++)
-            {
-                Vector2 offset = new Vector2(8, 0).RotatedBy(MathHelper.TwoPi / 4f * i);
-                Color color = Color.Lerp(Color.Red, Color.Blue, (float)Math.Sin((Main.GlobalTimeWrappedHourly * 2 + i * MathHelper.PiOver2) % MathHelper.TwoPi));
-                color.A = 0;
-                Main.spriteBatch.Draw(flameTarget, Vector2.Zero + offset, null, color, 0, Vector2.Zero, 2, 0, 0);
-            }
+            //red and blue bit goes here
 
             Effect edges = ModContent.Request<Effect>($"{nameof(BlockContent)}/Nihilus/Assets/Effects/EdgeShader", AssetRequestMode.ImmediateLoad).Value;
             edges.Parameters["uSize"].SetValue(new Vector2(Main.screenWidth, Main.screenHeight));

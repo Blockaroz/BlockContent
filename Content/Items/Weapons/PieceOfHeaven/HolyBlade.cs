@@ -17,7 +17,7 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Holy Blade");
-            Tooltip.SetDefault("something about it being shiny");
+            Tooltip.SetDefault("Shiny \nRight click to guard");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.ItemNoGravity[Type] = true;
         }
@@ -25,11 +25,11 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
         public override void SetDefaults()
         {
             Item.width = 64;
-            Item.height = 70;
+            Item.height = 72;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 18;
             Item.useAnimation = 18;
-            Item.reuseDelay = 10;
+            Item.reuseDelay = 5;
             Item.useTurn = true;
             Item.autoReuse = true;
             Item.channel = true;
@@ -58,7 +58,12 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
             }
         }
 
-        public override void HoldItem(Player player) => Lighting.AddLight(player.Center, HeavenColors.MeleeDark.ToVector3() * 0.7f);
+        public override void HoldItem(Player player)
+        {
+            player.hasRaisableShield = true;
+
+            Lighting.AddLight(player.Center, HeavenColors.MeleeDark.ToVector3() * 0.7f);
+        }
 
         public override Color? GetAlpha(Color lightColor) => Color.Lerp(lightColor, Color.White, 0.7f);
 
@@ -68,7 +73,7 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
             Asset<Texture2D> shadow = ModContent.Request<Texture2D>(Texture + "Shadow");
             Asset<Texture2D> bloom = ModContent.Request<Texture2D>(Texture + "Bloom");
 
-            Color bloomColor = Color.Lerp(Color.GhostWhite, HeavenColors.Melee, 0.3f) * 0.4f;
+            Color bloomColor = Color.Lerp(Color.GhostWhite, HeavenColors.Melee, 0.3f) * 0.3f;
             bloomColor.A = 0;
             spriteBatch.Draw(shadow.Value, position, null, Color.Black * 0.3f, 0, origin + new Vector2(14), scale, 0, 0);
             spriteBatch.Draw(texture.Value, position, null, drawColor, 0, origin, scale, 0, 0);
@@ -82,12 +87,12 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
             Asset<Texture2D> shadow = ModContent.Request<Texture2D>(Texture + "Shadow");
             Asset<Texture2D> bloom = ModContent.Request<Texture2D>(Texture + "Bloom");
 
-            Color bloomColor = Color.Lerp(Color.GhostWhite, HeavenColors.Melee, 0.3f) * 0.4f;
+            Vector2 origin = new Vector2(36, 36);
+            Color bloomColor = Color.Lerp(Color.GhostWhite, HeavenColors.Melee, 0.3f) * 0.3f;
             bloomColor.A = 0;
-            spriteBatch.Draw(shadow.Value, Item.Center - Main.screenPosition, null, Color.Black * 0.3f, rotation - MathHelper.PiOver4, Item.Size * 0.5f + new Vector2(14), scale, 0, 0);
-            spriteBatch.Draw(texture.Value, Item.Center - Main.screenPosition, null, alphaColor, rotation - MathHelper.PiOver4, Item.Size * 0.5f, scale, 0, 0);
-            spriteBatch.Draw(bloom.Value, Item.Center - Main.screenPosition, null, bloomColor, rotation - MathHelper.PiOver4, Item.Size * 0.5f + new Vector2(14), scale, 0, 0);
-
+            spriteBatch.Draw(shadow.Value, Item.Center - Main.screenPosition, null, Color.Black * 0.3f, rotation - MathHelper.PiOver4, origin + new Vector2(14), scale, 0, 0);
+            spriteBatch.Draw(texture.Value, Item.Center - Main.screenPosition, null, alphaColor, rotation - MathHelper.PiOver4, origin, scale, 0, 0);
+            spriteBatch.Draw(bloom.Value, Item.Center - Main.screenPosition, null, bloomColor, rotation - MathHelper.PiOver4, origin + new Vector2(14), scale, 0, 0);
             //DrawStar(spriteBatch, Item.Center - new Vector2(-2, -19).RotatedBy(rotation));
 
             return false;
@@ -110,12 +115,27 @@ namespace BlockContent.Content.Items.Weapons.PieceOfHeaven
             spriteBatch.Draw(bloom.Value, position - Main.screenPosition, null, bloomColor * 0.3f * shineStrength, 0, bloom.Size() * 0.5f, 1.5f, 0, 0);
         }
 
+        public override bool AltFunctionUse(Player player) => !player.HasBuff(BuffID.ParryDamageBuff);
+
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            Projectile proj = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI, 0, -1);
-            proj.spriteDirection = player.direction;
-            proj.direction = -1;
-            proj.scale = player.GetAdjustedItemScale(Item) * 1.33f;
+            if (player.ownedProjectileCounts[type] < 1)
+            {
+                float ai0 = 0;
+                float ai1 = 0;
+
+                if (player.altFunctionUse == 2)
+                    ai0 = 1;
+                if (player.HasBuff(BuffID.ParryDamageBuff))
+                    ai0 = 2;
+
+                //ai0 = 2;
+
+                Projectile proj = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI, ai0, ai1);
+                proj.spriteDirection = player.direction;
+                proj.direction = -1;
+                proj.scale = player.GetAdjustedItemScale(Item) * 1.2f;
+            }
 
             return false;
         }

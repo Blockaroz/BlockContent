@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
@@ -53,6 +54,9 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
             Player.heldProj = Projectile.whoAmI;
             Player.ChangeDir(Projectile.direction);
 
+            if (Player.dead || Player.whoAmI != Projectile.owner)
+                Projectile.Kill();
+
             float armRot = Projectile.velocity.ToRotation() * Player.gravDir - MathHelper.PiOver2 - Player.fullRotation;
             Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.None, armRot);
             Player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, armRot);
@@ -87,16 +91,15 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
                 if (ChargeTime > 80)
                 {
                     ShotCount++;
-                    if (ShotCount >= 7)
+                    if (ShotCount >= 3)
                     {
                         Special++;
-                        SpecialFX++;
+                        SpecialFX = 1;
                         ShotCount = 0;
-                        Main.NewText(Special, new Color(255, 33, 33));
                     }
                 }
 
-                Vector2 muzzlePos = new Vector2(35, -7 * Projectile.direction).RotatedBy(Projectile.rotation);
+                Vector2 muzzlePos = new Vector2(0, -7 * Projectile.direction).RotatedBy(Projectile.rotation);
 
                 Player.PickAmmo(Player.HeldItem, out int projType, out float projSpeed, out int damage, out float knockBack, out int ammoType, Main.rand.NextBool());
                 IEntitySource source = Player.GetSource_ItemUse_WithPotentialAmmo(Player.HeldItem, ammoType);
@@ -120,7 +123,7 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
             if (BounceTime < 0.01f)
                 BounceTime = 0;
 
-            SpecialFX = MathHelper.Lerp(BounceTime, 0, 0.1f);
+            SpecialFX = MathHelper.Lerp(SpecialFX, 0, 0.2f);
             if (SpecialFX < 0.01f)
                 SpecialFX = 0;
 
@@ -156,23 +159,22 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
             SpriteEffects dir = spriteDir > 0 ? SpriteEffects.None : SpriteEffects.FlipVertically;
             Color drawColor = Color.White;
 
-            Vector2 handleOffset = new Vector2(-15, 0).RotatedBy(Projectile.velocity.ToRotation());
+            Vector2 handleOffset = new Vector2(-11, 0).RotatedBy(Projectile.velocity.ToRotation());
             Main.EntitySpriteDraw(texture.Value, Projectile.Center + handleOffset - Main.screenPosition, null, lightColor.MultiplyRGBA(drawColor), Projectile.rotation, origin, Projectile.scale, dir, 0);
             Main.EntitySpriteDraw(glow.Value, Projectile.Center + handleOffset - Main.screenPosition, null, Color.White.MultiplyRGB(drawColor), Projectile.rotation, origin, Projectile.scale, dir, 0);
 
             if (ShootTime < 2)
             {
-                Vector2 flashOffset = new Vector2(40, -7 * spriteDir).RotatedBy(Projectile.rotation);
-                Main.EntitySpriteDraw(flash.Value, Projectile.Center + flashOffset - Main.screenPosition, null, new Color(255, 33, 33, 128).MultiplyRGBA(drawColor), Projectile.rotation, flash.Size() * new Vector2(0.2f, 0.5f), Projectile.scale, 0, 0);
-                Main.EntitySpriteDraw(TextureAssets.Extra[98].Value, Projectile.Center + flashOffset - Main.screenPosition, null, new Color(255, 33, 33, 50), Projectile.rotation + MathHelper.PiOver2, TextureAssets.Extra[98].Size() * new Vector2(0.5f, 0.6f), Projectile.scale * 0.6f, 0, 0);
-                Main.EntitySpriteDraw(flash.Value, Projectile.Center + flashOffset - Main.screenPosition, null, new Color(255, 255, 255, 0), Projectile.rotation, flash.Size() * new Vector2(0.2f, 0.5f), Projectile.scale * 0.5f, 0, 0);
+                float flashScale = Projectile.scale * ((ShootTime + 1) / 2f);
+                Vector2 flashOffset = new Vector2(42, -8 * spriteDir).RotatedBy(Projectile.rotation);
+                Main.EntitySpriteDraw(flash.Value, Projectile.Center + flashOffset - Main.screenPosition, null, new Color(255, 33, 33, 128).MultiplyRGBA(drawColor), Projectile.rotation, flash.Size() * new Vector2(0.2f, 0.5f), flashScale, 0, 0);
+                Main.EntitySpriteDraw(TextureAssets.Extra[98].Value, Projectile.Center + flashOffset - Main.screenPosition, null, new Color(255, 33, 33, 50), Projectile.rotation + MathHelper.PiOver2, TextureAssets.Extra[98].Size() * new Vector2(0.5f, 0.6f), flashScale * 0.6f, 0, 0);
+                Main.EntitySpriteDraw(flash.Value, Projectile.Center + flashOffset - Main.screenPosition, null, new Color(255, 255, 255, 0), Projectile.rotation, flash.Size() * new Vector2(0.2f, 0.5f), flashScale * 0.5f, 0, 0);
             }
-
-            SaboteurEffects effects = default(SaboteurEffects);
 
             return false;
         }
 
-        private static readonly Color Sanguine = new Color(255, 33, 33);
+        private static readonly Color Sanguine = new Color(255, 33, 33); 
     }
 }

@@ -70,7 +70,6 @@ namespace BlockContent.Content.Items.Weapons.Red
                 .AddIngredient(ItemID.VenusMagnum)
                 .AddIngredient(ItemID.ChainGun)
                 .AddIngredient(ItemID.Xenopopper)
-                .AddIngredient(ItemID.VenusMagnum)
                 .AddIngredient(ItemID.SDMG)
                 .AddIngredient(ItemID.IllegalGunParts)
                 .AddTile(TileID.MythrilAnvil)

@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 
-namespace BlockContent.Content.Items.Ammo
+namespace BlockContent.Content.Items.Ammunition
 {
     public class BottomlessGelBucket : ModItem
     {
