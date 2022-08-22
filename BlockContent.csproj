@@ -16,7 +16,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Assets\Sounds\Items\HolyBlade\" />
+    <Folder Include="Common\" />
     <Folder Include="Content\Items\MountItems\" />
     <Folder Include="Content\NPCs\" />
+    <Folder Include="Content\Projectiles\Weapons\Miracle\" />
   </ItemGroup>
 </Project>

@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace BlockContent.Content.Items.Weapons
 {
-    public class DeepBlueRarity : ModRarity
+    public class DeepBlue : ModRarity
     {
         public override string Name => "Deep Blue";
 
