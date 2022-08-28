@@ -28,22 +28,22 @@ namespace BlockContent.Content.Projectiles.Weapons.Red
 
         private static Dictionary<int, SaboteurProfile> profiles = new Dictionary<int, SaboteurProfile>
         {
-            {ItemID.FlintlockPistol, new SaboteurProfile(Color.Beige) },
-            {ItemID.QuadBarrelShotgun, new SaboteurProfile(Color.Beige) },
-            {ItemID.Handgun, new SaboteurProfile(Color.Beige) },
-            {ItemID.PhoenixBlaster, new SaboteurProfile(Color.Beige) },
-            {ItemID.Shotgun, new SaboteurProfile(Color.Beige) },
-            {ItemID.OnyxBlaster, new SaboteurProfile(Color.Beige) },
-            {ItemID.Minishark, new SaboteurProfile(Color.Beige) },
-            {ItemID.Megashark, new SaboteurProfile(Color.Beige) },
-            {ItemID.StarCannon, new SaboteurProfile(Color.Beige) },
-            {ItemID.SuperStarCannon, new SaboteurProfile(Color.Beige) },
-            {ItemID.SniperRifle, new SaboteurProfile(Color.Beige) },
-            {ItemID.VenusMagnum, new SaboteurProfile(Color.Beige) },
-            {ItemID.ChainGun, new SaboteurProfile(Color.Beige) },
-            {ItemID.Xenopopper, new SaboteurProfile(Color.Beige) },
-            {ItemID.Celeb2, new SaboteurProfile(Color.Beige) },
-            {ItemID.SDMG, new SaboteurProfile(Color.Beige) }
+            {ItemID.FlintlockPistol, new SaboteurProfile(Color.DarkKhaki) },
+            {ItemID.QuadBarrelShotgun, new SaboteurProfile(Color.OrangeRed) },
+            {ItemID.Handgun, new SaboteurProfile(Color.LightCoral) },
+            {ItemID.PhoenixBlaster, new SaboteurProfile(Color.Orange) },
+            {ItemID.Shotgun, new SaboteurProfile(Color.Gainsboro) },
+            {ItemID.OnyxBlaster, new SaboteurProfile(Color.DarkOrchid) },
+            {ItemID.Minishark, new SaboteurProfile(Color.DarkOrange) },
+            {ItemID.Megashark, new SaboteurProfile(Color.DodgerBlue) },
+            {ItemID.StarCannon, new SaboteurProfile(Color.MediumBlue) },
+            {ItemID.SuperStarCannon, new SaboteurProfile(Color.Goldenrod) },
+            {ItemID.SniperRifle, new SaboteurProfile(Color.DimGray) },
+            {ItemID.VenusMagnum, new SaboteurProfile(Color.Lime) },
+            {ItemID.ChainGun, new SaboteurProfile(Color.DarkRed) },
+            {ItemID.Xenopopper, new SaboteurProfile(Color.Magenta) },
+            {ItemID.Celeb2, new SaboteurProfile(Color.GhostWhite) },
+            {ItemID.SDMG, new SaboteurProfile(Color.Aquamarine) }
         };
 
         private static SaboteurProfile defaultProfile = new SaboteurProfile(new Color(255, 33, 33));

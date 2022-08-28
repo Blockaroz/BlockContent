@@ -55,7 +55,7 @@ namespace BlockContent.Content.Projectiles.Ammunition
         {
 			Asset<Texture2D> bullet = ModContent.Request<Texture2D>(Texture);
 			float fadeIn = (255 - Projectile.alpha) / 255f;
-			Main.EntitySpriteDraw(bullet.Value, Projectile.Center - Main.screenPosition, null, GetAlpha(lightColor).Value * fadeIn, Projectile.rotation, bullet.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(bullet.Value, Projectile.Center - Main.screenPosition, null, GetAlpha(lightColor).Value * fadeIn, Projectile.rotation, bullet.Size() * new Vector2(0.5f, 0.1f), Projectile.scale, SpriteEffects.None, 0);
 
 			return false;
         }
