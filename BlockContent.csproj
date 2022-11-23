@@ -18,7 +18,6 @@
   <ItemGroup>
     <Folder Include="Common\" />
     <Folder Include="Content\NPCs\" />
-    <Folder Include="Content\Projectiles\Weapons\Melee\" />
     <Folder Include="Content\Tiles\" />
   </ItemGroup>
 </Project>
