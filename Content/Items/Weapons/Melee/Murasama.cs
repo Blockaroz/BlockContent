@@ -43,12 +43,14 @@ namespace BlockContent.Content.Items.Weapons.Melee
             return base.PreDrawTooltipLine(line, ref yOffset);
         }
 
+        public override bool MeleePrefix() => true;
+
         public override void SetDefaults()
         {
             Item.width = 60;
             Item.height = 84;
-            Item.useTime = 15;
-            Item.useAnimation = 15;
+            Item.useTime = 28;
+            Item.useAnimation = 28;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noUseGraphic = true;
             Item.channel = true;
@@ -59,7 +61,7 @@ namespace BlockContent.Content.Items.Weapons.Melee
             Item.rare = ModContent.RarityType<DeepBlue>();
             Item.value = Item.buyPrice(1);
             Item.shootSpeed = 5f;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Weapons.Melee.MurasamaHeld>();
+            Item.shoot = ModContent.ProjectileType<MurasamaHeld>();
         }
 
         public override Color? GetAlpha(Color lightColor) => Color.White;
@@ -69,8 +71,10 @@ namespace BlockContent.Content.Items.Weapons.Melee
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (player.ownedProjectileCounts[type] <= 0)
-                Projectile.NewProjectileDirect(source, position, Vector2.Zero, type, Item.damage, 0f, player.whoAmI, 0, -1);
-
+            {
+                Projectile sword = Projectile.NewProjectileDirect(source, position, position.DirectionTo(Main.MouseWorld), type, Item.damage, 0f, player.whoAmI, -1, 0);
+                sword.scale = player.GetAdjustedItemScale(Item);
+            }
             return false;
         }
     }
